@@ -15,3 +15,7 @@ api_router.include_router(products_router)
 
 api_router.include_router(inventory_router)
 api_router.include_router(devices_router)
+
+from app.api.finance import router as finance_router
+
+api_router.include_router(finance_router)
