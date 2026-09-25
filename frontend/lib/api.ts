@@ -52,7 +52,7 @@ async function request<T>(
         message = payload.detail;
       }
     } catch {
-      // Keep the default message.
+      // Keep default message.
     }
 
     throw new ApiError(message, response.status);
@@ -76,6 +76,14 @@ export type LoginResponse = {
   token_type: string;
 };
 
+export type OrganizationContext = {
+  id: string;
+  name: string;
+  slug: string;
+  is_active: boolean;
+  is_owner: boolean;
+};
+
 export async function login(
   email: string,
   password: string,
@@ -95,6 +103,17 @@ export async function getCurrentUser(): Promise<AuthUser> {
 
 export async function apiGet<T>(path: string): Promise<T> {
   return request<T>(path);
+}
+
+export async function apiGetForOrganization<T>(
+  path: string,
+  organizationId: string,
+): Promise<T> {
+  const separator = path.includes("?") ? "&" : "?";
+
+  return request<T>(
+    `${path}${separator}organization_id=${encodeURIComponent(organizationId)}`,
+  );
 }
 
 export async function apiPost<T>(

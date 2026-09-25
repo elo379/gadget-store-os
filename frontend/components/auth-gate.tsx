@@ -3,10 +3,11 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import {
-  clearToken,
-  getCurrentUser,
-  hasToken,
-} from "@/lib/api";
+  clearSession,
+  getAccessToken,
+} from "@/lib/session";
+import { getCurrentUser } from "@/lib/api";
+import { WorkspaceProvider } from "./workspace-provider";
 
 export function AuthGate({
   children,
@@ -20,7 +21,7 @@ export function AuthGate({
     let active = true;
 
     async function checkSession() {
-      if (!hasToken()) {
+      if (!getAccessToken()) {
         router.replace("/login");
         return;
       }
@@ -32,7 +33,7 @@ export function AuthGate({
           setChecking(false);
         }
       } catch {
-        clearToken();
+        clearSession();
         router.replace("/login");
       }
     }
@@ -57,5 +58,9 @@ export function AuthGate({
     );
   }
 
-  return <>{children}</>;
+  return (
+    <WorkspaceProvider>
+      {children}
+    </WorkspaceProvider>
+  );
 }
