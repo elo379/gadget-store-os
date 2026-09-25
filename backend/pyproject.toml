@@ -1,0 +1,12 @@
+[project]
+name = "gadget-store-os-api"
+version = "0.1.0"
+description = "Gadget Store OS backend API"
+requires-python = ">=3.12"
+dependencies = [
+    "fastapi",
+    "uvicorn[standard]",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
