@@ -39,3 +39,7 @@ api_router.include_router(notifications_router)
 from app.api.stocktake import router as stocktake_router
 
 api_router.include_router(stocktake_router)
+
+from app.api.reports import router as reports_router
+
+api_router.include_router(reports_router)
