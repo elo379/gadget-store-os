@@ -1,4 +1,5 @@
-from app.db.base import Base, TimestampMixin, UUIDPrimaryKeyMixin
+from app.db.base import Base
+from app.db.mixins import TimestampMixin, UUIDPrimaryKeyMixin
 
 __all__ = [
     "Base",

@@ -1,0 +1,30 @@
+PERMISSION_CATALOG = {
+    "organization.view": "View organization information",
+    "organization.manage": "Manage organization settings",
+    "members.view": "View organization members",
+    "members.manage": "Manage organization members",
+    "roles.view": "View roles",
+    "roles.manage": "Create and manage roles",
+    "products.view": "View products",
+    "products.manage": "Create and manage products",
+    "inventory.view": "View inventory",
+    "inventory.manage": "Manage inventory",
+    "purchases.view": "View purchases",
+    "purchases.manage": "Manage purchases",
+    "sales.view": "View sales",
+    "sales.create": "Create sales",
+    "sales.manage": "Manage sales",
+    "customers.view": "View customers",
+    "customers.manage": "Manage customers",
+    "suppliers.view": "View suppliers",
+    "suppliers.manage": "Manage suppliers",
+    "finance.view": "View financial information",
+    "expenses.manage": "Manage expenses",
+    "attendance.view": "View attendance",
+    "attendance.manage": "Manage attendance",
+    "reports.view": "View reports",
+    "audit.view": "View audit logs",
+}
+
+def permission_keys() -> list[str]:
+    return list(PERMISSION_CATALOG.keys())
