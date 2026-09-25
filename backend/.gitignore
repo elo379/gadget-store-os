@@ -1,0 +1,10 @@
+
+pilot_store.db
+
+__pycache__/
+*.pyc
+alembic_dev.db
+
+__pycache__/
+*.pyc
+*.db

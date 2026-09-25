@@ -1,0 +1,1 @@
+from app.organizations.personnel_lifecycle_routes import router
