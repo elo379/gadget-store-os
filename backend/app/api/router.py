@@ -27,3 +27,15 @@ api_router.include_router(expenses_router)
 from app.api.staff import router as staff_router
 
 api_router.include_router(staff_router)
+
+from app.api.dashboard import router as dashboard_router
+
+api_router.include_router(dashboard_router)
+
+from app.api.notifications import router as notifications_router
+
+api_router.include_router(notifications_router)
+
+from app.api.stocktake import router as stocktake_router
+
+api_router.include_router(stocktake_router)
