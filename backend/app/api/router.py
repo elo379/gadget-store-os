@@ -23,3 +23,7 @@ api_router.include_router(finance_router)
 from app.api.expenses import router as expenses_router
 
 api_router.include_router(expenses_router)
+
+from app.api.staff import router as staff_router
+
+api_router.include_router(staff_router)
