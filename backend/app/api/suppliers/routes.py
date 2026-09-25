@@ -1,0 +1,3 @@
+from app.suppliers.routes import router
+
+__all__ = ["router"]
