@@ -6,6 +6,7 @@ from pydantic import BaseModel, Field
 
 class SaleLineCreate(BaseModel):
     product_id: uuid.UUID
+    location_id: uuid.UUID | None = None
     quantity: Decimal = Field(gt=0)
     unit_price: Decimal = Field(ge=0)
     device_id: uuid.UUID | None = None

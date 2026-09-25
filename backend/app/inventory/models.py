@@ -70,6 +70,12 @@ class InventoryItem(UUIDPrimaryKeyMixin, TimestampMixin, Base):
         default=Decimal("0"),
     )
 
+    average_unit_cost: Mapped[Decimal] = mapped_column(
+        Numeric(14, 2),
+        nullable=False,
+        default=Decimal("0"),
+    )
+
     status: Mapped[str] = mapped_column(
         String(50),
         nullable=False,
