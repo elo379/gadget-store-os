@@ -17,6 +17,7 @@ api_router.include_router(inventory_router)
 api_router.include_router(devices_router)
 
 from app.api.finance import router as finance_router
+from app.api.audit import router as audit_router
 
 api_router.include_router(finance_router)
 
@@ -43,3 +44,5 @@ api_router.include_router(stocktake_router)
 from app.api.reports import router as reports_router
 
 api_router.include_router(reports_router)
+
+api_router.include_router(audit_router)

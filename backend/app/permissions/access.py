@@ -3,20 +3,20 @@ import uuid
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from app.models import Membership
+from app.models.membership import Membership
 from app.permissions.membership_roles import MembershipRole
-from app.permissions.models import Permission, RolePermission
+from app.permissions.models import Permission, Role, RolePermission
 
 
 def is_owner(
     db: Session,
-    organization_id: uuid.UUID,
     user_id: uuid.UUID,
+    organization_id: uuid.UUID,
 ) -> bool:
     membership = db.scalar(
         select(Membership).where(
-            Membership.organization_id == organization_id,
             Membership.user_id == user_id,
+            Membership.organization_id == organization_id,
             Membership.is_active.is_(True),
         )
     )
@@ -26,38 +26,50 @@ def is_owner(
 
 def user_has_permission(
     db: Session,
-    organization_id: uuid.UUID,
     user_id: uuid.UUID,
-    permission_key: str,
+    organization_id: uuid.UUID,
+    permission_name: str,
 ) -> bool:
-    if is_owner(db, organization_id, user_id):
+    if is_owner(db, user_id, organization_id):
         return True
 
-    statement = (
-        select(Permission.id)
-        .join(
-            RolePermission,
-            RolePermission.permission_id == Permission.id,
-        )
-        .join(
-            MembershipRole,
-            MembershipRole.role_id == RolePermission.role_id,
-        )
-        .join(
-            Membership,
-            Membership.id == MembershipRole.membership_id,
-        )
-        .join(
-            RolePermission,
-            RolePermission.role_id == MembershipRole.role_id,
-        )
-        .where(
-            Membership.organization_id == organization_id,
+    membership = db.scalar(
+        select(Membership).where(
             Membership.user_id == user_id,
+            Membership.organization_id == organization_id,
             Membership.is_active.is_(True),
-            Permission.key == permission_key,
+        )
+    )
+
+    if membership is None:
+        return False
+
+    permission = db.scalar(
+        select(Permission).where(
+            Permission.key == permission_name,
             Permission.is_active.is_(True),
         )
     )
 
-    return db.scalar(statement) is not None
+    if permission is None:
+        return False
+
+    assignment = db.scalar(
+        select(MembershipRole)
+        .join(
+            Role,
+            MembershipRole.role_id == Role.id,
+        )
+        .join(
+            RolePermission,
+            RolePermission.role_id == Role.id,
+        )
+        .where(
+            MembershipRole.membership_id == membership.id,
+            Role.organization_id == organization_id,
+            Role.is_active.is_(True),
+            RolePermission.permission_id == permission.id,
+        )
+    )
+
+    return assignment is not None
