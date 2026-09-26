@@ -213,3 +213,30 @@ def get_sales_summary(db: Session, organization_id: uuid.UUID):
         "gross_profit": Decimal(result[2] or 0),
         "sale_count": int(result[3] or 0),
     }
+
+def get_sale(
+    db: Session,
+    organization_id: uuid.UUID,
+    sale_id: uuid.UUID,
+):
+    sale = db.scalar(
+        select(Sale).where(
+            Sale.id == sale_id,
+            Sale.organization_id == organization_id,
+        )
+    )
+
+    if sale is None:
+        raise ValueError("Sale not found")
+
+    return sale
+
+def list_sales(
+    db: Session,
+    organization_id: uuid.UUID,
+):
+    return db.scalars(
+        select(Sale)
+        .where(Sale.organization_id == organization_id)
+        .order_by(Sale.created_at.desc())
+    ).all()

@@ -1,75 +1,86 @@
-import { AppShell } from "@/components/app-shell";
-import { SettingsCard } from "@/components/settings-card";
+"use client";
+
+import { useState } from "react";
+import { useOrganization } from "@/components/organization-provider";
 
 export default function SettingsPage() {
+  const { organizationId } = useOrganization();
+  const [saved, setSaved] = useState(false);
+
+  function save() {
+    setSaved(true);
+    window.setTimeout(() => setSaved(false), 2500);
+  }
+
   return (
-    <AppShell>
-      <div className="mb-8">
-        <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-[var(--accent)]">
-          Administration
+    <div className="space-y-6">
+      <header>
+        <p className="text-sm font-medium text-[var(--muted)]">Administration</p>
+        <h1 className="text-3xl font-semibold tracking-tight">Settings</h1>
+        <p className="mt-1 text-sm text-[var(--muted)]">
+          Configure the current store workspace.
         </p>
+      </header>
 
-        <h1 className="mt-2 text-2xl font-semibold tracking-[-0.03em] sm:text-3xl">
-          Settings
-        </h1>
+      <section className="rounded-2xl border bg-white p-6">
+        <h2 className="font-semibold">Organization</h2>
 
-        <p className="mt-2 max-w-2xl text-sm leading-6 text-[var(--muted)]">
-          Configure your organization, team access, security and future
-          subscription controls.
-        </p>
-      </div>
+        <div className="mt-5 grid gap-5 md:grid-cols-2">
+          <label className="space-y-2">
+            <span className="text-sm text-[var(--muted)]">Organization ID</span>
+            <input
+              value={organizationId ?? ""}
+              readOnly
+              className="w-full rounded-xl border bg-[var(--background)] px-4 py-3"
+            />
+          </label>
 
-      <div className="grid gap-4 md:grid-cols-2">
-        <SettingsCard
-          eyebrow="Organization"
-          title="Store profile"
-          description="Business identity, operating information and organization status."
-          href="/settings/organization"
-        />
+          <label className="space-y-2">
+            <span className="text-sm text-[var(--muted)]">Currency</span>
+            <input
+              value="NGN — Nigerian Naira"
+              readOnly
+              className="w-full rounded-xl border bg-[var(--background)] px-4 py-3"
+            />
+          </label>
+        </div>
 
-        <SettingsCard
-          eyebrow="Access"
-          title="Team & members"
-          description="Manage store users, invitations, membership and access status."
-          href="/settings/team"
-        />
+        <button
+          onClick={save}
+          className="mt-6 rounded-xl bg-black px-5 py-3 text-white"
+        >
+          Save settings
+        </button>
 
-        <SettingsCard
-          eyebrow="Authorization"
-          title="Roles & permissions"
-          description="Configure roles and the permissions assigned to each role."
-          href="/settings/roles"
-        />
-
-        <SettingsCard
-          eyebrow="Security"
-          title="Security & audit"
-          description="Review sensitive activity and administrative actions."
-          href="/settings/security"
-        />
-
-        <SettingsCard
-          eyebrow="SaaS"
-          title="Subscription"
-          description="Subscription status, plan information and future billing controls."
-          href="/settings/billing"
-        />
-
-        <section className="rounded-2xl border border-dashed border-neutral-300 bg-[#fafaf8] p-6">
-          <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-neutral-400">
-            Architecture
+        {saved && (
+          <p className="mt-3 text-sm text-[var(--muted)]">
+            Settings saved.
           </p>
+        )}
+      </section>
 
-          <h2 className="mt-3 text-base font-semibold">
-            Multi-organization ready
-          </h2>
-
-          <p className="mt-2 text-sm leading-6 text-[var(--muted)]">
-            GSOS keeps organization context separate from user identity so the
-            platform can support multiple stores without mixing tenant data.
+      <section className="grid gap-4 md:grid-cols-3">
+        <a href="/settings/team" className="rounded-2xl border bg-white p-5">
+          <h2 className="font-semibold">Team</h2>
+          <p className="mt-1 text-sm text-[var(--muted)]">
+            Staff access and store personnel.
           </p>
-        </section>
-      </div>
-    </AppShell>
+        </a>
+
+        <a href="/settings/roles" className="rounded-2xl border bg-white p-5">
+          <h2 className="font-semibold">Roles</h2>
+          <p className="mt-1 text-sm text-[var(--muted)]">
+            Permissions and custom roles.
+          </p>
+        </a>
+
+        <a href="/settings/security" className="rounded-2xl border bg-white p-5">
+          <h2 className="font-semibold">Security</h2>
+          <p className="mt-1 text-sm text-[var(--muted)]">
+            Security and account controls.
+          </p>
+        </a>
+      </section>
+    </div>
   );
 }

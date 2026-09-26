@@ -17,14 +17,12 @@ def create_organization(
     existing_organization = db.scalar(
         select(Organization).where(Organization.slug == slug)
     )
-
     if existing_organization is not None:
         raise ValueError("Organization slug already exists")
 
     existing_user = db.scalar(
         select(User).where(User.email == owner_email)
     )
-
     if existing_user is not None:
         raise ValueError("User email already exists")
 
@@ -44,6 +42,8 @@ def create_organization(
         organization=organization,
         user=owner,
         role_name="owner",
+        personnel_id="GSOS-OWN-001",
+        account_status="active",
         is_owner=True,
         is_active=True,
     )

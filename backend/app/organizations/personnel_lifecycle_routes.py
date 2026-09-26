@@ -15,7 +15,7 @@ from app.organizations.personnel_lifecycle import (
 )
 
 router = APIRouter(
-    prefix="/organizations",
+    prefix="",
     tags=["personnel-lifecycle"],
 )
 

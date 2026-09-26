@@ -1,0 +1,27 @@
+#!/usr/bin/env bash
+set -e
+ROOT="$(cd "$(dirname "$0")" && pwd)"
+
+echo "================================"
+echo " GSOS FULL TEST SUITE"
+echo "================================"
+
+echo
+echo "== BACKEND TESTS =="
+cd "$ROOT/backend"
+source .venv/bin/activate
+pytest -q
+
+echo
+echo "== FRONTEND TYPESCRIPT =="
+cd "$ROOT/frontend"
+npx tsc --noEmit
+
+echo
+echo "== FRONTEND PRODUCTION BUILD =="
+npm run build
+
+echo
+echo "================================"
+echo " ALL TESTS PASSED"
+echo "================================"

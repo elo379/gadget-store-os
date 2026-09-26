@@ -29,6 +29,7 @@ class PersonnelCreate(BaseModel):
 
 
 class StoreTreeMember(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
     id: uuid.UUID
     user_id: uuid.UUID
     personnel_id: str | None

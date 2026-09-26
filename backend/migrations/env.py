@@ -1,4 +1,5 @@
-from logging.config import fileConfig
+import importlib
+import pkgutil
 
 from alembic import context
 from sqlalchemy import engine_from_config
@@ -6,28 +7,59 @@ from sqlalchemy import pool
 
 from app.core.config import settings
 from app.db.base import Base
+import app
 
 
 config = context.config
 
-if config.config_file_name is not None:
-    fileConfig(config.config_file_name)
+
+def import_model_modules():
+    prefixes = (
+        ".models",
+        ".membership_roles",
+        ".store_tree",
+        ".invitation_model",
+    )
+
+    for module_info in pkgutil.walk_packages(
+        app.__path__,
+        app.__name__ + ".",
+    ):
+        name = module_info.name
+
+        if name.endswith(prefixes):
+            importlib.import_module(name)
+
+
+import_model_modules()
+
+
+def get_database_url():
+    database_url = settings.DATABASE_URL
+
+    if database_url:
+        return database_url
+
+    return "sqlite:///./alembic_dev.db"
+
+
+config.set_main_option(
+    "sqlalchemy.url",
+    get_database_url(),
+)
 
 target_metadata = Base.metadata
 
 
-def get_database_url():
-    return settings.DATABASE_URL
-
-
 def run_migrations_offline():
-    url = get_database_url()
+    url = config.get_main_option("sqlalchemy.url")
 
     context.configure(
         url=url,
         target_metadata=target_metadata,
         literal_binds=True,
         dialect_opts={"paramstyle": "named"},
+        compare_type=True,
     )
 
     with context.begin_transaction():
@@ -35,11 +67,11 @@ def run_migrations_offline():
 
 
 def run_migrations_online():
-    configuration = config.get_section(config.config_ini_section) or {}
-    configuration["sqlalchemy.url"] = get_database_url()
-
     connectable = engine_from_config(
-        configuration,
+        config.get_section(
+            config.config_ini_section,
+            {},
+        ),
         prefix="sqlalchemy.",
         poolclass=pool.NullPool,
     )
@@ -48,6 +80,7 @@ def run_migrations_online():
         context.configure(
             connection=connection,
             target_metadata=target_metadata,
+            compare_type=True,
         )
 
         with context.begin_transaction():

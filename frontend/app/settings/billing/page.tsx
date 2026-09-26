@@ -1,69 +1,63 @@
-import { AppShell } from "@/components/app-shell";
+"use client";
 
-export default function BillingSettingsPage() {
+import { useState } from "react";
+
+export default function BillingPage() {
+  const [message, setMessage] = useState("");
+
+  function manage() {
+    setMessage(
+      "Billing management is prepared for the organization billing provider integration.",
+    );
+  }
+
   return (
-    <AppShell>
-      <div className="mb-7">
-        <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-[var(--accent)]">
-          SaaS
+    <div className="space-y-6">
+      <header>
+        <p className="text-sm font-medium text-[var(--muted)]">Administration</p>
+        <h1 className="text-3xl font-semibold tracking-tight">Billing</h1>
+        <p className="mt-1 text-sm text-[var(--muted)]">
+          Subscription and organization billing controls.
         </p>
+      </header>
 
-        <h1 className="mt-2 text-2xl font-semibold tracking-[-0.03em]">
-          Subscription
-        </h1>
-
-        <p className="mt-2 text-sm text-[var(--muted)]">
-          Subscription and billing controls for the future SaaS platform.
-        </p>
-      </div>
-
-      <section className="max-w-2xl rounded-2xl border border-[var(--border)] bg-white p-6 sm:p-8">
-        <div className="flex items-start justify-between gap-5">
+      <section className="rounded-2xl border bg-white p-6">
+        <div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <p className="text-xs font-semibold text-[var(--muted)]">
-              Current plan
+            <p className="text-sm text-[var(--muted)]">Current plan</p>
+            <h2 className="mt-1 text-2xl font-semibold">Store Workspace</h2>
+            <p className="mt-1 text-sm text-[var(--muted)]">
+              Core store management capabilities.
             </p>
-
-            <h2 className="mt-2 text-xl font-semibold">
-              Pilot workspace
-            </h2>
           </div>
 
-          <span className="rounded-full bg-[var(--accent-soft)] px-3 py-1 text-xs font-semibold text-[var(--accent)]">
-            Active
-          </span>
+          <button
+            onClick={manage}
+            className="rounded-xl bg-black px-5 py-3 text-white"
+          >
+            Manage billing
+          </button>
         </div>
 
-        <div className="mt-7 grid gap-4 sm:grid-cols-3">
-          <div className="rounded-xl bg-[#fafaf8] p-4">
-            <p className="text-[10px] uppercase tracking-[0.12em] text-neutral-400">
-              Organizations
-            </p>
-            <p className="mt-2 text-lg font-semibold">1</p>
-          </div>
-
-          <div className="rounded-xl bg-[#fafaf8] p-4">
-            <p className="text-[10px] uppercase tracking-[0.12em] text-neutral-400">
-              Members
-            </p>
-            <p className="mt-2 text-lg font-semibold">3</p>
-          </div>
-
-          <div className="rounded-xl bg-[#fafaf8] p-4">
-            <p className="text-[10px] uppercase tracking-[0.12em] text-neutral-400">
-              Billing
-            </p>
-            <p className="mt-2 text-lg font-semibold">Not active</p>
-          </div>
-        </div>
-
-        <div className="mt-7 border-t border-[var(--border)] pt-6">
-          <p className="text-xs leading-5 text-[var(--muted)]">
-            Payment provider integration and subscription mutations will be
-            enabled after the SaaS billing contract is finalized.
+        {message && (
+          <p className="mt-5 rounded-xl bg-[var(--background)] p-4 text-sm text-[var(--muted)]">
+            {message}
           </p>
-        </div>
+        )}
       </section>
-    </AppShell>
+
+      <div className="grid gap-4 md:grid-cols-3">
+        {[
+          ["Inventory", "Products, stock and device records."],
+          ["Sales", "POS, customers and transaction history."],
+          ["Operations", "Purchasing, staff, finance and reporting."],
+        ].map(([title, body]) => (
+          <div key={title} className="rounded-2xl border bg-white p-5">
+            <h2 className="font-semibold">{title}</h2>
+            <p className="mt-1 text-sm text-[var(--muted)]">{body}</p>
+          </div>
+        ))}
+      </div>
+    </div>
   );
 }

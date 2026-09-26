@@ -1,462 +1,424 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
-import {
-  apiGet,
-  apiPost,
-  apiGetForOrganization,
-} from "@/lib/api";
+import { FormEvent, useCallback, useEffect, useState } from "react";
+import { apiGet, apiPost } from "@/lib/api";
 import { useOrganization } from "@/components/organization-provider";
-import { PageHeader } from "@/components/page-header";
-import { SectionCard } from "@/components/section-card";
 
-type StoreTreeMember = {
-  id: string;
-  user_id: string;
-  email: string;
-  personnel_id: string | null;
-  role_name: string;
-  account_status: string;
-  is_owner: boolean;
-  parent_membership_id: string | null;
-  created_by_membership_id: string | null;
-  is_active: boolean;
+type Member = {
+  id?: string;
+  membership_id?: string;
+  user_id?: string;
+  personnel_id?: string | null;
+  email?: string;
+  role_name?: string;
+  parent_membership_id?: string | null;
+  created_by_membership_id?: string | null;
+  account_status?: string;
+  invited_at?: string | null;
+  accepted_at?: string | null;
+  is_owner?: boolean;
+  is_active?: boolean;
 };
 
-type StoreTreeResponse = {
+type Tree = {
   organization_id: string;
-  members: StoreTreeMember[];
+  members: Member[];
 };
 
-type StoreTreePolicy = {
-  organization_id: string;
+type Policy = {
   managers_can_create_staff: boolean;
+  managers_can_create_managers: boolean;
+  managers_can_assign_roles: boolean;
+  managers_can_modify_permissions: boolean;
 };
 
-type InvitationResponse = {
-  id: string;
-  email: string;
-  role_name: string;
-  token: string;
-  expires_at: string | null;
-};
+const roles = ["manager", "staff"];
 
-export default function TeamSettingsPage() {
-  const organization = useOrganization();
+export default function TeamPage() {
+  const { organizationId } = useOrganization();
 
-  const [tree, setTree] = useState<StoreTreeResponse | null>(null);
-  const [policy, setPolicy] = useState<StoreTreePolicy | null>(null);
+  const [tree, setTree] = useState<Tree | null>(null);
+  const [policy, setPolicy] = useState<Policy | null>(null);
+
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [roleName, setRoleName] = useState("staff");
+
   const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState("");
-  const [error, setError] = useState("");
 
-  const [inviteEmail, setInviteEmail] = useState("");
-  const [inviteRole, setInviteRole] = useState("manager");
-  const [inviteLoading, setInviteLoading] = useState(false);
-  const [invitation, setInvitation] = useState<InvitationResponse | null>(
-    null,
-  );
-
-  const organizationId = organization?.organizationId;
-
-  async function loadTeam() {
+  const load = useCallback(async () => {
     if (!organizationId) return;
 
     setLoading(true);
-    setError("");
+    setMessage("");
 
     try {
       const [treeData, policyData] = await Promise.all([
-        apiGet<StoreTreeResponse>(
-          `/organizations/${organizationId}/store-tree`,
-        ),
-        apiGet<StoreTreePolicy>(
-          `/organizations/${organizationId}/store-tree/policy`,
-        ),
+        apiGet<Tree>(`/organizations/${organizationId}/store-tree`),
+        apiGet<Policy>(`/organizations/${organizationId}/store-tree/policy`),
       ]);
 
       setTree(treeData);
       setPolicy(policyData);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Unable to load team.");
+    } catch (error) {
+      setMessage(
+        error instanceof Error ? error.message : "Unable to load team.",
+      );
     } finally {
       setLoading(false);
     }
-  }
-
-  useEffect(() => {
-    loadTeam();
   }, [organizationId]);
 
-  const owner = useMemo(
-    () => tree?.members.find((member) => member.is_owner),
-    [tree],
-  );
+  useEffect(() => {
+    void load();
+  }, [load]);
 
-  const managers = useMemo(
-    () =>
-      tree?.members.filter(
-        (member) => !member.is_owner && member.role_name === "manager",
-      ) ?? [],
-    [tree],
-  );
+  async function invite(event: FormEvent) {
+    event.preventDefault();
 
-  const staff = useMemo(
-    () =>
-      tree?.members.filter(
-        (member) => !member.is_owner && member.role_name === "staff",
-      ) ?? [],
-    [tree],
-  );
-
-  async function updatePolicy(enabled: boolean) {
-    if (!organizationId) return;
-
-    setError("");
-    setMessage("");
-
-    try {
-      const result = await apiPost<StoreTreePolicy>(
-        `/organizations/${organizationId}/store-tree/policy`,
-        { managers_can_create_staff: enabled },
-      );
-
-      setPolicy(result);
-      setMessage(
-        enabled
-          ? "Managers can now create staff accounts."
-          : "Manager staff creation has been disabled.",
-      );
-    } catch (err) {
-      setError(
-        err instanceof Error
-          ? err.message
-          : "Unable to update Store Tree policy.",
-      );
+    if (!organizationId || !email.trim() || password.length < 8) {
+      setMessage("Enter a valid email and a password of at least 8 characters.");
+      return;
     }
-  }
 
-  async function invitePersonnel() {
-    if (!organizationId || !inviteEmail.trim()) return;
-
-    setInviteLoading(true);
-    setError("");
+    setSaving(true);
     setMessage("");
-    setInvitation(null);
 
     try {
-      const result = await apiPost<InvitationResponse>(
+      await apiPost(
         `/organizations/${organizationId}/store-tree/invitations`,
         {
-          email: inviteEmail.trim(),
-          role_name: inviteRole,
+          email: email.trim(),
+          password,
+          role_name: roleName,
         },
       );
 
-      setInvitation(result);
-      setInviteEmail("");
-      setMessage(`${inviteRole} invitation created.`);
-      await loadTeam();
-    } catch (err) {
-      setError(
-        err instanceof Error
-          ? err.message
-          : "Unable to create invitation.",
+      setEmail("");
+      setPassword("");
+      setMessage("Personnel invitation created.");
+      await load();
+    } catch (error) {
+      setMessage(
+        error instanceof Error
+          ? error.message
+          : "Unable to create personnel.",
       );
     } finally {
-      setInviteLoading(false);
+      setSaving(false);
     }
   }
 
-  function memberStatus(member: StoreTreeMember) {
-    if (!member.is_active) return "Suspended";
-    if (member.account_status === "invitation_pending") {
-      return "Invitation pending";
+  async function personnelAction(
+    membershipId: string,
+    action: "suspend" | "reactivate" | "revoke",
+  ) {
+    if (!organizationId) return;
+
+    setSaving(true);
+    setMessage("");
+
+    try {
+      const token = localStorage.getItem("gsos_access_token");
+
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000"}/organizations/${organizationId}/store-tree/personnel/${membershipId}/${action}`,
+        {
+          method: "PATCH",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
+      );
+
+      if (!response.ok) {
+        const body = await response.text();
+        throw new Error(body || `Unable to ${action} personnel.`);
+      }
+
+      setMessage(`Personnel ${action}d successfully.`);
+      await load();
+    } catch (error) {
+      setMessage(
+        error instanceof Error
+          ? error.message
+          : `Unable to ${action} personnel.`,
+      );
+    } finally {
+      setSaving(false);
     }
-    return "Active";
   }
 
-  if (!organizationId) {
-    return (
-      <main className="space-y-6">
-        <PageHeader
-          eyebrow="Team"
-          title="Store Tree"
-          description="Manage your store identity hierarchy."
-        />
-        <SectionCard title="Organization unavailable">
-          <p className="text-sm text-[var(--muted)]">
-            Select an organization before managing team access.
-          </p>
-        </SectionCard>
-      </main>
-    );
-  }
+  const members = tree?.members ?? [];
 
   return (
     <main className="space-y-6">
-      <PageHeader
-        eyebrow="Team & identity"
-        title="Store Tree"
-        description="The authority structure behind your store workspace."
-      />
+      <section>
+        <p className="text-sm font-medium text-zinc-500">Settings</p>
+        <h1 className="mt-1 text-2xl font-semibold text-zinc-950">
+          Team & Store Tree
+        </h1>
+        <p className="mt-2 max-w-2xl text-sm text-zinc-500">
+          Manage store personnel, roles and account status from the owner
+          controlled identity tree.
+        </p>
+      </section>
 
       {message ? (
-        <div className="rounded-xl border border-[var(--border)] bg-white px-4 py-3 text-sm">
+        <div className="rounded-xl border border-zinc-200 bg-zinc-50 px-4 py-3 text-sm text-zinc-700">
           {message}
         </div>
       ) : null}
 
-      {error ? (
-        <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
-          {error}
-        </div>
-      ) : null}
-
-      <section className="grid gap-4 sm:grid-cols-3">
-        <MetricCard
-          label="Owner"
-          value={owner ? "1" : "0"}
-          detail={owner?.personnel_id ?? "Root authority"}
-        />
-        <MetricCard
-          label="Managers"
-          value={String(managers.length)}
-          detail="Store leadership"
-        />
-        <MetricCard
-          label="Staff"
-          value={String(staff.length)}
-          detail="Operational personnel"
-        />
-      </section>
-
-      <SectionCard
-        title="Store hierarchy"
-        description="Roles, authority and reporting relationships are kept separate."
-      >
-        {loading ? (
-          <p className="text-sm text-[var(--muted)]">Loading Store Tree…</p>
-        ) : (
-          <div className="space-y-5">
-            {owner ? (
-              <TreeMember member={owner} level="owner" />
-            ) : null}
-
-            <div className="ml-4 border-l border-[var(--border)] pl-5 sm:ml-8">
-              <div className="mb-3 text-[11px] font-semibold uppercase tracking-[0.16em] text-[var(--muted)]">
-                Managers
-              </div>
-
-              <div className="space-y-3">
-                {managers.length ? (
-                  managers.map((member) => (
-                    <TreeMember
-                      key={member.id}
-                      member={member}
-                      level="manager"
-                    />
-                  ))
-                ) : (
-                  <p className="text-sm text-[var(--muted)]">
-                    No managers have been added yet.
-                  </p>
-                )}
-              </div>
-
-              <div className="mt-6 border-l border-[var(--border)] pl-5 sm:ml-8">
-                <div className="mb-3 text-[11px] font-semibold uppercase tracking-[0.16em] text-[var(--muted)]">
-                  Staff
-                </div>
-
-                <div className="space-y-3">
-                  {staff.length ? (
-                    staff.map((member) => (
-                      <TreeMember
-                        key={member.id}
-                        member={member}
-                        level="staff"
-                      />
-                    ))
-                  ) : (
-                    <p className="text-sm text-[var(--muted)]">
-                      No staff accounts have been added yet.
-                    </p>
-                  )}
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
-      </SectionCard>
-
-      <div className="grid gap-6 lg:grid-cols-2">
-        <SectionCard
-          title="Manager authority"
-          description="Owner-controlled policy for the Store Tree."
+      <section className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.4fr)]">
+        <form
+          onSubmit={invite}
+          className="rounded-2xl border border-zinc-200 bg-white p-5"
         >
-          <div className="flex items-center justify-between gap-4">
-            <div>
-              <p className="text-sm font-medium">
-                Managers can create staff
-              </p>
-              <p className="mt-1 text-xs text-[var(--muted)]">
-                Managers never create other managers by default.
-              </p>
-            </div>
+          <h2 className="font-semibold text-zinc-950">
+            Add personnel
+          </h2>
 
-            <button
-              type="button"
-              onClick={() =>
-                updatePolicy(!policy?.managers_can_create_staff)
-              }
-              className={`rounded-full px-4 py-2 text-xs font-semibold ${
-                policy?.managers_can_create_staff
-                  ? "bg-black text-white"
-                  : "border border-[var(--border)] bg-white text-[var(--foreground)]"
-              }`}
-            >
-              {policy?.managers_can_create_staff ? "Enabled" : "Disabled"}
-            </button>
-          </div>
-        </SectionCard>
+          <p className="mt-1 text-sm text-zinc-500">
+            Create a protected account inside this store&apos;s identity tree.
+          </p>
 
-        <SectionCard
-          title="Invite personnel"
-          description="Create a real invitation through the Store Tree."
-        >
-          <div className="space-y-4">
+          <div className="mt-5 space-y-4">
             <label className="block">
-              <span className="mb-2 block text-xs font-semibold uppercase tracking-[0.12em] text-[var(--muted)]">
+              <span className="text-sm font-medium text-zinc-700">
                 Email
               </span>
               <input
-                value={inviteEmail}
-                onChange={(event) => setInviteEmail(event.target.value)}
+                value={email}
+                onChange={(event) => setEmail(event.target.value)}
                 type="email"
-                placeholder="person@yourstore.ng"
-                className="w-full rounded-xl border border-[var(--border)] bg-white px-4 py-3 text-sm outline-none focus:border-black"
+                required
+                className="mt-1 w-full rounded-xl border border-zinc-200 px-3 py-2.5 text-sm outline-none focus:border-zinc-500"
+                placeholder="staff@example.com"
               />
             </label>
 
             <label className="block">
-              <span className="mb-2 block text-xs font-semibold uppercase tracking-[0.12em] text-[var(--muted)]">
+              <span className="text-sm font-medium text-zinc-700">
+                Temporary password
+              </span>
+              <input
+                value={password}
+                onChange={(event) => setPassword(event.target.value)}
+                type="password"
+                minLength={8}
+                required
+                className="mt-1 w-full rounded-xl border border-zinc-200 px-3 py-2.5 text-sm outline-none focus:border-zinc-500"
+                placeholder="Minimum 8 characters"
+              />
+            </label>
+
+            <label className="block">
+              <span className="text-sm font-medium text-zinc-700">
                 Role
               </span>
               <select
-                value={inviteRole}
-                onChange={(event) => setInviteRole(event.target.value)}
-                className="w-full rounded-xl border border-[var(--border)] bg-white px-4 py-3 text-sm outline-none"
+                value={roleName}
+                onChange={(event) => setRoleName(event.target.value)}
+                className="mt-1 w-full rounded-xl border border-zinc-200 bg-white px-3 py-2.5 text-sm outline-none focus:border-zinc-500"
               >
-                <option value="manager">Manager</option>
-                <option value="staff">Staff</option>
+                {roles.map((role) => (
+                  <option key={role} value={role}>
+                    {role}
+                  </option>
+                ))}
               </select>
             </label>
 
             <button
-              type="button"
-              disabled={inviteLoading || !inviteEmail.trim()}
-              onClick={invitePersonnel}
-              className="w-full rounded-xl bg-black px-4 py-3 text-sm font-semibold text-white disabled:cursor-not-allowed disabled:opacity-40"
+              type="submit"
+              disabled={saving}
+              className="w-full rounded-xl bg-zinc-950 px-4 py-2.5 text-sm font-medium text-white disabled:opacity-50"
             >
-              {inviteLoading ? "Creating invitation…" : "Create invitation"}
+              {saving ? "Saving..." : "Create personnel"}
             </button>
           </div>
-        </SectionCard>
-      </div>
+        </form>
 
-      {invitation ? (
-        <SectionCard
-          title="Invitation created"
-          description="Development view only. The raw token is shown once."
-        >
-          <div className="space-y-3">
-            <div className="rounded-xl border border-[var(--border)] bg-[var(--background)] p-4">
-              <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[var(--muted)]">
-                Invitation token
+        <section className="rounded-2xl border border-zinc-200 bg-white p-5">
+          <h2 className="font-semibold text-zinc-950">
+            Store Tree Policy
+          </h2>
+
+          <div className="mt-4 grid gap-3 sm:grid-cols-2">
+            {policy ? (
+              <>
+                <PolicyItem
+                  label="Managers can create staff"
+                  enabled={policy.managers_can_create_staff}
+                />
+                <PolicyItem
+                  label="Managers can create managers"
+                  enabled={policy.managers_can_create_managers}
+                />
+                <PolicyItem
+                  label="Managers can assign roles"
+                  enabled={policy.managers_can_assign_roles}
+                />
+                <PolicyItem
+                  label="Managers can modify permissions"
+                  enabled={policy.managers_can_modify_permissions}
+                />
+              </>
+            ) : (
+              <p className="text-sm text-zinc-500">
+                Loading policy...
               </p>
-              <p className="mt-2 break-all font-mono text-xs">
-                {invitation.token}
-              </p>
-            </div>
-            <p className="text-xs text-[var(--muted)]">
-              In production, this token should be delivered through the
-              configured invitation channel rather than displayed in the
-              workspace.
+            )}
+          </div>
+        </section>
+      </section>
+
+      <section className="rounded-2xl border border-zinc-200 bg-white p-5">
+        <div className="flex items-center justify-between gap-4">
+          <div>
+            <h2 className="font-semibold text-zinc-950">
+              Assigned personnel
+            </h2>
+            <p className="mt-1 text-sm text-zinc-500">
+              Manage active and inactive accounts in the store tree.
             </p>
           </div>
-        </SectionCard>
-      ) : null}
+
+          <span className="rounded-full bg-zinc-100 px-3 py-1 text-xs font-medium text-zinc-600">
+            {members.length} member{members.length === 1 ? "" : "s"}
+          </span>
+        </div>
+
+        <div className="mt-4 divide-y divide-zinc-100">
+          {loading ? (
+            <p className="py-4 text-sm text-zinc-500">
+              Loading...
+            </p>
+          ) : members.length === 0 ? (
+            <p className="py-4 text-sm text-zinc-500">
+              No personnel found.
+            </p>
+          ) : (
+            members.map((member, index) => {
+              const membershipId =
+                member.id ??
+                member.membership_id ??
+                member.personnel_id ??
+                String(index);
+
+              const status =
+                member.account_status ??
+                (member.is_active === false ? "inactive" : "active");
+
+              const isOwner = Boolean(member.is_owner);
+
+              return (
+                <div
+                  key={membershipId}
+                  className="flex flex-col gap-4 py-4 sm:flex-row sm:items-center sm:justify-between"
+                >
+                  <div className="min-w-0">
+                    <p className="truncate font-medium text-zinc-900">
+                      {member.email ??
+                        member.personnel_id ??
+                        "Personnel"}
+                    </p>
+
+                    <p className="mt-1 text-sm capitalize text-zinc-500">
+                      {member.role_name ?? "Unassigned"}
+                      {member.personnel_id
+                        ? ` • ${member.personnel_id}`
+                        : ""}
+                    </p>
+                  </div>
+
+                  <div className="flex flex-wrap items-center gap-2">
+                    <span className="rounded-full bg-zinc-100 px-3 py-1 text-xs font-medium capitalize text-zinc-600">
+                      {status}
+                    </span>
+
+                    {isOwner ? (
+                      <span className="rounded-full bg-zinc-950 px-3 py-1 text-xs font-medium text-white">
+                        Owner
+                      </span>
+                    ) : (
+                      <>
+                        {status === "active" ? (
+                          <button
+                            type="button"
+                            disabled={saving}
+                            onClick={() =>
+                              void personnelAction(
+                                membershipId,
+                                "suspend",
+                              )
+                            }
+                            className="rounded-lg border border-zinc-200 px-3 py-1.5 text-xs font-medium text-zinc-700 disabled:opacity-50"
+                          >
+                            Suspend
+                          </button>
+                        ) : status === "suspended" ? (
+                          <button
+                            type="button"
+                            disabled={saving}
+                            onClick={() =>
+                              void personnelAction(
+                                membershipId,
+                                "reactivate",
+                              )
+                            }
+                            className="rounded-lg border border-zinc-200 px-3 py-1.5 text-xs font-medium text-zinc-700 disabled:opacity-50"
+                          >
+                            Reactivate
+                          </button>
+                        ) : null}
+
+                        {status !== "revoked" ? (
+                          <button
+                            type="button"
+                            disabled={saving}
+                            onClick={() =>
+                              void personnelAction(
+                                membershipId,
+                                "revoke",
+                              )
+                            }
+                            className="rounded-lg border border-red-200 px-3 py-1.5 text-xs font-medium text-red-600 disabled:opacity-50"
+                          >
+                            Revoke
+                          </button>
+                        ) : null}
+                      </>
+                    )}
+                  </div>
+                </div>
+              );
+            })
+          )}
+        </div>
+      </section>
     </main>
   );
 }
 
-function MetricCard({
+function PolicyItem({
   label,
-  value,
-  detail,
+  enabled,
 }: {
   label: string;
-  value: string;
-  detail: string;
+  enabled: boolean;
 }) {
   return (
-    <div className="rounded-2xl border border-[var(--border)] bg-white p-5">
-      <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[var(--muted)]">
+    <div className="rounded-xl border border-zinc-200 px-4 py-3">
+      <p className="text-sm font-medium text-zinc-800">
         {label}
       </p>
-      <p className="mt-3 text-3xl font-semibold tracking-[-0.04em]">
-        {value}
+      <p className="mt-1 text-xs font-medium text-zinc-500">
+        {enabled ? "Enabled" : "Owner only"}
       </p>
-      <p className="mt-1 text-xs text-[var(--muted)]">{detail}</p>
     </div>
   );
-}
-
-function TreeMember({
-  member,
-  level,
-}: {
-  member: StoreTreeMember;
-  level: "owner" | "manager" | "staff";
-}) {
-  const roleLabel =
-    level === "owner"
-      ? "Owner"
-      : level === "manager"
-        ? "Manager"
-        : "Staff";
-
-  return (
-    <div className="flex items-center justify-between gap-4 rounded-2xl border border-[var(--border)] bg-white p-4">
-      <div className="min-w-0">
-        <div className="flex flex-wrap items-center gap-2">
-          <span className="text-sm font-semibold">{roleLabel}</span>
-          <span className="rounded-full border border-[var(--border)] px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.1em]">
-            {memberStatusText(member)}
-          </span>
-        </div>
-        <p className="mt-1 truncate text-sm text-[var(--muted)]">
-          {member.email}
-        </p>
-      </div>
-
-      <div className="shrink-0 text-right">
-        <p className="font-mono text-xs font-semibold">
-          {member.personnel_id ?? "—"}
-        </p>
-        <p className="mt-1 text-[10px] uppercase tracking-[0.1em] text-[var(--muted)]">
-          Personnel ID
-        </p>
-      </div>
-    </div>
-  );
-}
-
-function memberStatusText(member: StoreTreeMember) {
-  if (!member.is_active) return "Suspended";
-  if (member.account_status === "invitation_pending") {
-    return "Invitation pending";
-  }
-  return "Active";
 }

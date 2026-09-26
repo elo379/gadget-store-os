@@ -1,0 +1,49 @@
+#!/usr/bin/env bash
+set -e
+
+ROOT="$(cd "$(dirname "$0")" && pwd)"
+BACKEND="$ROOT/backend"
+FRONTEND="$ROOT/frontend"
+
+echo "== GSOS DEV START =="
+
+if [ ! -d "$BACKEND/.venv" ]; then
+  echo "Backend virtualenv missing"
+  exit 1
+fi
+
+if lsof -i :8000 >/dev/null 2>&1; then
+  echo "Stopping existing API on :8000..."
+  fuser -k 8000/tcp 2>/dev/null || true
+  sleep 1
+fi
+
+echo "Starting backend..."
+cd "$BACKEND"
+source .venv/bin/activate
+nohup uvicorn app.main:app --host 0.0.0.0 --port 8000 > phase26_api.log 2>&1 &
+API_PID=$!
+
+echo "Waiting for API..."
+for i in {1..30}; do
+  if curl -sf http://127.0.0.1:8000/health >/dev/null; then
+    echo "API: READY"
+    break
+  fi
+  sleep 1
+done
+
+if ! curl -sf http://127.0.0.1:8000/health >/dev/null; then
+  echo "API failed to start"
+  tail -40 phase26_api.log
+  exit 1
+fi
+
+echo "Starting frontend..."
+cd "$FRONTEND"
+nohup npm run dev > next_dev.log 2>&1 &
+
+echo "== GSOS DEV READY =="
+echo "API:      http://localhost:8000"
+echo "Frontend: http://localhost:3000"
+echo "API PID:  $API_PID"

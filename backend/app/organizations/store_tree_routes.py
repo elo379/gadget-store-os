@@ -22,7 +22,7 @@ from app.organizations.store_tree_service import (
 )
 
 router = APIRouter(
-    prefix="/organizations",
+    prefix="",
     tags=["store-tree"],
 )
 

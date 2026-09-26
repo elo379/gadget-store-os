@@ -1,74 +1,146 @@
-import { AppShell } from "@/components/app-shell";
+"use client";
 
-const roles = [
-  {
-    name: "Owner",
-    description: "Full organization authority.",
-    permissions: "All permissions",
-  },
-  {
-    name: "Manager",
-    description: "Operational management access.",
-    permissions: "Configured permissions",
-  },
-  {
-    name: "Sales",
-    description: "Sales and customer workflows.",
-    permissions: "Sales, customers",
-  },
-  {
-    name: "Inventory",
-    description: "Inventory and stock operations.",
-    permissions: "Inventory, products",
-  },
-];
+import { useEffect, useState } from "react";
+import { apiGet } from "@/lib/api";
+import { useOrganization } from "@/components/organization-provider";
+
+type Member = {
+  id?: string;
+  membership_id?: string;
+  email?: string;
+  role_name?: string;
+  account_status?: string;
+  personnel_id?: string;
+};
+
+type StoreTree = {
+  members?: Member[];
+  personnel?: Member[];
+};
 
 export default function RolesPage() {
+  const { organizationId } = useOrganization();
+  const [members, setMembers] = useState<Member[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    if (!organizationId) return;
+
+    async function load() {
+      setLoading(true);
+      setError("");
+
+      try {
+        const data = await apiGet<StoreTree>(
+          `/organizations/${organizationId}/store-tree`
+        );
+
+        setMembers(data.members ?? data.personnel ?? []);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : "Unable to load roles.");
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    void load();
+  }, [organizationId]);
+
+  const roles = Array.from(
+    new Set(members.map((member) => member.role_name).filter(Boolean))
+  );
+
   return (
-    <AppShell>
-      <div className="mb-7">
-        <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-[var(--accent)]">
-          Authorization
-        </p>
-
-        <h1 className="mt-2 text-2xl font-semibold tracking-[-0.03em]">
-          Roles & permissions
+    <main className="space-y-6">
+      <div>
+        <p className="text-sm text-zinc-500">Settings / Roles</p>
+        <h1 className="text-2xl font-semibold text-zinc-950">
+          Roles & Access
         </h1>
-
-        <p className="mt-2 text-sm text-[var(--muted)]">
-          Roles define access while permissions define what each role can do.
+        <p className="mt-1 text-sm text-zinc-500">
+          Review the roles currently assigned within this organization.
         </p>
       </div>
 
-      <div className="grid gap-4 lg:grid-cols-2">
-        {roles.map((role) => (
-          <section
-            key={role.name}
-            className="rounded-2xl border border-[var(--border)] bg-white p-6"
-          >
-            <div className="flex items-start justify-between gap-4">
-              <div>
-                <h2 className="text-base font-semibold">{role.name}</h2>
-                <p className="mt-1 text-sm text-[var(--muted)]">
-                  {role.description}
-                </p>
+      {error && (
+        <div className="rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700">
+          {error}
+        </div>
+      )}
+
+      <section className="rounded-2xl border border-zinc-200 bg-white p-5">
+        <h2 className="font-semibold text-zinc-950">Active roles</h2>
+
+        {loading ? (
+          <p className="mt-4 text-sm text-zinc-500">Loading roles...</p>
+        ) : roles.length === 0 ? (
+          <p className="mt-4 text-sm text-zinc-500">
+            No role assignments found.
+          </p>
+        ) : (
+          <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+            {roles.map((role) => {
+              const count = members.filter(
+                (member) => member.role_name === role
+              ).length;
+
+              return (
+                <div
+                  key={role}
+                  className="rounded-xl border border-zinc-200 p-4"
+                >
+                  <p className="font-medium capitalize text-zinc-950">
+                    {role}
+                  </p>
+                  <p className="mt-1 text-sm text-zinc-500">
+                    {count} member{count === 1 ? "" : "s"}
+                  </p>
+                </div>
+              );
+            })}
+          </div>
+        )}
+      </section>
+
+      <section className="rounded-2xl border border-zinc-200 bg-white p-5">
+        <h2 className="font-semibold text-zinc-950">Assigned personnel</h2>
+
+        <div className="mt-4 divide-y divide-zinc-100">
+          {loading ? (
+            <p className="py-4 text-sm text-zinc-500">Loading...</p>
+          ) : members.length === 0 ? (
+            <p className="py-4 text-sm text-zinc-500">
+              No personnel found.
+            </p>
+          ) : (
+            members.map((member, index) => (
+              <div
+                key={
+                  member.membership_id ??
+                  member.id ??
+                  member.personnel_id ??
+                  index
+                }
+                className="flex items-center justify-between gap-4 py-4"
+              >
+                <div>
+                  <p className="font-medium text-zinc-900">
+                    {member.email ?? member.personnel_id ?? "Personnel"}
+                  </p>
+                  <p className="text-sm capitalize text-zinc-500">
+                    {member.role_name ?? "Unassigned"}
+                  </p>
+                </div>
+
+                <span className="rounded-full bg-zinc-100 px-3 py-1 text-xs font-medium capitalize text-zinc-600">
+                  {member.account_status ?? "active"}
+                </span>
               </div>
-
-              <button className="text-sm font-semibold text-[var(--accent)]">
-                Manage
-              </button>
-            </div>
-
-            <div className="mt-6 rounded-xl bg-[#fafaf8] px-4 py-3">
-              <p className="text-[10px] font-semibold uppercase tracking-[0.12em] text-neutral-400">
-                Access
-              </p>
-
-              <p className="mt-1 text-sm">{role.permissions}</p>
-            </div>
-          </section>
-        ))}
-      </div>
-    </AppShell>
+            ))
+          )}
+        </div>
+      </section>
+    </main>
   );
 }

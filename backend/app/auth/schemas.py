@@ -1,3 +1,5 @@
+import uuid
+
 from pydantic import BaseModel, EmailStr, Field
 
 
@@ -14,3 +16,7 @@ class TokenResponse(BaseModel):
 class AuthenticatedUser(BaseModel):
     user_id: str
     email: EmailStr
+
+    @property
+    def id(self) -> uuid.UUID:
+        return uuid.UUID(str(self.user_id))

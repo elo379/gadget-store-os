@@ -21,7 +21,7 @@ from app.organizations.invitations import (
 )
 
 router = APIRouter(
-    prefix="/organizations",
+    prefix="",
     tags=["invitations"],
 )
 
