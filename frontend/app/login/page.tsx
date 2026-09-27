@@ -1,41 +1,64 @@
 "use client";
 
-import { FormEvent, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { ApiError, login } from "@/lib/api";
 import {
-  ApiError,
-  login,
-  saveToken,
-} from "@/lib/api";
+  authenticateWithPasskey,
+  supportsPasskeys,
+} from "@/lib/passkeys";
 
 export default function LoginPage() {
   const router = useRouter();
-
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [passkeyLoading, setPasskeyLoading] = useState(false);
+  const [passkeySupported, setPasskeySupported] = useState(false);
+
+  useEffect(() => {
+    setPasskeySupported(supportsPasskeys());
+  }, []);
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-
     setError("");
     setLoading(true);
 
     try {
-      const result = await login(email.trim(), password);
+      await login(email.trim(), password);
+      router.replace("/");
+    } catch (err) {
+      setError(
+        err instanceof ApiError
+          ? err.message
+          : "Unable to connect to the GSOS server.",
+      );
+    } finally {
+      setLoading(false);
+    }
+  }
 
-      saveToken(result.access_token);
+  async function handlePasskey() {
+    setError("");
+    setPasskeyLoading(true);
+
+    try {
+      const result = await authenticateWithPasskey();
+
+      localStorage.setItem("gsos_access_token", result.access_token);
+      localStorage.setItem("gsos_refresh_token", result.refresh_token);
 
       router.replace("/");
     } catch (err) {
-      if (err instanceof ApiError) {
-        setError(err.message);
-      } else {
-        setError("Unable to connect to the GSOS server.");
-      }
+      setError(
+        err instanceof Error
+          ? err.message
+          : "Passkey authentication failed.",
+      );
     } finally {
-      setLoading(false);
+      setPasskeyLoading(false);
     }
   }
 
@@ -56,11 +79,9 @@ export default function LoginPage() {
             <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-[var(--accent)]">
               Secure access
             </p>
-
             <h1 className="mt-2 text-2xl font-semibold tracking-[-0.03em]">
               Welcome back
             </h1>
-
             <p className="mt-2 text-sm leading-6 text-[var(--muted)]">
               Sign in to access your store workspace.
             </p>
@@ -74,15 +95,14 @@ export default function LoginPage() {
               >
                 Email
               </label>
-
               <input
                 id="email"
                 type="email"
-                autoComplete="email"
+                autoComplete="username"
                 required
                 value={email}
                 onChange={(event) => setEmail(event.target.value)}
-                className="h-12 w-full rounded-xl border border-[var(--border)] bg-[#fafaf8] px-4 text-sm outline-none transition focus:border-neutral-400 focus:bg-white"
+                className="h-12 w-full rounded-xl border border-[var(--border)] bg-[#fafaf8] px-4 text-sm outline-none transition focus:border-neutral-400"
                 placeholder="you@example.com"
               />
             </div>
@@ -94,7 +114,6 @@ export default function LoginPage() {
               >
                 Password
               </label>
-
               <input
                 id="password"
                 type="password"
@@ -102,7 +121,7 @@ export default function LoginPage() {
                 required
                 value={password}
                 onChange={(event) => setPassword(event.target.value)}
-                className="h-12 w-full rounded-xl border border-[var(--border)] bg-[#fafaf8] px-4 text-sm outline-none transition focus:border-neutral-400 focus:bg-white"
+                className="h-12 w-full rounded-xl border border-[var(--border)] bg-[#fafaf8] px-4 text-sm outline-none transition focus:border-neutral-400"
                 placeholder="Enter your password"
               />
             </div>
@@ -115,11 +134,34 @@ export default function LoginPage() {
 
             <button
               type="submit"
-              disabled={loading}
+              disabled={loading || passkeyLoading}
               className="h-12 w-full rounded-xl bg-neutral-900 text-sm font-semibold text-white transition hover:bg-neutral-800 disabled:cursor-not-allowed disabled:opacity-60"
             >
               {loading ? "Signing in..." : "Sign in"}
             </button>
+
+            {passkeySupported && (
+              <>
+                <div className="flex items-center gap-3">
+                  <div className="h-px flex-1 bg-[var(--border)]" />
+                  <span className="text-[11px] text-[var(--muted)]">
+                    OR
+                  </span>
+                  <div className="h-px flex-1 bg-[var(--border)]" />
+                </div>
+
+                <button
+                  type="button"
+                  onClick={handlePasskey}
+                  disabled={loading || passkeyLoading}
+                  className="h-12 w-full rounded-xl border border-[var(--border)] bg-[var(--surface)] text-sm font-semibold transition hover:bg-black/[0.03] disabled:cursor-not-allowed disabled:opacity-60"
+                >
+                  {passkeyLoading
+                    ? "Verifying passkey..."
+                    : "Sign in with Passkey"}
+                </button>
+              </>
+            )}
           </form>
         </section>
 

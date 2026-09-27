@@ -4,12 +4,15 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
 from app.db.dependencies import get_db
+from app.auth.dependencies import get_current_user
+from app.auth.schemas import AuthenticatedUser
 from app.organizations.schemas import (
     MembershipResponse,
     OrganizationCreate,
     OrganizationMemberResponse,
     OrganizationResponse,
 )
+from app.models.membership import Membership
 from app.organizations.service import (
     create_organization,
     get_membership,

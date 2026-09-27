@@ -2,12 +2,8 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import {
-  clearSession,
-  getAccessToken,
-} from "@/lib/session";
+import { clearSession, getAccessToken } from "@/lib/session";
 import { getCurrentUser } from "@/lib/api";
-import { WorkspaceProvider } from "./workspace-provider";
 
 export function AuthGate({
   children,
@@ -58,9 +54,5 @@ export function AuthGate({
     );
   }
 
-  return (
-    <WorkspaceProvider>
-      {children}
-    </WorkspaceProvider>
-  );
+  return <>{children}</>;
 }

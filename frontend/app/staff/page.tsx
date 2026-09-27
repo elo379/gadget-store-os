@@ -83,7 +83,7 @@ export default function StaffPage() {
       </header>
 
       <div className="grid gap-6 lg:grid-cols-[1fr_2fr]">
-        <form onSubmit={createStaff} className="rounded-2xl border bg-white p-5 space-y-4">
+        <form onSubmit={createStaff} className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] shadow-sm p-5 space-y-4">
           <h2 className="font-semibold">Create staff profile</h2>
 
           <input
@@ -123,7 +123,7 @@ export default function StaffPage() {
           {message && <p className="text-sm text-[var(--muted)]">{message}</p>}
         </form>
 
-        <section className="rounded-2xl border bg-white p-5">
+        <section className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] shadow-sm p-5">
           <div className="mb-4 flex items-center justify-between">
             <div>
               <h2 className="font-semibold">Personnel</h2>

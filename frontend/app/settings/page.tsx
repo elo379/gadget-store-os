@@ -1,10 +1,14 @@
 "use client";
 
+import Link from "next/link";
+import { ThemeToggle, Toggle } from "@/components/premium-ui";
+
 import { useState } from "react";
 import { useOrganization } from "@/components/organization-provider";
 
 export default function SettingsPage() {
-  const { organizationId } = useOrganization();
+  const { organizationId, setOrganizationId } = useOrganization();
+  const [organizationInput, setOrganizationInput] = useState(organizationId ?? "");
   const [saved, setSaved] = useState(false);
 
   function save() {
@@ -16,7 +20,20 @@ export default function SettingsPage() {
     <div className="space-y-6">
       <header>
         <p className="text-sm font-medium text-[var(--muted)]">Administration</p>
-        <h1 className="text-3xl font-semibold tracking-tight">Settings</h1>
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+          <div>
+            <p className="text-sm font-medium text-[var(--muted)]">
+              Store configuration
+            </p>
+            <h1 className="text-3xl font-semibold tracking-tight">
+              Settings
+            </h1>
+            <p className="mt-1 text-sm text-[var(--muted)]">
+              Manage your workspace and experience.
+            </p>
+          </div>
+          <ThemeToggle />
+        </div>
         <p className="mt-1 text-sm text-[var(--muted)]">
           Configure the current store workspace.
         </p>
@@ -60,26 +77,26 @@ export default function SettingsPage() {
       </section>
 
       <section className="grid gap-4 md:grid-cols-3">
-        <a href="/settings/team" className="rounded-2xl border bg-white p-5">
+        <Link href="/settings/team" className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-5 shadow-sm transition hover:shadow-md">
           <h2 className="font-semibold">Team</h2>
           <p className="mt-1 text-sm text-[var(--muted)]">
             Staff access and store personnel.
           </p>
-        </a>
+        </Link>
 
-        <a href="/settings/roles" className="rounded-2xl border bg-white p-5">
+        <Link href="/settings/roles" className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-5 shadow-sm transition hover:shadow-md">
           <h2 className="font-semibold">Roles</h2>
           <p className="mt-1 text-sm text-[var(--muted)]">
             Permissions and custom roles.
           </p>
-        </a>
+        </Link>
 
-        <a href="/settings/security" className="rounded-2xl border bg-white p-5">
+        <Link href="/settings/security" className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-5 shadow-sm transition hover:shadow-md">
           <h2 className="font-semibold">Security</h2>
           <p className="mt-1 text-sm text-[var(--muted)]">
             Security and account controls.
           </p>
-        </a>
+        </Link>
       </section>
     </div>
   );

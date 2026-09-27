@@ -1,49 +1,121 @@
 #!/usr/bin/env bash
-set -e
+set -euo pipefail
 
 ROOT="$(cd "$(dirname "$0")" && pwd)"
 BACKEND="$ROOT/backend"
 FRONTEND="$ROOT/frontend"
 
-echo "== GSOS DEV START =="
+echo
+echo "========================================"
+echo "   GADGET STORE OS - DEV START"
+echo "========================================"
+echo
 
-if [ ! -d "$BACKEND/.venv" ]; then
-  echo "Backend virtualenv missing"
-  exit 1
-fi
+echo "== PREPARING ENVIRONMENT =="
+"$ROOT/dev-setup"
 
+echo
+echo "== CHECKING BACKEND PORT =="
 if lsof -i :8000 >/dev/null 2>&1; then
-  echo "Stopping existing API on :8000..."
-  fuser -k 8000/tcp 2>/dev/null || true
-  sleep 1
-fi
+    echo "Port 8000 is already in use."
 
-echo "Starting backend..."
-cd "$BACKEND"
-source .venv/bin/activate
-nohup uvicorn app.main:app --host 0.0.0.0 --port 8000 > phase26_api.log 2>&1 &
-API_PID=$!
+    if curl -sf http://127.0.0.1:8000/health >/dev/null 2>&1; then
+        echo "Existing backend API: READY"
+    else
+        echo "Port 8000 is occupied but the API is not healthy."
+        echo "Stop the process using port 8000 and run ./dev-up again."
+        exit 1
+    fi
+else
+    echo "Starting backend..."
 
-echo "Waiting for API..."
-for i in {1..30}; do
-  if curl -sf http://127.0.0.1:8000/health >/dev/null; then
+    cd "$BACKEND"
+    source .venv/bin/activate
+
+    nohup uvicorn app.main:app \
+        --host 0.0.0.0 \
+        --port 8000 \
+        > phase26_api.log 2>&1 &
+
+    API_PID=$!
+
+    echo "Backend PID: $API_PID"
+    echo "Waiting for API..."
+
+    API_READY=0
+
+    for i in {1..30}; do
+        if curl -sf http://127.0.0.1:8000/health >/dev/null 2>&1; then
+            API_READY=1
+            break
+        fi
+        sleep 1
+    done
+
+    if [ "$API_READY" -ne 1 ]; then
+        echo
+        echo "Backend failed to start."
+        echo
+        echo "Last backend log:"
+        tail -40 "$BACKEND/phase26_api.log" || true
+        exit 1
+    fi
+
     echo "API: READY"
-    break
-  fi
-  sleep 1
-done
-
-if ! curl -sf http://127.0.0.1:8000/health >/dev/null; then
-  echo "API failed to start"
-  tail -40 phase26_api.log
-  exit 1
 fi
 
-echo "Starting frontend..."
-cd "$FRONTEND"
-nohup npm run dev > next_dev.log 2>&1 &
+echo
+echo "== CHECKING FRONTEND PORT =="
 
-echo "== GSOS DEV READY =="
+if lsof -i :3000 >/dev/null 2>&1; then
+    echo "Port 3000 is already in use."
+
+    if curl -sf http://127.0.0.1:3000 >/dev/null 2>&1; then
+        echo "Existing frontend: READY"
+    else
+        echo "Port 3000 is occupied but the frontend is not responding."
+        echo "Stop the process using port 3000 and run ./dev-up again."
+        exit 1
+    fi
+else
+    echo "Starting frontend..."
+
+    cd "$FRONTEND"
+
+    nohup npm run dev > next_dev.log 2>&1 &
+
+    FRONTEND_PID=$!
+
+    echo "Frontend PID: $FRONTEND_PID"
+    echo "Waiting for frontend..."
+
+    FRONTEND_READY=0
+
+    for i in {1..30}; do
+        if curl -sf http://127.0.0.1:3000 >/dev/null 2>&1; then
+            FRONTEND_READY=1
+            break
+        fi
+        sleep 1
+    done
+
+    if [ "$FRONTEND_READY" -ne 1 ]; then
+        echo
+        echo "Frontend failed to start."
+        echo
+        echo "Last frontend log:"
+        tail -40 "$FRONTEND/next_dev.log" || true
+        exit 1
+    fi
+
+    echo "Frontend: READY"
+fi
+
+echo
+echo "========================================"
+echo "   GSOS DEV READY"
+echo "========================================"
+echo
 echo "API:      http://localhost:8000"
 echo "Frontend: http://localhost:3000"
-echo "API PID:  $API_PID"
+echo

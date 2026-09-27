@@ -3,14 +3,10 @@
 import {
   createContext,
   useContext,
-  useEffect,
   useMemo,
-  useState,
 } from "react";
-import {
-  getActiveOrganizationId,
-  setActiveOrganizationId,
-} from "@/lib/session";
+import { getActiveOrganizationId, setActiveOrganizationId } from "@/lib/session";
+import { usePersistedState } from "@/hooks/use-persisted-state";
 
 type OrganizationContextValue = {
   organizationId: string | null;
@@ -27,11 +23,10 @@ export function OrganizationProvider({
   children: React.ReactNode;
 }) {
   const [organizationId, setOrganizationIdState] =
-    useState<string | null>(null);
-
-  useEffect(() => {
-    setOrganizationIdState(getActiveOrganizationId());
-  }, []);
+    usePersistedState<string | null>(
+      "gsos_active_organization",
+      getActiveOrganizationId(),
+    );
 
   const value = useMemo(
     () => ({
@@ -42,7 +37,7 @@ export function OrganizationProvider({
         setOrganizationIdState(nextOrganizationId);
       },
     }),
-    [organizationId],
+    [organizationId, setOrganizationIdState],
   );
 
   return (

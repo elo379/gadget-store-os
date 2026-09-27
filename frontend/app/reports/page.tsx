@@ -3,98 +3,107 @@
 import { useEffect, useState } from "react";
 import { apiGet } from "@/lib/api";
 import { useOrganization } from "@/components/organization-provider";
+import { PageHeader } from "@/components/page-header";
 
-type ReportRow = Record<string, unknown>;
+type ReportRow = {
+  id?: string;
+  name?: string;
+  value?: number | string;
+  total?: number | string;
+  status?: string;
+};
 
 export default function ReportsPage() {
   const { organizationId } = useOrganization();
   const [rows, setRows] = useState<ReportRow[]>([]);
-  const [period, setPeriod] = useState("30");
+  const [loading, setLoading] = useState(true);
   const [message, setMessage] = useState("");
 
-  async function load() {
+  async function loadReports() {
     if (!organizationId) return;
 
-    setMessage("");
+    setLoading(true);
 
     try {
       const data = await apiGet<ReportRow[]>(
-        `/reports?organization_id=${organizationId}&days=${period}`,
+        `/reports?organization_id=${organizationId}`,
       );
+
       setRows(Array.isArray(data) ? data : []);
-    } catch (error) {
+      setMessage("");
+    } catch {
       setRows([]);
-      setMessage(error instanceof Error ? error.message : "Report endpoint unavailable.");
+      setMessage("Unable to load reports.");
+    } finally {
+      setLoading(false);
     }
   }
 
   useEffect(() => {
-    void load();
-  }, [organizationId, period]);
+    void loadReports();
+  }, [organizationId]);
 
   return (
     <div className="space-y-6">
-      <header className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-        <div>
-          <p className="text-sm font-medium text-[var(--muted)]">Analytics</p>
-          <h1 className="text-3xl font-semibold tracking-tight">Reports</h1>
-          <p className="mt-1 text-sm text-[var(--muted)]">
-            Review transaction and operational reporting.
-          </p>
-        </div>
+      <PageHeader
+        eyebrow="Analytics"
+        title="Reports"
+        description="Review operational and financial reporting for the organization."
+      />
 
-        <select
-          value={period}
-          onChange={(e) => setPeriod(e.target.value)}
-          className="rounded-xl border bg-white px-4 py-3"
+      <div className="flex justify-end">
+        <button
+          type="button"
+          onClick={() => void loadReports()}
+          disabled={loading}
+          className="rounded-xl border border-[var(--border)] bg-[var(--surface)] px-4 py-2 text-sm font-semibold disabled:opacity-50"
         >
-          <option value="7">Last 7 days</option>
-          <option value="30">Last 30 days</option>
-          <option value="90">Last 90 days</option>
-          <option value="365">Last 12 months</option>
-        </select>
-      </header>
+          {loading ? "Refreshing…" : "Refresh"}
+        </button>
+      </div>
 
-      <section className="rounded-2xl border bg-white p-5">
-        <div className="flex items-center justify-between">
-          <h2 className="font-semibold">Report data</h2>
-          <button onClick={() => void load()} className="rounded-xl border px-4 py-2">
-            Refresh
-          </button>
+      {message && (
+        <div className="rounded-xl border border-[var(--border)] bg-[var(--surface)] p-4 text-sm">
+          {message}
         </div>
+      )}
 
-        {message && (
-          <p className="mt-4 rounded-xl bg-[var(--background)] p-4 text-sm text-[var(--muted)]">
-            {message}
-          </p>
-        )}
-
-        <div className="mt-4 overflow-x-auto">
+      {loading ? (
+        <div className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-6 text-sm">
+          Loading reports…
+        </div>
+      ) : rows.length === 0 ? (
+        <div className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-6 text-sm">
+          No report data available.
+        </div>
+      ) : (
+        <div className="overflow-x-auto rounded-2xl border border-[var(--border)] bg-[var(--surface)]">
           <table className="w-full text-left text-sm">
             <thead>
               <tr className="border-b text-[var(--muted)]">
-                <th className="px-3 py-3">Metric</th>
-                <th className="px-3 py-3">Value</th>
+                <th className="px-4 py-3">Report</th>
+                <th className="px-4 py-3">Value</th>
+                <th className="px-4 py-3">Status</th>
               </tr>
             </thead>
             <tbody>
-              {rows.map((row, index) => {
-                const entries = Object.entries(row);
-                return (
-                  <tr key={index} className="border-b last:border-0">
-                    <td className="px-3 py-4 font-medium">
-                      {String(entries[0]?.[0] ?? "Record")}
-                    </td>
-                    <td className="px-3 py-4">
-                      {String(entries[0]?.[1] ?? "—")}
-                    </td>
-                  </tr>
-                );
-              })}
+              {rows.map((row, index) => (
+                <tr key={row.id ?? index} className="border-b last:border-0">
+                  <td className="px-4 py-4 font-medium">
+                    {row.name ?? "Report"}
+                  </td>
+                  <td className="px-4 py-4">
+                    {row.value ?? row.total ?? "—"}
+                  </td>
+                  <td className="px-4 py-4">
+                    {row.status ?? "Available"}
+                  </td>
+                </tr>
+              ))}
             </tbody>
           </table>
         </div>
-      </section>
+      )}
     </div>
   );
 }

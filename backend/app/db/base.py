@@ -12,3 +12,5 @@ class Base(DeclarativeBase):
             "pk": "pk_%(table_name)s",
         }
     )
+
+from app.models.passkey import PasskeyCredential, PasskeyChallenge

@@ -1,7 +1,7 @@
 "use client";
 
 import { FormEvent, useEffect, useMemo, useState } from "react";
-import { apiGet, apiPost } from "@/lib/api";
+import { apiGet, apiPost, apiPatch } from "@/lib/api";
 import { useOrganization } from "@/components/organization-provider";
 
 type Customer = {
@@ -24,6 +24,7 @@ export default function CustomersPage() {
   const [email, setEmail] = useState("");
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState("");
+  const [editingId, setEditingId] = useState<string | null>(null);
 
   async function load() {
     if (!organizationId) return;
@@ -40,6 +41,21 @@ export default function CustomersPage() {
   useEffect(() => {
     void load();
   }, [organizationId]);
+
+  async function updateCustomer(id: string, name: string, phone: string, email: string) {
+    try {
+      await apiPatch(`/customers/${id}?organization_id=${organizationId}`, {
+        name,
+        phone,
+        email,
+      });
+      setMessage("Customer updated.");
+      setEditingId(null);
+      await load();
+    } catch {
+      setMessage("Unable to update customer.");
+    }
+  }
 
   async function createCustomer(event: FormEvent) {
     event.preventDefault();
@@ -89,24 +105,24 @@ export default function CustomersPage() {
       </header>
 
       <div className="grid gap-4 md:grid-cols-3">
-        <div className="rounded-2xl border bg-white p-5">
+        <div className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] shadow-sm p-5">
           <p className="text-sm text-[var(--muted)]">Customers</p>
           <p className="mt-2 text-3xl font-semibold">{customers.length}</p>
         </div>
-        <div className="rounded-2xl border bg-white p-5">
+        <div className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] shadow-sm p-5">
           <p className="text-sm text-[var(--muted)]">Active</p>
           <p className="mt-2 text-3xl font-semibold">
             {customers.filter((item) => item.is_active !== false).length}
           </p>
         </div>
-        <div className="rounded-2xl border bg-white p-5">
+        <div className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] shadow-sm p-5">
           <p className="text-sm text-[var(--muted)]">Search results</p>
           <p className="mt-2 text-3xl font-semibold">{filtered.length}</p>
         </div>
       </div>
 
       <div className="grid gap-6 lg:grid-cols-[1fr_2fr]">
-        <form onSubmit={createCustomer} className="rounded-2xl border bg-white p-5 space-y-4">
+        <form onSubmit={createCustomer} className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] shadow-sm p-5 space-y-4">
           <div>
             <h2 className="font-semibold">Add customer</h2>
             <p className="text-sm text-[var(--muted)]">Create a customer profile.</p>
@@ -143,7 +159,7 @@ export default function CustomersPage() {
           {message && <p className="text-sm text-[var(--muted)]">{message}</p>}
         </form>
 
-        <section className="rounded-2xl border bg-white p-5">
+        <section className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] shadow-sm p-5">
           <div className="mb-4 flex gap-3">
             <input
               value={query}
@@ -175,6 +191,15 @@ export default function CustomersPage() {
                     <td className="px-3 py-4 font-medium">{customer.name}</td>
                     <td className="px-3 py-4">{customer.phone || "—"}</td>
                     <td className="px-3 py-4">{customer.email || "—"}</td>
+<td className="px-3 py-4">
+  <button
+    type="button"
+    onClick={() => setEditingId(customer.id)}
+    className="rounded-lg border border-[var(--border)] px-3 py-2 text-xs font-semibold"
+  >
+    Edit
+  </button>
+</td>
                     <td className="px-3 py-4">
                       {customer.is_active === false ? "Inactive" : "Active"}
                     </td>

@@ -1,22 +1,25 @@
 import type { Metadata, Viewport } from "next";
-import "./globals.css";
 import { WorkspaceProvider } from "@/components/workspace-provider";
+import { AppShell } from "@/components/app-shell";
+import { OfflineBanner } from "@/components/offline-banner";
+import "./globals.css";
 
 export const metadata: Metadata = {
   title: {
-    default: "GSOS — Gadget Store OS",
-    template: "%s — GSOS",
+    default: "Gadget Store OS",
+    template: "%s | Gadget Store OS",
   },
-  description: "Gadget Store Operating System",
-  applicationName: "GSOS",
-  manifest: "/manifest.webmanifest",
+  description:
+    "Gadget Store Operations Platform for sales, inventory, products, customers and store management.",
+  applicationName: "Gadget Store OS",
+  generator: "Next.js",
 };
 
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
   viewportFit: "cover",
-  themeColor: "#171717",
+  interactiveWidget: "resizes-content",
 };
 
 export default function RootLayout({
@@ -26,7 +29,12 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body><WorkspaceProvider>{children}</WorkspaceProvider></body>
+      <body>
+        <WorkspaceProvider>
+          <AppShell>{children}</AppShell>
+          <OfflineBanner />
+        </WorkspaceProvider>
+      </body>
     </html>
   );
 }

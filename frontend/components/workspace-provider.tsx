@@ -1,7 +1,15 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { getCurrentUser, type AuthUser } from "@/lib/api";
+import {
+  getCurrentUser,
+  getMyOrganizations,
+  type AuthUser,
+} from "@/lib/api";
+import {
+  getActiveOrganizationId,
+  setActiveOrganizationId,
+} from "@/lib/session";
 import { OrganizationProvider } from "./organization-provider";
 
 export function WorkspaceProvider({
@@ -14,12 +22,26 @@ export function WorkspaceProvider({
   useEffect(() => {
     let active = true;
 
-    async function loadUser() {
+    async function loadWorkspace() {
       try {
-        const currentUser = await getCurrentUser();
+        const [currentUser, memberships] = await Promise.all([
+          getCurrentUser(),
+          getMyOrganizations(),
+        ]);
 
-        if (active) {
-          setUser(currentUser);
+        if (!active) return;
+
+        setUser(currentUser);
+
+        const existingOrganizationId = getActiveOrganizationId();
+
+        const validExistingMembership = memberships.some(
+          (membership) =>
+            membership.organization_id === existingOrganizationId,
+        );
+
+        if (!validExistingMembership && memberships.length > 0) {
+          setActiveOrganizationId(memberships[0].organization_id);
         }
       } catch {
         if (active) {
@@ -28,7 +50,7 @@ export function WorkspaceProvider({
       }
     }
 
-    loadUser();
+    loadWorkspace();
 
     return () => {
       active = false;
@@ -37,7 +59,7 @@ export function WorkspaceProvider({
 
   return (
     <OrganizationProvider>
-      <div data-user-id={user?.id ?? ""}>{children}</div>
+      <div data-user-id={user?.user_id ?? ""}>{children}</div>
     </OrganizationProvider>
   );
 }

@@ -1,6 +1,7 @@
 from fastapi import APIRouter
 
 from app.api.auth.routes import router as auth_router
+from app.api.auth.passkeys import router as passkeys_router
 from app.api.organizations import router as organizations_router
 from app.api.products.routes import router as products_router
 from app.api.inventory.routes import router as inventory_router
@@ -20,6 +21,7 @@ from app.api.audit import router as audit_router
 api_router = APIRouter()
 
 api_router.include_router(auth_router)
+api_router.include_router(passkeys_router)
 api_router.include_router(organizations_router)
 api_router.include_router(products_router)
 api_router.include_router(inventory_router)
@@ -35,3 +37,9 @@ api_router.include_router(notifications_router)
 api_router.include_router(stocktake_router)
 api_router.include_router(reports_router)
 api_router.include_router(audit_router)
+
+from app.api.customers import router as customers_router
+api_router.include_router(customers_router)
+
+from app.api.customers import router as customers_router
+api_router.include_router(customers_router)

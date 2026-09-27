@@ -1,0 +1,68 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ROOT="$(cd "$(dirname "$0")" && pwd)"
+BACKEND="$ROOT/backend"
+FRONTEND="$ROOT/frontend"
+
+echo
+echo "========================================"
+echo "   GADGET STORE OS - DEV SETUP"
+echo "========================================"
+echo
+
+echo "== CHECKING PYTHON =="
+python --version
+
+echo
+echo "== CHECKING NODE =="
+node --version
+npm --version
+
+echo
+echo "== BACKEND ENVIRONMENT =="
+if [ ! -d "$BACKEND/.venv" ]; then
+    echo "Creating backend virtual environment..."
+    python -m venv "$BACKEND/.venv"
+else
+    echo "Backend virtual environment: OK"
+fi
+
+source "$BACKEND/.venv/bin/activate"
+
+echo
+echo "== BACKEND DEPENDENCIES =="
+python -m pip install --upgrade pip
+
+if [ -f "$BACKEND/requirements.txt" ] && [ -s "$BACKEND/requirements.txt" ]; then
+    python -m pip install -r "$BACKEND/requirements.txt"
+else
+    echo "requirements.txt is empty or missing; skipping pip install."
+fi
+
+echo
+echo "== FRONTEND DEPENDENCIES =="
+cd "$FRONTEND"
+
+if [ -f package-lock.json ]; then
+    if [ ! -d node_modules ]; then
+        echo "Installing frontend dependencies with npm ci..."
+        npm ci
+    else
+        echo "Frontend node_modules: OK"
+    fi
+else
+    echo "package-lock.json missing."
+    echo "Running npm install..."
+    npm install
+fi
+
+echo
+echo "== BACKEND IMPORT CHECK =="
+cd "$BACKEND"
+python -c "from app.main import app; print('Backend import: OK')"
+
+echo
+echo "========================================"
+echo "   DEV SETUP COMPLETE"
+echo "========================================"

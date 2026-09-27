@@ -1,34 +1,38 @@
 "use client";
 
-export default function GlobalError({
+import { useEffect } from "react";
+
+export default function Error({
+  error,
   reset,
 }: {
   error: Error & { digest?: string };
   reset: () => void;
 }) {
-  return (
-    <main className="flex min-h-screen items-center justify-center bg-[var(--background)] px-5">
-      <section className="w-full max-w-md rounded-2xl border border-[var(--border)] bg-white p-7 text-center shadow-sm">
-        <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-red-600">
-          Workspace error
-        </p>
+  useEffect(() => {
+    console.error(error);
+  }, [error]);
 
-        <h1 className="mt-3 text-2xl font-semibold tracking-[-0.03em]">
+  return (
+    <main className="flex min-h-[60vh] items-center justify-center px-5 py-10">
+      <div className="w-full max-w-md rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-7 text-center shadow-sm">
+        <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[var(--accent)]">
+          Recovery
+        </p>
+        <h1 className="mt-2 text-2xl font-semibold">
           Something went wrong
         </h1>
-
-        <p className="mt-2 text-sm leading-6 text-[var(--muted)]">
-          GSOS could not finish loading this screen. Your store data has not
-          been changed by this error.
+        <p className="mt-2 text-sm text-[var(--muted)]">
+          GSOS hit an unexpected problem. Your saved session is preserved.
         </p>
-
         <button
-          onClick={() => reset()}
-          className="mt-6 h-11 rounded-xl bg-neutral-900 px-5 text-sm font-semibold text-white"
+          type="button"
+          onClick={reset}
+          className="mt-6 rounded-xl bg-black px-5 py-3 text-sm font-semibold text-white"
         >
           Try again
         </button>
-      </section>
+      </div>
     </main>
   );
 }

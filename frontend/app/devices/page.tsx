@@ -88,7 +88,7 @@ export default function DevicesPage() {
       />
 
       <div className="grid gap-5 xl:grid-cols-[1fr_380px]">
-        <section className="rounded-2xl border border-[var(--border)] bg-white p-5">
+        <section className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] shadow-sm p-5">
           <form onSubmit={lookup} className="flex gap-2">
             <input
               value={query}
@@ -156,7 +156,7 @@ export default function DevicesPage() {
           )}
         </section>
 
-        <aside className="rounded-2xl border border-[var(--border)] bg-white p-5">
+        <aside className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] shadow-sm p-5">
           <p className="text-sm font-semibold">Registry controls</p>
 
           <div className="mt-5 space-y-3">

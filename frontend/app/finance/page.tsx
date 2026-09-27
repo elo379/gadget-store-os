@@ -60,7 +60,7 @@ export default function FinancePage() {
 
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-5">
         {cards.map(([label, value]) => (
-          <div key={label} className="rounded-2xl border bg-white p-5">
+          <div key={label} className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] shadow-sm p-5">
             <p className="text-sm text-[var(--muted)]">{label}</p>
             <p className="mt-2 text-2xl font-semibold">
               {loading ? "Loading..." : money(value)}
@@ -69,7 +69,7 @@ export default function FinancePage() {
         ))}
       </div>
 
-      <section className="rounded-2xl border bg-white p-6">
+      <section className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] shadow-sm p-6">
         <div className="flex items-center justify-between">
           <div>
             <h2 className="font-semibold">Financial controls</h2>

@@ -1,0 +1,1351 @@
+INFO:     Started server process [135610]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+INFO:     127.0.0.1:35872 - "GET /health HTTP/1.1" 200 OK
+INFO:     102.90.82.171:0 - "GET /auth/me HTTP/1.1" 401 Unauthorized
+INFO:     102.90.82.171:0 - "GET /auth/me HTTP/1.1" 401 Unauthorized
+INFO:     102.90.82.171:0 - "GET /organizations/me HTTP/1.1" 422 Unprocessable Content
+INFO:     102.90.82.171:0 - "GET /organizations/me HTTP/1.1" 422 Unprocessable Content
+INFO:     102.90.82.171:0 - "POST /auth/login HTTP/1.1" 500 Internal Server Error
+ERROR:    Exception in ASGI application
+Traceback (most recent call last):
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/sqlalchemy/engine/base.py", line 1943, in _exec_single_context
+    self.dialect.do_execute(
+    ~~~~~~~~~~~~~~~~~~~~~~~^
+        cursor, str_statement, effective_parameters, context
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/sqlalchemy/engine/default.py", line 1180, in do_execute
+    cursor.execute(statement, parameters)
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+sqlite3.OperationalError: no such table: sessions
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/uvicorn/protocols/http/httptools_impl.py", line 422, in run_asgi
+    result = await app(  # type: ignore[func-returns-value]
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        self.scope, self.receive, self.send
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/uvicorn/middleware/proxy_headers.py", line 63, in __call__
+    return await self.app(scope, receive, send)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/fastapi/applications.py", line 1163, in __call__
+    await super().__call__(scope, receive, send)
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/starlette/applications.py", line 96, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/starlette/middleware/errors.py", line 186, in __call__
+    raise exc
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/starlette/middleware/errors.py", line 164, in __call__
+    await self.app(scope, receive, _send)
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/starlette/middleware/cors.py", line 91, in __call__
+    await self.simple_response(scope, receive, send, request_headers=headers)
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/starlette/middleware/cors.py", line 149, in simple_response
+    await self.app(scope, receive, send)
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/starlette/middleware/exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/fastapi/middleware/asyncexitstack.py", line 18, in __call__
+    await self.app(scope, receive, send)
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/starlette/routing.py", line 676, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/fastapi/routing.py", line 2734, in app
+    await route.handle(scope, receive, send)
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/fastapi/routing.py", line 1780, in handle
+    await self.original_router.handle(scope, receive, send)
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/fastapi/routing.py", line 2789, in handle
+    await included_router._handle_selected(scope, receive, send)
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/fastapi/routing.py", line 1791, in _handle_selected
+    await route.handle(scope, receive, send)
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/fastapi/routing.py", line 1780, in handle
+    await self.original_router.handle(scope, receive, send)
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/fastapi/routing.py", line 2789, in handle
+    await included_router._handle_selected(scope, receive, send)
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/fastapi/routing.py", line 1800, in _handle_selected
+    await original_route.handle(scope, receive, send)
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/fastapi/routing.py", line 1279, in handle
+    await app(scope, receive, send)
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/fastapi/routing.py", line 158, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/fastapi/routing.py", line 144, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/fastapi/routing.py", line 706, in app
+    raw_response = await run_endpoint_function(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/fastapi/routing.py", line 354, in run_endpoint_function
+    return await run_in_threadpool(dependant.call, **values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/starlette/concurrency.py", line 34, in run_in_threadpool
+    return await anyio.to_thread.run_sync(func)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/anyio/to_thread.py", line 65, in run_sync
+    return await get_async_backend().run_sync_in_worker_thread(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        func, args, abandon_on_cancel=abandon_on_cancel, limiter=limiter
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/anyio/_backends/_asyncio.py", line 2706, in run_sync_in_worker_thread
+    return await future
+           ^^^^^^^^^^^^
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/anyio/_backends/_asyncio.py", line 1100, in run
+    result = context.run(func, *args)
+  File "/workspaces/gadget-store-os/backend/app/api/auth/routes.py", line 57, in login
+    access_token, refresh_token = create_login_session(
+                                  ~~~~~~~~~~~~~~~~~~~~^
+        db,
+        ^^^
+        user,
+        ^^^^^
+    )
+    ^
+  File "/workspaces/gadget-store-os/backend/app/auth/service.py", line 41, in create_login_session
+    db.commit()
+    ~~~~~~~~~^^
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/sqlalchemy/orm/session.py", line 2095, in commit
+    trans.commit(_to_root=True)
+    ~~~~~~~~~~~~^^^^^^^^^^^^^^^
+  File "<sqlalchemy generated _go() wrapper for sqlalchemy.orm.session.SessionTransaction.commit>", line 2, in commit
+    return target(fn, self, _to_root=_to_root)
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/sqlalchemy/orm/state_changes.py", line 137, in _go
+    ret_value = fn(self, *arg, **kw)
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/sqlalchemy/orm/session.py", line 1330, in commit
+    self._prepare_impl()
+    ~~~~~~~~~~~~~~~~~~^^
+  File "<sqlalchemy generated _go() wrapper for sqlalchemy.orm.session.SessionTransaction._prepare_impl>", line 2, in _prepare_impl
+    return target(fn, self)
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/sqlalchemy/orm/state_changes.py", line 137, in _go
+    ret_value = fn(self, *arg, **kw)
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/sqlalchemy/orm/session.py", line 1304, in _prepare_impl
+    self.session.flush()
+    ~~~~~~~~~~~~~~~~~~^^
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/sqlalchemy/orm/session.py", line 4536, in flush
+    self._flush(objects)
+    ~~~~~~~~~~~^^^^^^^^^
+  File "<sqlalchemy generated warned() wrapper for sqlalchemy.orm.session.Session._flush>", line 2, in _flush
+    return target(fn, self, objects=objects)
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/sqlalchemy/util/deprecations.py", line 281, in warned
+    return fn(*args, **kwargs)  # type: ignore[no-any-return]
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/sqlalchemy/orm/session.py", line 4679, in _flush
+    with util.safe_reraise():
+         ~~~~~~~~~~~~~~~~~^^
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/sqlalchemy/util/langhelpers.py", line 166, in __exit__
+    raise exc_value.with_traceback(exc_tb)
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/sqlalchemy/orm/session.py", line 4640, in _flush
+    flush_context.execute()
+    ~~~~~~~~~~~~~~~~~~~~~^^
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/sqlalchemy/orm/unitofwork.py", line 467, in execute
+    rec.execute(self)
+    ~~~~~~~~~~~^^^^^^
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/sqlalchemy/orm/unitofwork.py", line 643, in execute
+    util.preloaded.orm_persistence._save_obj(
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        self.mapper,
+        ^^^^^^^^^^^^
+        uow.states_for_mapper_hierarchy(self.mapper, False, False),
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        uow,
+        ^^^^
+    )
+    ^
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/sqlalchemy/orm/persistence.py", line 92, in _save_obj
+    _emit_insert_statements(
+    ~~~~~~~~~~~~~~~~~~~~~~~^
+        base_mapper,
+        ^^^^^^^^^^^^
+    ...<3 lines>...
+        insert,
+        ^^^^^^^
+    )
+    ^
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/sqlalchemy/orm/persistence.py", line 1237, in _emit_insert_statements
+    result = connection.execute(
+        statement,
+        params,
+        execution_options=execution_options,
+    )
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/sqlalchemy/engine/base.py", line 1448, in execute
+    return meth(
+        self,
+        distilled_parameters,
+        execution_options or NO_OPTIONS,
+    )
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/sqlalchemy/sql/elements.py", line 533, in _execute_on_connection
+    return connection._execute_clauseelement(
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        self, distilled_params, execution_options
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/sqlalchemy/engine/base.py", line 1668, in _execute_clauseelement
+    ret = self._execute_context(
+        dialect,
+    ...<9 lines>...
+        param_dict=param_dict,
+    )
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/sqlalchemy/engine/base.py", line 1822, in _execute_context
+    return self._exec_single_context(
+           ~~~~~~~~~~~~~~~~~~~~~~~~~^
+        dialect, context, statement, parameters
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/sqlalchemy/engine/base.py", line 1962, in _exec_single_context
+    self._handle_dbapi_exception(
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        e, str_statement, effective_parameters, cursor, context
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/sqlalchemy/engine/base.py", line 2332, in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/sqlalchemy/engine/base.py", line 1943, in _exec_single_context
+    self.dialect.do_execute(
+    ~~~~~~~~~~~~~~~~~~~~~~~^
+        cursor, str_statement, effective_parameters, context
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/sqlalchemy/engine/default.py", line 1180, in do_execute
+    cursor.execute(statement, parameters)
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+sqlalchemy.exc.OperationalError: (sqlite3.OperationalError) no such table: sessions
+[SQL: INSERT INTO sessions (user_id, refresh_token_hash, expires_at, revoked, id, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?)]
+[parameters: ('1c27cfb1d9a148dab940e44e85fb7a06', 'ef05815ef9631c1e15c18691bddd3d4fab741b847b73b53e940d4cb031c86d9c', '2026-10-27 13:51:13.274346', 0, '414ac5a79d5d4c9a9a749589592f044c', '2026-09-27 13:51:13.276625', '2026-09-27 13:51:13.276628')]
+(Background on this error at: https://sqlalche.me/e/21/e3q8)
+INFO:     102.90.82.171:0 - "POST /auth/login HTTP/1.1" 500 Internal Server Error
+ERROR:    Exception in ASGI application
+Traceback (most recent call last):
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/sqlalchemy/engine/base.py", line 1943, in _exec_single_context
+    self.dialect.do_execute(
+    ~~~~~~~~~~~~~~~~~~~~~~~^
+        cursor, str_statement, effective_parameters, context
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/sqlalchemy/engine/default.py", line 1180, in do_execute
+    cursor.execute(statement, parameters)
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+sqlite3.OperationalError: no such table: sessions
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/uvicorn/protocols/http/httptools_impl.py", line 422, in run_asgi
+    result = await app(  # type: ignore[func-returns-value]
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        self.scope, self.receive, self.send
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/uvicorn/middleware/proxy_headers.py", line 63, in __call__
+    return await self.app(scope, receive, send)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/fastapi/applications.py", line 1163, in __call__
+    await super().__call__(scope, receive, send)
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/starlette/applications.py", line 96, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/starlette/middleware/errors.py", line 186, in __call__
+    raise exc
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/starlette/middleware/errors.py", line 164, in __call__
+    await self.app(scope, receive, _send)
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/starlette/middleware/cors.py", line 91, in __call__
+    await self.simple_response(scope, receive, send, request_headers=headers)
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/starlette/middleware/cors.py", line 149, in simple_response
+    await self.app(scope, receive, send)
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/starlette/middleware/exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/fastapi/middleware/asyncexitstack.py", line 18, in __call__
+    await self.app(scope, receive, send)
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/starlette/routing.py", line 676, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/fastapi/routing.py", line 2734, in app
+    await route.handle(scope, receive, send)
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/fastapi/routing.py", line 1780, in handle
+    await self.original_router.handle(scope, receive, send)
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/fastapi/routing.py", line 2789, in handle
+    await included_router._handle_selected(scope, receive, send)
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/fastapi/routing.py", line 1791, in _handle_selected
+    await route.handle(scope, receive, send)
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/fastapi/routing.py", line 1780, in handle
+    await self.original_router.handle(scope, receive, send)
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/fastapi/routing.py", line 2789, in handle
+    await included_router._handle_selected(scope, receive, send)
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/fastapi/routing.py", line 1800, in _handle_selected
+    await original_route.handle(scope, receive, send)
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/fastapi/routing.py", line 1279, in handle
+    await app(scope, receive, send)
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/fastapi/routing.py", line 158, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/fastapi/routing.py", line 144, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/fastapi/routing.py", line 706, in app
+    raw_response = await run_endpoint_function(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/fastapi/routing.py", line 354, in run_endpoint_function
+    return await run_in_threadpool(dependant.call, **values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/starlette/concurrency.py", line 34, in run_in_threadpool
+    return await anyio.to_thread.run_sync(func)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/anyio/to_thread.py", line 65, in run_sync
+    return await get_async_backend().run_sync_in_worker_thread(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        func, args, abandon_on_cancel=abandon_on_cancel, limiter=limiter
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/anyio/_backends/_asyncio.py", line 2706, in run_sync_in_worker_thread
+    return await future
+           ^^^^^^^^^^^^
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/anyio/_backends/_asyncio.py", line 1100, in run
+    result = context.run(func, *args)
+  File "/workspaces/gadget-store-os/backend/app/api/auth/routes.py", line 57, in login
+    access_token, refresh_token = create_login_session(
+                                  ~~~~~~~~~~~~~~~~~~~~^
+        db,
+        ^^^
+        user,
+        ^^^^^
+    )
+    ^
+  File "/workspaces/gadget-store-os/backend/app/auth/service.py", line 41, in create_login_session
+    db.commit()
+    ~~~~~~~~~^^
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/sqlalchemy/orm/session.py", line 2095, in commit
+    trans.commit(_to_root=True)
+    ~~~~~~~~~~~~^^^^^^^^^^^^^^^
+  File "<sqlalchemy generated _go() wrapper for sqlalchemy.orm.session.SessionTransaction.commit>", line 2, in commit
+    return target(fn, self, _to_root=_to_root)
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/sqlalchemy/orm/state_changes.py", line 137, in _go
+    ret_value = fn(self, *arg, **kw)
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/sqlalchemy/orm/session.py", line 1330, in commit
+    self._prepare_impl()
+    ~~~~~~~~~~~~~~~~~~^^
+  File "<sqlalchemy generated _go() wrapper for sqlalchemy.orm.session.SessionTransaction._prepare_impl>", line 2, in _prepare_impl
+    return target(fn, self)
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/sqlalchemy/orm/state_changes.py", line 137, in _go
+    ret_value = fn(self, *arg, **kw)
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/sqlalchemy/orm/session.py", line 1304, in _prepare_impl
+    self.session.flush()
+    ~~~~~~~~~~~~~~~~~~^^
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/sqlalchemy/orm/session.py", line 4536, in flush
+    self._flush(objects)
+    ~~~~~~~~~~~^^^^^^^^^
+  File "<sqlalchemy generated warned() wrapper for sqlalchemy.orm.session.Session._flush>", line 2, in _flush
+    return target(fn, self, objects=objects)
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/sqlalchemy/util/deprecations.py", line 281, in warned
+    return fn(*args, **kwargs)  # type: ignore[no-any-return]
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/sqlalchemy/orm/session.py", line 4679, in _flush
+    with util.safe_reraise():
+         ~~~~~~~~~~~~~~~~~^^
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/sqlalchemy/util/langhelpers.py", line 166, in __exit__
+    raise exc_value.with_traceback(exc_tb)
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/sqlalchemy/orm/session.py", line 4640, in _flush
+    flush_context.execute()
+    ~~~~~~~~~~~~~~~~~~~~~^^
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/sqlalchemy/orm/unitofwork.py", line 467, in execute
+    rec.execute(self)
+    ~~~~~~~~~~~^^^^^^
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/sqlalchemy/orm/unitofwork.py", line 643, in execute
+    util.preloaded.orm_persistence._save_obj(
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        self.mapper,
+        ^^^^^^^^^^^^
+        uow.states_for_mapper_hierarchy(self.mapper, False, False),
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        uow,
+        ^^^^
+    )
+    ^
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/sqlalchemy/orm/persistence.py", line 92, in _save_obj
+    _emit_insert_statements(
+    ~~~~~~~~~~~~~~~~~~~~~~~^
+        base_mapper,
+        ^^^^^^^^^^^^
+    ...<3 lines>...
+        insert,
+        ^^^^^^^
+    )
+    ^
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/sqlalchemy/orm/persistence.py", line 1237, in _emit_insert_statements
+    result = connection.execute(
+        statement,
+        params,
+        execution_options=execution_options,
+    )
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/sqlalchemy/engine/base.py", line 1448, in execute
+    return meth(
+        self,
+        distilled_parameters,
+        execution_options or NO_OPTIONS,
+    )
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/sqlalchemy/sql/elements.py", line 533, in _execute_on_connection
+    return connection._execute_clauseelement(
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        self, distilled_params, execution_options
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/sqlalchemy/engine/base.py", line 1668, in _execute_clauseelement
+    ret = self._execute_context(
+        dialect,
+    ...<9 lines>...
+        param_dict=param_dict,
+    )
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/sqlalchemy/engine/base.py", line 1822, in _execute_context
+    return self._exec_single_context(
+           ~~~~~~~~~~~~~~~~~~~~~~~~~^
+        dialect, context, statement, parameters
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/sqlalchemy/engine/base.py", line 1962, in _exec_single_context
+    self._handle_dbapi_exception(
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        e, str_statement, effective_parameters, cursor, context
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/sqlalchemy/engine/base.py", line 2332, in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/sqlalchemy/engine/base.py", line 1943, in _exec_single_context
+    self.dialect.do_execute(
+    ~~~~~~~~~~~~~~~~~~~~~~~^
+        cursor, str_statement, effective_parameters, context
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/sqlalchemy/engine/default.py", line 1180, in do_execute
+    cursor.execute(statement, parameters)
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+sqlalchemy.exc.OperationalError: (sqlite3.OperationalError) no such table: sessions
+[SQL: INSERT INTO sessions (user_id, refresh_token_hash, expires_at, revoked, id, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?)]
+[parameters: ('1c27cfb1d9a148dab940e44e85fb7a06', '8a6a0f896b3e798aca22be3abcb002016df5c206809194190987d418e8f80f05', '2026-10-27 13:51:15.611350', 0, '0ed7c47a0c8a4596a8039c8a9c346951', '2026-09-27 13:51:15.611968', '2026-09-27 13:51:15.611971')]
+(Background on this error at: https://sqlalche.me/e/21/e3q8)
+INFO:     102.90.82.171:0 - "GET /auth/me HTTP/1.1" 401 Unauthorized
+INFO:     102.90.82.171:0 - "GET /auth/me HTTP/1.1" 401 Unauthorized
+INFO:     102.90.82.171:0 - "GET /organizations/me HTTP/1.1" 422 Unprocessable Content
+INFO:     102.90.82.171:0 - "GET /organizations/me HTTP/1.1" 422 Unprocessable Content
+INFO:     102.90.82.171:0 - "POST /auth/login HTTP/1.1" 500 Internal Server Error
+ERROR:    Exception in ASGI application
+Traceback (most recent call last):
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/sqlalchemy/engine/base.py", line 1943, in _exec_single_context
+    self.dialect.do_execute(
+    ~~~~~~~~~~~~~~~~~~~~~~~^
+        cursor, str_statement, effective_parameters, context
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/sqlalchemy/engine/default.py", line 1180, in do_execute
+    cursor.execute(statement, parameters)
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+sqlite3.OperationalError: no such table: sessions
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/uvicorn/protocols/http/httptools_impl.py", line 422, in run_asgi
+    result = await app(  # type: ignore[func-returns-value]
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        self.scope, self.receive, self.send
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/uvicorn/middleware/proxy_headers.py", line 63, in __call__
+    return await self.app(scope, receive, send)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/fastapi/applications.py", line 1163, in __call__
+    await super().__call__(scope, receive, send)
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/starlette/applications.py", line 96, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/starlette/middleware/errors.py", line 186, in __call__
+    raise exc
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/starlette/middleware/errors.py", line 164, in __call__
+    await self.app(scope, receive, _send)
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/starlette/middleware/cors.py", line 91, in __call__
+    await self.simple_response(scope, receive, send, request_headers=headers)
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/starlette/middleware/cors.py", line 149, in simple_response
+    await self.app(scope, receive, send)
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/starlette/middleware/exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/fastapi/middleware/asyncexitstack.py", line 18, in __call__
+    await self.app(scope, receive, send)
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/starlette/routing.py", line 676, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/fastapi/routing.py", line 2734, in app
+    await route.handle(scope, receive, send)
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/fastapi/routing.py", line 1780, in handle
+    await self.original_router.handle(scope, receive, send)
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/fastapi/routing.py", line 2789, in handle
+    await included_router._handle_selected(scope, receive, send)
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/fastapi/routing.py", line 1791, in _handle_selected
+    await route.handle(scope, receive, send)
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/fastapi/routing.py", line 1780, in handle
+    await self.original_router.handle(scope, receive, send)
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/fastapi/routing.py", line 2789, in handle
+    await included_router._handle_selected(scope, receive, send)
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/fastapi/routing.py", line 1800, in _handle_selected
+    await original_route.handle(scope, receive, send)
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/fastapi/routing.py", line 1279, in handle
+    await app(scope, receive, send)
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/fastapi/routing.py", line 158, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/fastapi/routing.py", line 144, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/fastapi/routing.py", line 706, in app
+    raw_response = await run_endpoint_function(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/fastapi/routing.py", line 354, in run_endpoint_function
+    return await run_in_threadpool(dependant.call, **values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/starlette/concurrency.py", line 34, in run_in_threadpool
+    return await anyio.to_thread.run_sync(func)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/anyio/to_thread.py", line 65, in run_sync
+    return await get_async_backend().run_sync_in_worker_thread(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        func, args, abandon_on_cancel=abandon_on_cancel, limiter=limiter
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/anyio/_backends/_asyncio.py", line 2706, in run_sync_in_worker_thread
+    return await future
+           ^^^^^^^^^^^^
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/anyio/_backends/_asyncio.py", line 1100, in run
+    result = context.run(func, *args)
+  File "/workspaces/gadget-store-os/backend/app/api/auth/routes.py", line 57, in login
+    access_token, refresh_token = create_login_session(
+                                  ~~~~~~~~~~~~~~~~~~~~^
+        db,
+        ^^^
+        user,
+        ^^^^^
+    )
+    ^
+  File "/workspaces/gadget-store-os/backend/app/auth/service.py", line 41, in create_login_session
+    db.commit()
+    ~~~~~~~~~^^
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/sqlalchemy/orm/session.py", line 2095, in commit
+    trans.commit(_to_root=True)
+    ~~~~~~~~~~~~^^^^^^^^^^^^^^^
+  File "<sqlalchemy generated _go() wrapper for sqlalchemy.orm.session.SessionTransaction.commit>", line 2, in commit
+    return target(fn, self, _to_root=_to_root)
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/sqlalchemy/orm/state_changes.py", line 137, in _go
+    ret_value = fn(self, *arg, **kw)
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/sqlalchemy/orm/session.py", line 1330, in commit
+    self._prepare_impl()
+    ~~~~~~~~~~~~~~~~~~^^
+  File "<sqlalchemy generated _go() wrapper for sqlalchemy.orm.session.SessionTransaction._prepare_impl>", line 2, in _prepare_impl
+    return target(fn, self)
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/sqlalchemy/orm/state_changes.py", line 137, in _go
+    ret_value = fn(self, *arg, **kw)
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/sqlalchemy/orm/session.py", line 1304, in _prepare_impl
+    self.session.flush()
+    ~~~~~~~~~~~~~~~~~~^^
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/sqlalchemy/orm/session.py", line 4536, in flush
+    self._flush(objects)
+    ~~~~~~~~~~~^^^^^^^^^
+  File "<sqlalchemy generated warned() wrapper for sqlalchemy.orm.session.Session._flush>", line 2, in _flush
+    return target(fn, self, objects=objects)
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/sqlalchemy/util/deprecations.py", line 281, in warned
+    return fn(*args, **kwargs)  # type: ignore[no-any-return]
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/sqlalchemy/orm/session.py", line 4679, in _flush
+    with util.safe_reraise():
+         ~~~~~~~~~~~~~~~~~^^
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/sqlalchemy/util/langhelpers.py", line 166, in __exit__
+    raise exc_value.with_traceback(exc_tb)
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/sqlalchemy/orm/session.py", line 4640, in _flush
+    flush_context.execute()
+    ~~~~~~~~~~~~~~~~~~~~~^^
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/sqlalchemy/orm/unitofwork.py", line 467, in execute
+    rec.execute(self)
+    ~~~~~~~~~~~^^^^^^
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/sqlalchemy/orm/unitofwork.py", line 643, in execute
+    util.preloaded.orm_persistence._save_obj(
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        self.mapper,
+        ^^^^^^^^^^^^
+        uow.states_for_mapper_hierarchy(self.mapper, False, False),
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        uow,
+        ^^^^
+    )
+    ^
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/sqlalchemy/orm/persistence.py", line 92, in _save_obj
+    _emit_insert_statements(
+    ~~~~~~~~~~~~~~~~~~~~~~~^
+        base_mapper,
+        ^^^^^^^^^^^^
+    ...<3 lines>...
+        insert,
+        ^^^^^^^
+    )
+    ^
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/sqlalchemy/orm/persistence.py", line 1237, in _emit_insert_statements
+    result = connection.execute(
+        statement,
+        params,
+        execution_options=execution_options,
+    )
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/sqlalchemy/engine/base.py", line 1448, in execute
+    return meth(
+        self,
+        distilled_parameters,
+        execution_options or NO_OPTIONS,
+    )
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/sqlalchemy/sql/elements.py", line 533, in _execute_on_connection
+    return connection._execute_clauseelement(
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        self, distilled_params, execution_options
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/sqlalchemy/engine/base.py", line 1668, in _execute_clauseelement
+    ret = self._execute_context(
+        dialect,
+    ...<9 lines>...
+        param_dict=param_dict,
+    )
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/sqlalchemy/engine/base.py", line 1822, in _execute_context
+    return self._exec_single_context(
+           ~~~~~~~~~~~~~~~~~~~~~~~~~^
+        dialect, context, statement, parameters
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/sqlalchemy/engine/base.py", line 1962, in _exec_single_context
+    self._handle_dbapi_exception(
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        e, str_statement, effective_parameters, cursor, context
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/sqlalchemy/engine/base.py", line 2332, in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/sqlalchemy/engine/base.py", line 1943, in _exec_single_context
+    self.dialect.do_execute(
+    ~~~~~~~~~~~~~~~~~~~~~~~^
+        cursor, str_statement, effective_parameters, context
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/sqlalchemy/engine/default.py", line 1180, in do_execute
+    cursor.execute(statement, parameters)
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+sqlalchemy.exc.OperationalError: (sqlite3.OperationalError) no such table: sessions
+[SQL: INSERT INTO sessions (user_id, refresh_token_hash, expires_at, revoked, id, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?)]
+[parameters: ('1c27cfb1d9a148dab940e44e85fb7a06', 'caa6924ab068d440a8f142b40319c4cfd28500e062e580a0b4be70b0996cc778', '2026-10-27 13:51:29.541313', 0, '4543184cf88a4f43b0115bb1bf280239', '2026-09-27 13:51:29.541783', '2026-09-27 13:51:29.541786')]
+(Background on this error at: https://sqlalche.me/e/21/e3q8)
+INFO:     127.0.0.1:43496 - "POST /auth/login HTTP/1.1" 422 Unprocessable Content
+INFO:     127.0.0.1:46832 - "POST /auth/login HTTP/1.1" 500 Internal Server Error
+ERROR:    Exception in ASGI application
+Traceback (most recent call last):
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/sqlalchemy/engine/base.py", line 1943, in _exec_single_context
+    self.dialect.do_execute(
+    ~~~~~~~~~~~~~~~~~~~~~~~^
+        cursor, str_statement, effective_parameters, context
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/sqlalchemy/engine/default.py", line 1180, in do_execute
+    cursor.execute(statement, parameters)
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+sqlite3.OperationalError: no such table: sessions
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/uvicorn/protocols/http/httptools_impl.py", line 422, in run_asgi
+    result = await app(  # type: ignore[func-returns-value]
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        self.scope, self.receive, self.send
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/uvicorn/middleware/proxy_headers.py", line 63, in __call__
+    return await self.app(scope, receive, send)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/fastapi/applications.py", line 1163, in __call__
+    await super().__call__(scope, receive, send)
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/starlette/applications.py", line 96, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/starlette/middleware/errors.py", line 186, in __call__
+    raise exc
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/starlette/middleware/errors.py", line 164, in __call__
+    await self.app(scope, receive, _send)
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/starlette/middleware/cors.py", line 91, in __call__
+    await self.simple_response(scope, receive, send, request_headers=headers)
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/starlette/middleware/cors.py", line 149, in simple_response
+    await self.app(scope, receive, send)
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/starlette/middleware/exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/fastapi/middleware/asyncexitstack.py", line 18, in __call__
+    await self.app(scope, receive, send)
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/starlette/routing.py", line 676, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/fastapi/routing.py", line 2734, in app
+    await route.handle(scope, receive, send)
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/fastapi/routing.py", line 1780, in handle
+    await self.original_router.handle(scope, receive, send)
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/fastapi/routing.py", line 2789, in handle
+    await included_router._handle_selected(scope, receive, send)
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/fastapi/routing.py", line 1791, in _handle_selected
+    await route.handle(scope, receive, send)
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/fastapi/routing.py", line 1780, in handle
+    await self.original_router.handle(scope, receive, send)
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/fastapi/routing.py", line 2789, in handle
+    await included_router._handle_selected(scope, receive, send)
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/fastapi/routing.py", line 1800, in _handle_selected
+    await original_route.handle(scope, receive, send)
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/fastapi/routing.py", line 1279, in handle
+    await app(scope, receive, send)
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/fastapi/routing.py", line 158, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/fastapi/routing.py", line 144, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/fastapi/routing.py", line 706, in app
+    raw_response = await run_endpoint_function(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/fastapi/routing.py", line 354, in run_endpoint_function
+    return await run_in_threadpool(dependant.call, **values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/starlette/concurrency.py", line 34, in run_in_threadpool
+    return await anyio.to_thread.run_sync(func)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/anyio/to_thread.py", line 65, in run_sync
+    return await get_async_backend().run_sync_in_worker_thread(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        func, args, abandon_on_cancel=abandon_on_cancel, limiter=limiter
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/anyio/_backends/_asyncio.py", line 2706, in run_sync_in_worker_thread
+    return await future
+           ^^^^^^^^^^^^
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/anyio/_backends/_asyncio.py", line 1100, in run
+    result = context.run(func, *args)
+  File "/workspaces/gadget-store-os/backend/app/api/auth/routes.py", line 57, in login
+    access_token, refresh_token = create_login_session(
+                                  ~~~~~~~~~~~~~~~~~~~~^
+        db,
+        ^^^
+        user,
+        ^^^^^
+    )
+    ^
+  File "/workspaces/gadget-store-os/backend/app/auth/service.py", line 41, in create_login_session
+    db.commit()
+    ~~~~~~~~~^^
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/sqlalchemy/orm/session.py", line 2095, in commit
+    trans.commit(_to_root=True)
+    ~~~~~~~~~~~~^^^^^^^^^^^^^^^
+  File "<sqlalchemy generated _go() wrapper for sqlalchemy.orm.session.SessionTransaction.commit>", line 2, in commit
+    return target(fn, self, _to_root=_to_root)
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/sqlalchemy/orm/state_changes.py", line 137, in _go
+    ret_value = fn(self, *arg, **kw)
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/sqlalchemy/orm/session.py", line 1330, in commit
+    self._prepare_impl()
+    ~~~~~~~~~~~~~~~~~~^^
+  File "<sqlalchemy generated _go() wrapper for sqlalchemy.orm.session.SessionTransaction._prepare_impl>", line 2, in _prepare_impl
+    return target(fn, self)
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/sqlalchemy/orm/state_changes.py", line 137, in _go
+    ret_value = fn(self, *arg, **kw)
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/sqlalchemy/orm/session.py", line 1304, in _prepare_impl
+    self.session.flush()
+    ~~~~~~~~~~~~~~~~~~^^
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/sqlalchemy/orm/session.py", line 4536, in flush
+    self._flush(objects)
+    ~~~~~~~~~~~^^^^^^^^^
+  File "<sqlalchemy generated warned() wrapper for sqlalchemy.orm.session.Session._flush>", line 2, in _flush
+    return target(fn, self, objects=objects)
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/sqlalchemy/util/deprecations.py", line 281, in warned
+    return fn(*args, **kwargs)  # type: ignore[no-any-return]
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/sqlalchemy/orm/session.py", line 4679, in _flush
+    with util.safe_reraise():
+         ~~~~~~~~~~~~~~~~~^^
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/sqlalchemy/util/langhelpers.py", line 166, in __exit__
+    raise exc_value.with_traceback(exc_tb)
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/sqlalchemy/orm/session.py", line 4640, in _flush
+    flush_context.execute()
+    ~~~~~~~~~~~~~~~~~~~~~^^
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/sqlalchemy/orm/unitofwork.py", line 467, in execute
+    rec.execute(self)
+    ~~~~~~~~~~~^^^^^^
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/sqlalchemy/orm/unitofwork.py", line 643, in execute
+    util.preloaded.orm_persistence._save_obj(
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        self.mapper,
+        ^^^^^^^^^^^^
+        uow.states_for_mapper_hierarchy(self.mapper, False, False),
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        uow,
+        ^^^^
+    )
+    ^
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/sqlalchemy/orm/persistence.py", line 92, in _save_obj
+    _emit_insert_statements(
+    ~~~~~~~~~~~~~~~~~~~~~~~^
+        base_mapper,
+        ^^^^^^^^^^^^
+    ...<3 lines>...
+        insert,
+        ^^^^^^^
+    )
+    ^
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/sqlalchemy/orm/persistence.py", line 1237, in _emit_insert_statements
+    result = connection.execute(
+        statement,
+        params,
+        execution_options=execution_options,
+    )
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/sqlalchemy/engine/base.py", line 1448, in execute
+    return meth(
+        self,
+        distilled_parameters,
+        execution_options or NO_OPTIONS,
+    )
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/sqlalchemy/sql/elements.py", line 533, in _execute_on_connection
+    return connection._execute_clauseelement(
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        self, distilled_params, execution_options
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/sqlalchemy/engine/base.py", line 1668, in _execute_clauseelement
+    ret = self._execute_context(
+        dialect,
+    ...<9 lines>...
+        param_dict=param_dict,
+    )
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/sqlalchemy/engine/base.py", line 1822, in _execute_context
+    return self._exec_single_context(
+           ~~~~~~~~~~~~~~~~~~~~~~~~~^
+        dialect, context, statement, parameters
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/sqlalchemy/engine/base.py", line 1962, in _exec_single_context
+    self._handle_dbapi_exception(
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        e, str_statement, effective_parameters, cursor, context
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/sqlalchemy/engine/base.py", line 2332, in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/sqlalchemy/engine/base.py", line 1943, in _exec_single_context
+    self.dialect.do_execute(
+    ~~~~~~~~~~~~~~~~~~~~~~~^
+        cursor, str_statement, effective_parameters, context
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/sqlalchemy/engine/default.py", line 1180, in do_execute
+    cursor.execute(statement, parameters)
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+sqlalchemy.exc.OperationalError: (sqlite3.OperationalError) no such table: sessions
+[SQL: INSERT INTO sessions (user_id, refresh_token_hash, expires_at, revoked, id, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?)]
+[parameters: ('1c27cfb1d9a148dab940e44e85fb7a06', '8b715dc73489c9b434919d0fc79e533a3e55cdce4e7856a0aec25377a7f7f1cb', '2026-10-27 13:54:45.477950', 0, '22a51248e63d4f02ba633a6a32ec7911', '2026-09-27 13:54:45.478274', '2026-09-27 13:54:45.478276')]
+(Background on this error at: https://sqlalche.me/e/21/e3q8)
+INFO:     127.0.0.1:37380 - "POST /auth/login HTTP/1.1" 500 Internal Server Error
+ERROR:    Exception in ASGI application
+Traceback (most recent call last):
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/sqlalchemy/engine/base.py", line 1943, in _exec_single_context
+    self.dialect.do_execute(
+    ~~~~~~~~~~~~~~~~~~~~~~~^
+        cursor, str_statement, effective_parameters, context
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/sqlalchemy/engine/default.py", line 1180, in do_execute
+    cursor.execute(statement, parameters)
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+sqlite3.OperationalError: no such table: sessions
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/uvicorn/protocols/http/httptools_impl.py", line 422, in run_asgi
+    result = await app(  # type: ignore[func-returns-value]
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        self.scope, self.receive, self.send
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/uvicorn/middleware/proxy_headers.py", line 63, in __call__
+    return await self.app(scope, receive, send)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/fastapi/applications.py", line 1163, in __call__
+    await super().__call__(scope, receive, send)
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/starlette/applications.py", line 96, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/starlette/middleware/errors.py", line 186, in __call__
+    raise exc
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/starlette/middleware/errors.py", line 164, in __call__
+    await self.app(scope, receive, _send)
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/starlette/middleware/cors.py", line 91, in __call__
+    await self.simple_response(scope, receive, send, request_headers=headers)
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/starlette/middleware/cors.py", line 149, in simple_response
+    await self.app(scope, receive, send)
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/starlette/middleware/exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/fastapi/middleware/asyncexitstack.py", line 18, in __call__
+    await self.app(scope, receive, send)
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/starlette/routing.py", line 676, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/fastapi/routing.py", line 2734, in app
+    await route.handle(scope, receive, send)
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/fastapi/routing.py", line 1780, in handle
+    await self.original_router.handle(scope, receive, send)
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/fastapi/routing.py", line 2789, in handle
+    await included_router._handle_selected(scope, receive, send)
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/fastapi/routing.py", line 1791, in _handle_selected
+    await route.handle(scope, receive, send)
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/fastapi/routing.py", line 1780, in handle
+    await self.original_router.handle(scope, receive, send)
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/fastapi/routing.py", line 2789, in handle
+    await included_router._handle_selected(scope, receive, send)
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/fastapi/routing.py", line 1800, in _handle_selected
+    await original_route.handle(scope, receive, send)
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/fastapi/routing.py", line 1279, in handle
+    await app(scope, receive, send)
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/fastapi/routing.py", line 158, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/fastapi/routing.py", line 144, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/fastapi/routing.py", line 706, in app
+    raw_response = await run_endpoint_function(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/fastapi/routing.py", line 354, in run_endpoint_function
+    return await run_in_threadpool(dependant.call, **values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/starlette/concurrency.py", line 34, in run_in_threadpool
+    return await anyio.to_thread.run_sync(func)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/anyio/to_thread.py", line 65, in run_sync
+    return await get_async_backend().run_sync_in_worker_thread(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        func, args, abandon_on_cancel=abandon_on_cancel, limiter=limiter
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/anyio/_backends/_asyncio.py", line 2706, in run_sync_in_worker_thread
+    return await future
+           ^^^^^^^^^^^^
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/anyio/_backends/_asyncio.py", line 1100, in run
+    result = context.run(func, *args)
+  File "/workspaces/gadget-store-os/backend/app/api/auth/routes.py", line 57, in login
+    access_token, refresh_token = create_login_session(
+                                  ~~~~~~~~~~~~~~~~~~~~^
+        db,
+        ^^^
+        user,
+        ^^^^^
+    )
+    ^
+  File "/workspaces/gadget-store-os/backend/app/auth/service.py", line 41, in create_login_session
+    db.commit()
+    ~~~~~~~~~^^
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/sqlalchemy/orm/session.py", line 2095, in commit
+    trans.commit(_to_root=True)
+    ~~~~~~~~~~~~^^^^^^^^^^^^^^^
+  File "<sqlalchemy generated _go() wrapper for sqlalchemy.orm.session.SessionTransaction.commit>", line 2, in commit
+    return target(fn, self, _to_root=_to_root)
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/sqlalchemy/orm/state_changes.py", line 137, in _go
+    ret_value = fn(self, *arg, **kw)
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/sqlalchemy/orm/session.py", line 1330, in commit
+    self._prepare_impl()
+    ~~~~~~~~~~~~~~~~~~^^
+  File "<sqlalchemy generated _go() wrapper for sqlalchemy.orm.session.SessionTransaction._prepare_impl>", line 2, in _prepare_impl
+    return target(fn, self)
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/sqlalchemy/orm/state_changes.py", line 137, in _go
+    ret_value = fn(self, *arg, **kw)
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/sqlalchemy/orm/session.py", line 1304, in _prepare_impl
+    self.session.flush()
+    ~~~~~~~~~~~~~~~~~~^^
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/sqlalchemy/orm/session.py", line 4536, in flush
+    self._flush(objects)
+    ~~~~~~~~~~~^^^^^^^^^
+  File "<sqlalchemy generated warned() wrapper for sqlalchemy.orm.session.Session._flush>", line 2, in _flush
+    return target(fn, self, objects=objects)
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/sqlalchemy/util/deprecations.py", line 281, in warned
+    return fn(*args, **kwargs)  # type: ignore[no-any-return]
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/sqlalchemy/orm/session.py", line 4679, in _flush
+    with util.safe_reraise():
+         ~~~~~~~~~~~~~~~~~^^
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/sqlalchemy/util/langhelpers.py", line 166, in __exit__
+    raise exc_value.with_traceback(exc_tb)
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/sqlalchemy/orm/session.py", line 4640, in _flush
+    flush_context.execute()
+    ~~~~~~~~~~~~~~~~~~~~~^^
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/sqlalchemy/orm/unitofwork.py", line 467, in execute
+    rec.execute(self)
+    ~~~~~~~~~~~^^^^^^
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/sqlalchemy/orm/unitofwork.py", line 643, in execute
+    util.preloaded.orm_persistence._save_obj(
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        self.mapper,
+        ^^^^^^^^^^^^
+        uow.states_for_mapper_hierarchy(self.mapper, False, False),
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        uow,
+        ^^^^
+    )
+    ^
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/sqlalchemy/orm/persistence.py", line 92, in _save_obj
+    _emit_insert_statements(
+    ~~~~~~~~~~~~~~~~~~~~~~~^
+        base_mapper,
+        ^^^^^^^^^^^^
+    ...<3 lines>...
+        insert,
+        ^^^^^^^
+    )
+    ^
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/sqlalchemy/orm/persistence.py", line 1237, in _emit_insert_statements
+    result = connection.execute(
+        statement,
+        params,
+        execution_options=execution_options,
+    )
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/sqlalchemy/engine/base.py", line 1448, in execute
+    return meth(
+        self,
+        distilled_parameters,
+        execution_options or NO_OPTIONS,
+    )
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/sqlalchemy/sql/elements.py", line 533, in _execute_on_connection
+    return connection._execute_clauseelement(
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        self, distilled_params, execution_options
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/sqlalchemy/engine/base.py", line 1668, in _execute_clauseelement
+    ret = self._execute_context(
+        dialect,
+    ...<9 lines>...
+        param_dict=param_dict,
+    )
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/sqlalchemy/engine/base.py", line 1822, in _execute_context
+    return self._exec_single_context(
+           ~~~~~~~~~~~~~~~~~~~~~~~~~^
+        dialect, context, statement, parameters
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/sqlalchemy/engine/base.py", line 1962, in _exec_single_context
+    self._handle_dbapi_exception(
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        e, str_statement, effective_parameters, cursor, context
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/sqlalchemy/engine/base.py", line 2332, in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/sqlalchemy/engine/base.py", line 1943, in _exec_single_context
+    self.dialect.do_execute(
+    ~~~~~~~~~~~~~~~~~~~~~~~^
+        cursor, str_statement, effective_parameters, context
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/sqlalchemy/engine/default.py", line 1180, in do_execute
+    cursor.execute(statement, parameters)
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+sqlalchemy.exc.OperationalError: (sqlite3.OperationalError) no such table: sessions
+[SQL: INSERT INTO sessions (user_id, refresh_token_hash, expires_at, revoked, id, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?)]
+[parameters: ('1c27cfb1d9a148dab940e44e85fb7a06', '78c97e21a8aeca3a8e7008f50fe9f38832aefa02d786ff49f843480b2783f666', '2026-10-27 13:55:20.559548', 0, 'c464b64f0fa04a07bd766ab70ba2b4d8', '2026-09-27 13:55:20.559917', '2026-09-27 13:55:20.559919')]
+(Background on this error at: https://sqlalche.me/e/21/e3q8)
+INFO:     127.0.0.1:39468 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59928 - "POST /auth/login HTTP/1.1" 500 Internal Server Error
+ERROR:    Exception in ASGI application
+Traceback (most recent call last):
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/sqlalchemy/engine/base.py", line 1943, in _exec_single_context
+    self.dialect.do_execute(
+    ~~~~~~~~~~~~~~~~~~~~~~~^
+        cursor, str_statement, effective_parameters, context
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/sqlalchemy/engine/default.py", line 1180, in do_execute
+    cursor.execute(statement, parameters)
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+sqlite3.OperationalError: no such table: sessions
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/uvicorn/protocols/http/httptools_impl.py", line 422, in run_asgi
+    result = await app(  # type: ignore[func-returns-value]
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        self.scope, self.receive, self.send
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/uvicorn/middleware/proxy_headers.py", line 63, in __call__
+    return await self.app(scope, receive, send)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/fastapi/applications.py", line 1163, in __call__
+    await super().__call__(scope, receive, send)
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/starlette/applications.py", line 96, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/starlette/middleware/errors.py", line 186, in __call__
+    raise exc
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/starlette/middleware/errors.py", line 164, in __call__
+    await self.app(scope, receive, _send)
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/starlette/middleware/cors.py", line 91, in __call__
+    await self.simple_response(scope, receive, send, request_headers=headers)
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/starlette/middleware/cors.py", line 149, in simple_response
+    await self.app(scope, receive, send)
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/starlette/middleware/exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/fastapi/middleware/asyncexitstack.py", line 18, in __call__
+    await self.app(scope, receive, send)
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/starlette/routing.py", line 676, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/fastapi/routing.py", line 2734, in app
+    await route.handle(scope, receive, send)
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/fastapi/routing.py", line 1780, in handle
+    await self.original_router.handle(scope, receive, send)
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/fastapi/routing.py", line 2789, in handle
+    await included_router._handle_selected(scope, receive, send)
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/fastapi/routing.py", line 1791, in _handle_selected
+    await route.handle(scope, receive, send)
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/fastapi/routing.py", line 1780, in handle
+    await self.original_router.handle(scope, receive, send)
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/fastapi/routing.py", line 2789, in handle
+    await included_router._handle_selected(scope, receive, send)
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/fastapi/routing.py", line 1800, in _handle_selected
+    await original_route.handle(scope, receive, send)
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/fastapi/routing.py", line 1279, in handle
+    await app(scope, receive, send)
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/fastapi/routing.py", line 158, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/fastapi/routing.py", line 144, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/fastapi/routing.py", line 706, in app
+    raw_response = await run_endpoint_function(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/fastapi/routing.py", line 354, in run_endpoint_function
+    return await run_in_threadpool(dependant.call, **values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/starlette/concurrency.py", line 34, in run_in_threadpool
+    return await anyio.to_thread.run_sync(func)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/anyio/to_thread.py", line 65, in run_sync
+    return await get_async_backend().run_sync_in_worker_thread(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        func, args, abandon_on_cancel=abandon_on_cancel, limiter=limiter
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/anyio/_backends/_asyncio.py", line 2706, in run_sync_in_worker_thread
+    return await future
+           ^^^^^^^^^^^^
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/anyio/_backends/_asyncio.py", line 1100, in run
+    result = context.run(func, *args)
+  File "/workspaces/gadget-store-os/backend/app/api/auth/routes.py", line 57, in login
+    access_token, refresh_token = create_login_session(
+                                  ~~~~~~~~~~~~~~~~~~~~^
+        db,
+        ^^^
+        user,
+        ^^^^^
+    )
+    ^
+  File "/workspaces/gadget-store-os/backend/app/auth/service.py", line 41, in create_login_session
+    db.commit()
+    ~~~~~~~~~^^
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/sqlalchemy/orm/session.py", line 2095, in commit
+    trans.commit(_to_root=True)
+    ~~~~~~~~~~~~^^^^^^^^^^^^^^^
+  File "<sqlalchemy generated _go() wrapper for sqlalchemy.orm.session.SessionTransaction.commit>", line 2, in commit
+    return target(fn, self, _to_root=_to_root)
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/sqlalchemy/orm/state_changes.py", line 137, in _go
+    ret_value = fn(self, *arg, **kw)
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/sqlalchemy/orm/session.py", line 1330, in commit
+    self._prepare_impl()
+    ~~~~~~~~~~~~~~~~~~^^
+  File "<sqlalchemy generated _go() wrapper for sqlalchemy.orm.session.SessionTransaction._prepare_impl>", line 2, in _prepare_impl
+    return target(fn, self)
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/sqlalchemy/orm/state_changes.py", line 137, in _go
+    ret_value = fn(self, *arg, **kw)
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/sqlalchemy/orm/session.py", line 1304, in _prepare_impl
+    self.session.flush()
+    ~~~~~~~~~~~~~~~~~~^^
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/sqlalchemy/orm/session.py", line 4536, in flush
+    self._flush(objects)
+    ~~~~~~~~~~~^^^^^^^^^
+  File "<sqlalchemy generated warned() wrapper for sqlalchemy.orm.session.Session._flush>", line 2, in _flush
+    return target(fn, self, objects=objects)
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/sqlalchemy/util/deprecations.py", line 281, in warned
+    return fn(*args, **kwargs)  # type: ignore[no-any-return]
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/sqlalchemy/orm/session.py", line 4679, in _flush
+    with util.safe_reraise():
+         ~~~~~~~~~~~~~~~~~^^
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/sqlalchemy/util/langhelpers.py", line 166, in __exit__
+    raise exc_value.with_traceback(exc_tb)
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/sqlalchemy/orm/session.py", line 4640, in _flush
+    flush_context.execute()
+    ~~~~~~~~~~~~~~~~~~~~~^^
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/sqlalchemy/orm/unitofwork.py", line 467, in execute
+    rec.execute(self)
+    ~~~~~~~~~~~^^^^^^
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/sqlalchemy/orm/unitofwork.py", line 643, in execute
+    util.preloaded.orm_persistence._save_obj(
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        self.mapper,
+        ^^^^^^^^^^^^
+        uow.states_for_mapper_hierarchy(self.mapper, False, False),
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        uow,
+        ^^^^
+    )
+    ^
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/sqlalchemy/orm/persistence.py", line 92, in _save_obj
+    _emit_insert_statements(
+    ~~~~~~~~~~~~~~~~~~~~~~~^
+        base_mapper,
+        ^^^^^^^^^^^^
+    ...<3 lines>...
+        insert,
+        ^^^^^^^
+    )
+    ^
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/sqlalchemy/orm/persistence.py", line 1237, in _emit_insert_statements
+    result = connection.execute(
+        statement,
+        params,
+        execution_options=execution_options,
+    )
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/sqlalchemy/engine/base.py", line 1448, in execute
+    return meth(
+        self,
+        distilled_parameters,
+        execution_options or NO_OPTIONS,
+    )
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/sqlalchemy/sql/elements.py", line 533, in _execute_on_connection
+    return connection._execute_clauseelement(
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        self, distilled_params, execution_options
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/sqlalchemy/engine/base.py", line 1668, in _execute_clauseelement
+    ret = self._execute_context(
+        dialect,
+    ...<9 lines>...
+        param_dict=param_dict,
+    )
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/sqlalchemy/engine/base.py", line 1822, in _execute_context
+    return self._exec_single_context(
+           ~~~~~~~~~~~~~~~~~~~~~~~~~^
+        dialect, context, statement, parameters
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/sqlalchemy/engine/base.py", line 1962, in _exec_single_context
+    self._handle_dbapi_exception(
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        e, str_statement, effective_parameters, cursor, context
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/sqlalchemy/engine/base.py", line 2332, in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/sqlalchemy/engine/base.py", line 1943, in _exec_single_context
+    self.dialect.do_execute(
+    ~~~~~~~~~~~~~~~~~~~~~~~^
+        cursor, str_statement, effective_parameters, context
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/workspaces/gadget-store-os/backend/.venv/lib/python3.14/site-packages/sqlalchemy/engine/default.py", line 1180, in do_execute
+    cursor.execute(statement, parameters)
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+sqlalchemy.exc.OperationalError: (sqlite3.OperationalError) no such table: sessions
+[SQL: INSERT INTO sessions (user_id, refresh_token_hash, expires_at, revoked, id, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?)]
+[parameters: ('1c27cfb1d9a148dab940e44e85fb7a06', 'd624163e8aff7022d376671ac824df74eff7e820f0dedb6d71eb15e4f8437ba4', '2026-10-27 13:56:15.878089', 0, '9c1cdd2a734e424195012ad8e99aa4b2', '2026-09-27 13:56:15.878420', '2026-09-27 13:56:15.878422')]
+(Background on this error at: https://sqlalche.me/e/21/e3q8)
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [135610]

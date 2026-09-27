@@ -18,6 +18,8 @@ html,
 body {
   margin: 0;
   min-height: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
 }
 
 body {
@@ -27,6 +29,254 @@ body {
 }
 
 button,
-input {
+input,
+textarea,
+select {
   font: inherit;
+}
+
+img,
+svg,
+video,
+canvas {
+  max-width: 100%;
+}
+
+a {
+  -webkit-tap-highlight-color: transparent;
+}
+
+
+html {
+  scroll-padding-bottom: 7rem;
+}
+
+body {
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+/* Premium UI theme tokens */
+:root {
+  color-scheme: light;
+}
+
+html.dark {
+  color-scheme: dark;
+}
+
+.dark {
+  --background: #0b0d0c;
+  --foreground: #f5f7f6;
+  --muted: #9aa39e;
+  --surface: #131715;
+  --border: #292f2b;
+  --accent: #35a978;
+  --accent-soft: #163427;
+}
+
+.dark body {
+  background: var(--background);
+  color: var(--foreground);
+}
+
+.dark input,
+.dark textarea,
+.dark select {
+  background: #111512;
+  color: var(--foreground);
+  border-color: var(--border);
+}
+
+.dark input::placeholder,
+.dark textarea::placeholder {
+  color: #68716c;
+}
+
+.dark table {
+  color: var(--foreground);
+}
+
+.dark th {
+  color: #aab2ad;
+}
+
+.dark tr {
+  border-color: var(--border);
+}
+
+.dark button:disabled {
+  opacity: 0.55;
+}
+
+/* Premium interaction layer */
+button,
+a,
+input,
+textarea,
+select {
+  -webkit-tap-highlight-color: transparent;
+}
+
+button,
+a {
+  transition:
+    background-color 160ms ease,
+    border-color 160ms ease,
+    color 160ms ease,
+    box-shadow 160ms ease,
+    transform 160ms ease;
+}
+
+input,
+textarea,
+select {
+  border-radius: 0.75rem;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--foreground);
+  outline: none;
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 16%, transparent);
+}
+
+.dark input,
+.dark textarea,
+.dark select {
+  background: #111512;
+}
+
+.dark ::selection {
+  background: #2b805e;
+  color: white;
+}
+
+.dark .bg-white {
+  background-color: var(--surface);
+}
+
+.dark .bg-gray-50,
+.dark .bg-slate-50 {
+  background-color: #101311;
+}
+
+.dark .text-gray-500,
+.dark .text-gray-600,
+.dark .text-slate-500,
+.dark .text-slate-600 {
+  color: var(--muted);
+}
+
+.dark .border-gray-200,
+.dark .border-slate-200 {
+  border-color: var(--border);
+}
+
+/* Premium transactional surfaces */
+main button:not(:disabled) {
+  transition:
+    transform 140ms ease,
+    box-shadow 140ms ease,
+    background-color 140ms ease;
+}
+
+main button:not(:disabled):active {
+  transform: scale(0.98);
+}
+
+main input:focus,
+main textarea:focus,
+main select:focus {
+  box-shadow:
+    0 0 0 3px color-mix(in srgb, var(--accent) 12%, transparent),
+    0 1px 2px rgba(0, 0, 0, 0.04);
+}
+
+.dark main input,
+.dark main textarea,
+.dark main select {
+  background: #101311;
+}
+
+.dark main [class*="bg-white"] {
+  background-color: var(--surface);
+}
+
+.dark main [class*="border-gray"],
+.dark main [class*="border-slate"] {
+  border-color: var(--border);
+}
+
+/* Premium settings surfaces */
+.dark main section,
+.dark main article {
+  border-color: var(--border);
+}
+
+.dark main [class*="bg-white"] {
+  background-color: var(--surface);
+}
+
+.dark main [class*="bg-gray-50"],
+.dark main [class*="bg-slate-50"] {
+  background-color: #101311;
+}
+
+/* Premium data surfaces */
+main form,
+main section,
+main article {
+  transition:
+    border-color 160ms ease,
+    box-shadow 160ms ease;
+}
+
+.dark main form:hover,
+.dark main section:hover,
+.dark main article:hover {
+  border-color: #343c37;
+}
+
+.dark main table {
+  background: var(--surface);
+}
+
+.dark main thead {
+  background: #101311;
+}
+
+.dark main tbody tr:hover {
+  background: rgba(255, 255, 255, 0.025);
+}
+
+/* Final premium polish */
+main [class*="rounded-2xl"] {
+  border-color: var(--border);
+}
+
+main button:not(:disabled):hover {
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06);
+}
+
+.dark main button:not(:disabled):hover {
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.28);
+}
+
+.dark main [class*="shadow-sm"] {
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+@media (max-width: 640px) {
+  main [class*="rounded-2xl"] {
+    border-radius: 1rem;
+  }
+
+  main button,
+  main a {
+    min-height: 42px;
+  }
 }

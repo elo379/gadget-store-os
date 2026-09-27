@@ -1,0 +1,10 @@
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Inventory",
+  description: "Manage stock levels, movements and inventory.",
+};
+
+export default function Layout({ children }: { children: React.ReactNode }) {
+  return children;
+}

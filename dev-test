@@ -1,10 +1,16 @@
 #!/usr/bin/env bash
-set -e
+set -euo pipefail
+
 ROOT="$(cd "$(dirname "$0")" && pwd)"
 
-echo "================================"
-echo " GSOS FULL TEST SUITE"
-echo "================================"
+echo
+echo "========================================"
+echo "   GADGET STORE OS - FULL TEST"
+echo "========================================"
+echo
+
+echo "== ENVIRONMENT + DEPENDENCIES =="
+"$ROOT/dev-setup"
 
 echo
 echo "== BACKEND TESTS =="
@@ -22,6 +28,6 @@ echo "== FRONTEND PRODUCTION BUILD =="
 npm run build
 
 echo
-echo "================================"
-echo " ALL TESTS PASSED"
-echo "================================"
+echo "========================================"
+echo "   ALL TESTS PASSED"
+echo "========================================"

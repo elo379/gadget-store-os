@@ -95,15 +95,15 @@ export default function PurchasingPage() {
       </header>
 
       <div className="grid gap-4 md:grid-cols-3">
-        <div className="rounded-2xl border bg-white p-5">
+        <div className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] shadow-sm p-5">
           <p className="text-sm text-[var(--muted)]">Suppliers</p>
           <p className="mt-2 text-3xl font-semibold">{suppliers.length}</p>
         </div>
-        <div className="rounded-2xl border bg-white p-5">
+        <div className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] shadow-sm p-5">
           <p className="text-sm text-[var(--muted)]">Purchase orders</p>
           <p className="mt-2 text-3xl font-semibold">{orders.length}</p>
         </div>
-        <div className="rounded-2xl border bg-white p-5">
+        <div className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] shadow-sm p-5">
           <p className="text-sm text-[var(--muted)]">Open orders</p>
           <p className="mt-2 text-3xl font-semibold">
             {orders.filter((order) => order.status !== "completed").length}
@@ -111,7 +111,7 @@ export default function PurchasingPage() {
         </div>
       </div>
 
-      <section className="rounded-2xl border bg-white p-5">
+      <section className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] shadow-sm p-5">
         <h2 className="font-semibold">Add supplier</h2>
         <div className="mt-4 grid gap-3 md:grid-cols-[1fr_1fr_auto]">
           <input
@@ -137,7 +137,7 @@ export default function PurchasingPage() {
         {message && <p className="mt-3 text-sm text-[var(--muted)]">{message}</p>}
       </section>
 
-      <section className="rounded-2xl border bg-white p-5">
+      <section className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] shadow-sm p-5">
         <h2 className="font-semibold">Purchase orders</h2>
         <div className="mt-4 overflow-x-auto">
           <table className="w-full text-left text-sm">
