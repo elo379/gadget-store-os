@@ -261,6 +261,54 @@ export async function apiPatch<T>(
   });
 }
 
+
+export async function apiPut<T>(
+  path: string,
+  body: unknown,
+): Promise<T> {
+  return request<T>(path, {
+    method: "PUT",
+    body: JSON.stringify(body),
+  });
+}
+
+export async function apiPostForOrganization<T>(
+  path: string,
+  organizationId: string,
+  body: unknown,
+): Promise<T> {
+  const separator = path.includes("?") ? "&" : "?";
+
+  return apiPost<T>(
+    `${path}${separator}organization_id=${encodeURIComponent(organizationId)}`,
+    body,
+  );
+}
+
+export async function apiPatchForOrganization<T>(
+  path: string,
+  organizationId: string,
+  body: unknown,
+): Promise<T> {
+  const separator = path.includes("?") ? "&" : "?";
+
+  return apiPatch<T>(
+    `${path}${separator}organization_id=${encodeURIComponent(organizationId)}`,
+    body,
+  );
+}
+
+export async function apiDeleteForOrganization<T = unknown>(
+  path: string,
+  organizationId: string,
+): Promise<T> {
+  const separator = path.includes("?") ? "&" : "?";
+
+  return apiDelete<T>(
+    `${path}${separator}organization_id=${encodeURIComponent(organizationId)}`,
+  );
+}
+
 export async function apiDelete<T>(
   path: string,
 ): Promise<T> {
