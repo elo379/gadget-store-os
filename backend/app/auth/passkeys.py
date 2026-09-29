@@ -7,7 +7,7 @@ import json
 import os
 from datetime import datetime, timedelta, timezone
 
-from sqlalchemy import select
+from sqlalchemy import select, update
 from sqlalchemy.orm import Session
 from webauthn import (
     generate_authentication_options,
@@ -49,7 +49,7 @@ def _save_challenge(
 ) -> None:
     db.add(
         PasskeyChallenge(
-            user_id=user_id,
+            user_id=uuid.UUID(user_id) if user_id else None,
             challenge=_b64(challenge),
             ceremony=ceremony,
             expires_at=datetime.now(timezone.utc)
@@ -64,25 +64,48 @@ def _consume_challenge(
     challenge: bytes,
     ceremony: str,
 ) -> PasskeyChallenge | None:
-    item = db.scalar(
-        select(PasskeyChallenge).where(
-            PasskeyChallenge.challenge == _b64(challenge),
+    now = datetime.now(timezone.utc)
+    challenge_text = _b64(challenge)
+    result = db.execute(
+        update(PasskeyChallenge)
+        .where(
+            PasskeyChallenge.challenge == challenge_text,
             PasskeyChallenge.ceremony == ceremony,
             PasskeyChallenge.consumed.is_(False),
+            PasskeyChallenge.expires_at > now,
         )
+        .values(consumed=True)
     )
-
-    if item is None:
-        return None
-
-    if item.expires_at <= datetime.now(timezone.utc):
-        item.consumed = True
+    db.commit()
+    if result.rowcount != 1:
+        # Expired challenges are also retired, without making them usable.
+        db.execute(
+            update(PasskeyChallenge)
+            .where(
+                PasskeyChallenge.challenge == challenge_text,
+                PasskeyChallenge.ceremony == ceremony,
+                PasskeyChallenge.consumed.is_(False),
+            )
+            .values(consumed=True)
+        )
         db.commit()
         return None
+    return db.scalar(select(PasskeyChallenge).where(PasskeyChallenge.challenge == challenge_text))
 
-    item.consumed = True
-    db.commit()
-    return item
+
+def _credential_payload(payload: dict, ceremony: str) -> dict:
+    """Adapt the existing compact API shape to WebAuthn's JSON credential shape."""
+    raw_id = payload.get("raw_id") or payload.get("rawId")
+    credential_id = payload.get("credential_id") or payload.get("id") or raw_id
+    client_data = payload.get("client_data_json") or payload.get("clientDataJSON")
+    response = {"clientDataJSON": client_data}
+    if ceremony == "registration":
+        response["attestationObject"] = payload.get("attestation_object") or payload.get("attestationObject")
+    else:
+        response["authenticatorData"] = payload.get("authenticator_data") or payload.get("authenticatorData")
+        response["signature"] = payload.get("signature")
+        response["userHandle"] = payload.get("user_handle") or payload.get("userHandle")
+    return {"id": credential_id, "rawId": raw_id, "type": "public-key", "response": response}
 
 
 def registration_options(db: Session, user: User) -> dict:
@@ -118,7 +141,8 @@ def verify_registration(
     user: User,
     payload: dict,
 ) -> dict:
-    challenge_value = payload.get("client_data_json")
+    credential = _credential_payload(payload, "registration")
+    challenge_value = credential["response"].get("clientDataJSON")
     if not challenge_value:
         raise ValueError("Missing client data")
 
@@ -130,7 +154,7 @@ def verify_registration(
         raise ValueError("Invalid or expired passkey challenge")
 
     verification = verify_registration_response(
-        credential=payload,
+        credential=credential,
         expected_challenge=challenge,
         expected_rp_id=RP_ID,
         expected_origin=ORIGIN,
@@ -139,7 +163,7 @@ def verify_registration(
 
     credential_id = _b64(verification.credential_id)
     item = PasskeyCredential(
-        user_id=str(user.id),
+        user_id=uuid.UUID(str(user.id)),
         credential_id=credential_id,
         public_key=_b64(verification.credential_public_key),
         sign_count=verification.sign_count,
@@ -167,7 +191,8 @@ def authentication_options(db: Session) -> dict:
 
 
 def verify_authentication(db: Session, payload: dict) -> dict:
-    credential_id = payload.get("raw_id") or payload.get("credential_id")
+    credential = _credential_payload(payload, "authentication")
+    credential_id = credential.get("rawId")
     if not credential_id:
         raise ValueError("Missing credential")
 
@@ -185,7 +210,7 @@ def verify_authentication(db: Session, payload: dict) -> dict:
     if user is None or not user.is_active:
         raise ValueError("User account is inactive")
 
-    client_data = json.loads(_unb64(payload["client_data_json"]))
+    client_data = json.loads(_unb64(credential["response"]["clientDataJSON"]))
     challenge = _unb64(client_data["challenge"])
 
     saved = _consume_challenge(db, challenge, "authentication")
@@ -193,7 +218,7 @@ def verify_authentication(db: Session, payload: dict) -> dict:
         raise ValueError("Invalid or expired passkey challenge")
 
     verification = verify_authentication_response(
-        credential=payload,
+        credential=credential,
         expected_challenge=challenge,
         expected_rp_id=RP_ID,
         expected_origin=ORIGIN,

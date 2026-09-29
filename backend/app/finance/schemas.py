@@ -19,4 +19,6 @@ class FinancialSummaryResponse(BaseModel):
     cogs: Decimal
     gross_profit: Decimal
     expenses: Decimal
-    net_operating_profit: Decimal
+    operating_result: Decimal
+    payments_received: Decimal
+    customer_outstanding: Decimal

@@ -11,6 +11,8 @@ from app.suppliers.service import (
     get_supplier,
     list_suppliers,
 )
+from app.auth.schemas import AuthenticatedUser
+from app.permissions.access import require_organization_permission
 
 router = APIRouter(
     prefix="/suppliers",
@@ -22,9 +24,10 @@ router = APIRouter(
 def create_supplier_route(
     payload: SupplierCreate,
     db: Session = Depends(get_db),
-    current_user=Depends(get_current_user),
+    current_user: AuthenticatedUser=Depends(get_current_user),
 ):
     try:
+        require_organization_permission(db, uuid.UUID(current_user.user_id), payload.organization_id, "suppliers.manage")
         return create_supplier(db, payload)
     except ValueError as exc:
         raise HTTPException(
@@ -39,6 +42,7 @@ def list_supplier_route(
     db: Session = Depends(get_db),
     current_user=Depends(get_current_user),
 ):
+    require_organization_permission(db, uuid.UUID(current_user.user_id), organization_id, "suppliers.view")
     return list_suppliers(
         db,
         organization_id,
@@ -52,6 +56,7 @@ def get_supplier_route(
     db: Session = Depends(get_db),
     current_user=Depends(get_current_user),
 ):
+    require_organization_permission(db, uuid.UUID(current_user.user_id), organization_id, "suppliers.view")
     supplier = get_supplier(
         db,
         organization_id,

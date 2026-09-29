@@ -108,7 +108,35 @@ export default function InventoryPage() {
     }
   }
 
-  async function submitMovement(event: FormEvent) {
+  async function addProductToInventory(productId: string) {
+    if (!organizationId || !productId) return;
+
+    setMovementLoading(true);
+    setMovementError("");
+
+    try {
+      await apiPost(
+        `/inventory/items?organization_id=${organizationId}`,
+        {
+          product_id: productId,
+          quantity: 0,
+          notes: "Added from inventory workflow",
+        },
+      );
+
+      await loadInventory();
+    } catch (err) {
+      setMovementError(
+        err instanceof ApiError
+          ? err.message
+          : "Unable to add product to inventory.",
+      );
+    } finally {
+      setMovementLoading(false);
+    }
+  }
+
+async function submitMovement(event: FormEvent) {
     event.preventDefault();
 
     if (!organizationId || !selectedItem || !movementQuantity) return;
@@ -118,12 +146,8 @@ export default function InventoryPage() {
 
     try {
       await apiPost(
-        `/inventory/${selectedItem.id}/movements?organization_id=${organizationId}`,
-        {
-          movement_type: movementType,
-          quantity: Number(movementQuantity),
-          reason: movementReason,
-        }
+        `/inventory/${selectedItem.id}/movements?organization_id=${organizationId}&movement_type=${encodeURIComponent(movementType)}&quantity=${encodeURIComponent(movementQuantity)}&reason=${encodeURIComponent(movementReason)}`,
+        {},
       );
 
       setMovementQuantity("");

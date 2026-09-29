@@ -1,10 +1,24 @@
 import uuid
+from datetime import datetime, timezone, date
 
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from app.expenses.models import Expense, ExpenseCategory
 from app.expenses.schemas import ExpenseCategoryCreate, ExpenseCreate
+from app.audit.models import AuditLog
+from app.finance.models import FinancialTransaction
+
+DEFAULT_CATEGORIES = ("Rent", "Electricity", "Internet", "Salaries", "Transport", "Logistics", "Repairs", "Maintenance", "Marketing", "Packaging", "Security", "Bank/payment charges", "Miscellaneous")
+
+
+def list_categories(db: Session, organization_id: uuid.UUID):
+    existing = {name.lower() for name in db.scalars(select(ExpenseCategory.name).where(ExpenseCategory.organization_id == organization_id)).all()}
+    for name in DEFAULT_CATEGORIES:
+        if name.lower() not in existing:
+            db.add(ExpenseCategory(organization_id=organization_id, name=name))
+    db.flush()
+    return list(db.scalars(select(ExpenseCategory).where(ExpenseCategory.organization_id == organization_id, ExpenseCategory.is_active.is_(True)).order_by(ExpenseCategory.name)).all())
 
 
 def create_category(db: Session, payload: ExpenseCategoryCreate):
@@ -28,7 +42,7 @@ def create_category(db: Session, payload: ExpenseCategoryCreate):
     return category
 
 
-def create_expense(db: Session, payload: ExpenseCreate):
+def create_expense(db: Session, payload: ExpenseCreate, actor_id: uuid.UUID):
     category = db.scalar(
         select(ExpenseCategory).where(
             ExpenseCategory.id == payload.category_id,
@@ -56,8 +70,17 @@ def create_expense(db: Session, payload: ExpenseCreate):
         reference_number=payload.reference_number.strip(),
         description=payload.description.strip(),
         status="recorded",
+        expense_date=payload.expense_date or date.today(),
+        store_id=payload.store_id,
+        payment_account=payload.payment_account.strip(),
+        attachment_reference=payload.attachment_reference.strip(),
+        actor_id=actor_id,
     )
     db.add(expense)
+    db.flush()
+    db.add(AuditLog(organization_id=payload.organization_id, user_id=actor_id,
+        action="expense.recorded", entity_type="expense", entity_id=expense.id,
+        description=f"Expense recorded: {payload.reference_number.strip()}", metadata_json="{}"))
     db.commit()
     db.refresh(expense)
     return expense
@@ -68,6 +91,7 @@ def update_expense_status(
     organization_id: uuid.UUID,
     expense_id: uuid.UUID,
     status: str,
+    actor_id: uuid.UUID,
 ):
     allowed = {"recorded", "approved", "paid", "cancelled"}
 
@@ -90,7 +114,22 @@ def update_expense_status(
     if expense.status == "paid" and status != "paid":
         raise ValueError("Paid expense cannot be changed")
 
+    previous_status = expense.status
+    if status == "approved" and expense.status not in {"recorded", "approved"}:
+        raise ValueError("Only recorded expenses can be approved")
+    if status == "paid" and expense.status not in {"approved", "paid"}:
+        raise ValueError("Expense must be approved before payment")
     expense.status = status
+    if status == "approved":
+        expense.approved_by_user_id = actor_id
+        expense.approved_at = datetime.now(timezone.utc)
+    if status == "paid" and previous_status != "paid":
+        db.add(FinancialTransaction(organization_id=organization_id, transaction_type="expense_payment",
+            direction="debit", amount=expense.amount, reference_type="expense", reference_id=expense.id,
+            description=f"Payment for expense {expense.reference_number}", actor_id=actor_id, store_id=expense.store_id))
+    db.add(AuditLog(organization_id=organization_id, user_id=actor_id,
+        action=f"expense.{status}", entity_type="expense", entity_id=expense.id,
+        description=f"Expense {expense.reference_number} status changed to {status}", metadata_json="{}"))
     db.commit()
     db.refresh(expense)
     return expense

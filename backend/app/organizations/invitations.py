@@ -1,4 +1,5 @@
 import hashlib
+import json
 import secrets
 import uuid
 from datetime import datetime, timedelta, timezone
@@ -6,6 +7,7 @@ from datetime import datetime, timedelta, timezone
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
+from app.audit.models import AuditLog
 from app.auth.passwords import hash_password
 from app.models import Membership, User
 
@@ -70,6 +72,15 @@ def create_invitation(
 
     db.add(invitation)
     db.flush()
+    db.add(AuditLog(
+        organization_id=organization_id,
+        user_id=creator_membership.user_id,
+        action="personnel.invitation_created",
+        entity_type="personnel_invitation",
+        entity_id=invitation.id,
+        description="Personnel activation invitation created",
+        metadata_json=json.dumps({"role_name": role, "status": "pending"}),
+    ))
 
     return invitation, token
 
@@ -78,6 +89,7 @@ def accept_invitation(
     db: Session,
     token: str,
     password: str,
+    activation_id: uuid.UUID | None = None,
 ) -> Membership:
     from app.organizations.invitation_model import PersonnelInvitation
 
@@ -86,6 +98,7 @@ def accept_invitation(
     invitation = db.scalar(
         select(PersonnelInvitation).where(
             PersonnelInvitation.token_hash == token_hash,
+            *([PersonnelInvitation.id == activation_id] if activation_id else []),
         )
     )
 
@@ -104,6 +117,15 @@ def accept_invitation(
 
     if expires_at <= now:
         invitation.status = "expired"
+        db.add(AuditLog(
+            organization_id=invitation.organization_id,
+            user_id=None,
+            action="personnel.invitation_expired",
+            entity_type="personnel_invitation",
+            entity_id=invitation.id,
+            description="Personnel activation invitation expired",
+            metadata_json=json.dumps({"status": "expired"}),
+        ))
         db.flush()
         raise ValueError("Invitation has expired")
 
@@ -145,6 +167,25 @@ def accept_invitation(
     db.add(user)
     db.add(membership)
     db.flush()
+    if invitation.role_name.lower() == "staff":
+        from app.staff.models import StaffProfile
+        db.add(StaffProfile(
+            organization_id=invitation.organization_id,
+            user_id=user.id,
+            staff_code=personnel_id,
+        ))
+    db.add(AuditLog(
+        organization_id=invitation.organization_id,
+        user_id=user.id,
+        action="personnel.activated",
+        entity_type="membership",
+        entity_id=membership.id,
+        description="Personnel account activated",
+        metadata_json=json.dumps({
+            "role_name": invitation.role_name,
+            "activation_id": str(invitation.id),
+        }),
+    ))
 
     return membership
 

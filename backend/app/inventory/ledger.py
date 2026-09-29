@@ -23,6 +23,9 @@ class InventoryMovement(UUIDPrimaryKeyMixin, TimestampMixin, Base):
         index=True,
     )
 
+    product_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("products.id", ondelete="RESTRICT"), nullable=False, index=True)
+    location_id: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("inventory_locations.id", ondelete="SET NULL"), nullable=True, index=True)
+
     movement_type: Mapped[str] = mapped_column(
         String(50),
         nullable=False,

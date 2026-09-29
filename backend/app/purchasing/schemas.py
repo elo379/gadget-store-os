@@ -78,7 +78,12 @@ class PurchaseReceiveLine(BaseModel):
     model: str = ""
     variant: str = ""
     storage: str = ""
+    ram: str = ""
     color: str = ""
+    network_sim: str = ""
+    grade: str = ""
+    selling_price: Decimal | None = Field(default=None, ge=0)
+    warranty: str = ""
     condition: str = "new"
     notes: str = ""
 

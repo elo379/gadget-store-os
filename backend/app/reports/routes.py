@@ -3,7 +3,7 @@ import uuid
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
-from app.auth.dependencies import get_current_user
+from app.auth.dependencies import get_current_user_model
 from app.db.dependencies import get_db
 from app.reports.access import require_reports_access
 from app.reports.schemas import ReportPeriod
@@ -45,7 +45,7 @@ def check_access(
 def sales_report(
     organization_id: uuid.UUID,
     db: Session = Depends(get_db),
-    current_user=Depends(get_current_user),
+    current_user=Depends(get_current_user_model),
 ):
     check_access(db, current_user, organization_id)
     return get_sales_report(db, organization_id)
@@ -56,7 +56,7 @@ def sales_period_report(
     organization_id: uuid.UUID,
     payload: ReportPeriod,
     db: Session = Depends(get_db),
-    current_user=Depends(get_current_user),
+    current_user=Depends(get_current_user_model),
 ):
     check_access(db, current_user, organization_id)
 
@@ -82,7 +82,7 @@ def sales_period_report(
 def product_report(
     organization_id: uuid.UUID,
     db: Session = Depends(get_db),
-    current_user=Depends(get_current_user),
+    current_user=Depends(get_current_user_model),
 ):
     check_access(db, current_user, organization_id)
     return get_product_sales_report(
@@ -95,7 +95,7 @@ def product_report(
 def staff_report(
     organization_id: uuid.UUID,
     db: Session = Depends(get_db),
-    current_user=Depends(get_current_user),
+    current_user=Depends(get_current_user_model),
 ):
     check_access(db, current_user, organization_id)
     return get_staff_sales_report(
@@ -108,7 +108,7 @@ def staff_report(
 def expense_report(
     organization_id: uuid.UUID,
     db: Session = Depends(get_db),
-    current_user=Depends(get_current_user),
+    current_user=Depends(get_current_user_model),
 ):
     check_access(db, current_user, organization_id)
     return get_expense_report(
@@ -121,7 +121,7 @@ def expense_report(
 def inventory_report(
     organization_id: uuid.UUID,
     db: Session = Depends(get_db),
-    current_user=Depends(get_current_user),
+    current_user=Depends(get_current_user_model),
 ):
     check_access(db, current_user, organization_id)
     return get_inventory_report(
@@ -134,7 +134,7 @@ def inventory_report(
 def customer_report(
     organization_id: uuid.UUID,
     db: Session = Depends(get_db),
-    current_user=Depends(get_current_user),
+    current_user=Depends(get_current_user_model),
 ):
     check_access(db, current_user, organization_id)
     return get_customer_report(

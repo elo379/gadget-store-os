@@ -12,7 +12,11 @@ type Product = {
   brand?: string | null;
   model?: string | null;
   is_serialized: boolean;
+  selling_price?: number | string;
+  barcode?: string;
 };
+type Customer = { id: string; name: string; phone: string };
+type Device = { id: string; product_id: string | null; status: string; imei: string | null; serial_number: string | null };
 
 type CartLine = {
   product: Product;
@@ -23,11 +27,13 @@ type CartLine = {
 
 type SaleResponse = {
   id: string;
+  reference_number?: string;
   total: number | string;
   subtotal: number | string;
   discount: number | string;
   status: string;
 };
+type Receipt = { reference_number: string; total: number | string; amount_paid: number | string; amount_due: number | string; payment_status: string };
 
 export default function POSPage() {
   const { organizationId } = useOrganization();
@@ -36,13 +42,19 @@ export default function POSPage() {
   const [search, setSearch] = useState("");
   const [cart, setCart] = useState<CartLine[]>([]);
   const [discount, setDiscount] = useState("");
+  const [tax, setTax] = useState("");
+  const [fees, setFees] = useState("");
   const [paymentMethod, setPaymentMethod] = useState("cash");
   const [paymentAmount, setPaymentAmount] = useState("");
+  const [customers, setCustomers] = useState<Customer[]>([]);
+  const [customerId, setCustomerId] = useState("");
+  const [deviceScan, setDeviceScan] = useState("");
 
   const [loading, setLoading] = useState(true);
   const [checkoutLoading, setCheckoutLoading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState<SaleResponse | null>(null);
+  const [receipt, setReceipt] = useState<Receipt | null>(null);
 
   useEffect(() => {
     async function loadProducts() {
@@ -55,6 +67,7 @@ export default function POSPage() {
           `/products?organization_id=${organizationId}`
         );
         setProducts(result);
+        setCustomers(await apiGet<Customer[]>(`/customers?organization_id=${organizationId}`));
       } catch (err) {
         setError(
           err instanceof ApiError
@@ -81,6 +94,7 @@ export default function POSPage() {
           product.sku.toLowerCase().includes(value) ||
           product.brand?.toLowerCase().includes(value) ||
           product.model?.toLowerCase().includes(value)
+          || product.barcode?.toLowerCase().includes(value)
       )
       .slice(0, 8);
   }, [products, search]);
@@ -91,7 +105,9 @@ export default function POSPage() {
   );
 
   const discountValue = Math.max(0, Number(discount) || 0);
-  const total = Math.max(0, subtotal - discountValue);
+  const taxValue = Math.max(0, Number(tax) || 0);
+  const feeValue = Math.max(0, Number(fees) || 0);
+  const total = Math.max(0, subtotal - discountValue + taxValue + feeValue);
 
   function addProduct(product: Product) {
     setSuccess(null);
@@ -114,7 +130,7 @@ export default function POSPage() {
       {
         product,
         quantity: 1,
-        unitPrice: 0,
+        unitPrice: Number(product.selling_price ?? 0),
       },
     ]);
 
@@ -142,6 +158,27 @@ export default function POSPage() {
     );
   }
 
+  async function attachScannedDevice() {
+    if (!organizationId || !deviceScan.trim()) return;
+    try {
+      const value = encodeURIComponent(deviceScan.trim());
+      let device: Device;
+      try {
+        device = await apiGet<Device>(`/devices/lookup/imei/${value}?organization_id=${organizationId}`);
+      } catch {
+        device = await apiGet<Device>(`/devices/lookup/serial/${value}?organization_id=${organizationId}`);
+      }
+      const line = cart.find((item) => item.product.id === device.product_id);
+      if (!line) throw new Error("Add the scanned device product to the cart first.");
+      if (!line.product.is_serialized) throw new Error("The scanned device is not a serialized cart product.");
+      setCart(cart.map((item) => item.product.id === line.product.id ? { ...item, quantity: 1, deviceId: device.id } : item));
+      setDeviceScan("");
+      setError("");
+    } catch (cause) {
+      setError(cause instanceof Error ? cause.message : "Unable to find this device.");
+    }
+  }
+
   async function checkout(event: FormEvent) {
     event.preventDefault();
 
@@ -152,12 +189,7 @@ export default function POSPage() {
       return;
     }
 
-    if (Number(paymentAmount) <= 0) {
-      setError("Enter the payment amount.");
-      return;
-    }
-
-    if (Number(paymentAmount) > total) {
+    if (Number(paymentAmount || 0) > total) {
       setError("Payment cannot exceed the sale total.");
       return;
     }
@@ -166,9 +198,17 @@ export default function POSPage() {
     setError("");
 
     try {
+      const saleReference = `SALE-${Date.now()}-${crypto.randomUUID().slice(0, 8)}`;
+
       const sale = await apiPost<SaleResponse>("/sales", {
         organization_id: organizationId,
+        reference_number: saleReference,
+        customer_id: customerId || null,
         discount: discountValue,
+        tax: taxValue,
+        fees: feeValue,
+        payment_method: Number(paymentAmount) > 0 ? paymentMethod : null,
+        amount_paid: Number(paymentAmount || 0),
         lines: cart.map((line) => ({
           product_id: line.product.id,
           quantity: line.quantity,
@@ -178,17 +218,12 @@ export default function POSPage() {
         notes: "",
       });
 
-      await apiPost("/sales/payments", {
-        sale_id: sale.id,
-        payment_method: paymentMethod,
-        amount: Number(paymentAmount),
-        reference: "",
-        notes: "",
-      });
-
       setSuccess(sale);
+      void apiGet<Receipt>(`/sales/${sale.id}/receipt?organization_id=${organizationId}`).then(setReceipt).catch(() => setReceipt(null));
       setCart([]);
       setDiscount("");
+      setTax("");
+      setFees("");
       setPaymentAmount("");
     } catch (err) {
       setError(
@@ -223,8 +258,11 @@ export default function POSPage() {
 
       {success && (
         <div className="mb-5 rounded-xl border border-green-200 bg-green-50 p-4 text-sm text-green-800">
-          Sale created successfully. Sale ID:{" "}
-          <span className="font-semibold">{success.id}</span>
+          <div className="flex flex-wrap items-start justify-between gap-4">
+            <div><p className="font-semibold">Sale completed · {receipt?.reference_number ?? success.reference_number ?? success.id}</p>
+            <p className="mt-1">Receipt {receipt ? `total ₦${Number(receipt.total).toLocaleString()} · paid ₦${Number(receipt.amount_paid).toLocaleString()} · due ₦${Number(receipt.amount_due).toLocaleString()} · ${receipt.payment_status}` : "is loading"}</p></div>
+            {receipt && <button type="button" onClick={() => window.print()} className="rounded-lg border border-green-300 px-3 py-2 font-semibold">Print receipt</button>}
+          </div>
         </div>
       )}
 
@@ -261,6 +299,9 @@ export default function POSPage() {
               </div>
             )}
           </div>
+          <label className="mt-4 block text-xs text-[var(--muted)]">IMEI / serial scan for serialized items
+            <div className="mt-1 flex gap-2"><input value={deviceScan} onChange={(event) => setDeviceScan(event.target.value)} placeholder="Scan IMEI or serial number" className="h-11 min-w-0 flex-1 rounded-xl border border-[var(--border)] px-4 text-sm text-neutral-900" /><button type="button" onClick={() => void attachScannedDevice()} className="rounded-xl border px-3 text-sm font-semibold">Attach</button></div>
+          </label>
 
           <div className="mt-6">
             {loading ? (
@@ -289,6 +330,7 @@ export default function POSPage() {
                         <p className="mt-1 text-xs text-[var(--muted)]">
                           {line.product.sku}
                         </p>
+                        {line.product.is_serialized && <p className="mt-1 text-xs text-[var(--muted)]">{line.deviceId ? "IMEI / serial attached" : "Scan a device to complete this line"}</p>}
                       </div>
 
                       <button
@@ -363,6 +405,14 @@ export default function POSPage() {
                 placeholder="₦0"
               />
             </label>
+            <label className="block">
+              <span className="text-xs text-[var(--muted)]">Configured tax</span>
+              <input type="number" min="0" value={tax} onChange={(event) => setTax(event.target.value)} className="mt-1 h-10 w-full rounded-lg border border-[var(--border)] px-3 text-sm" placeholder="₦0" />
+            </label>
+            <label className="block">
+              <span className="text-xs text-[var(--muted)]">Fees</span>
+              <input type="number" min="0" value={fees} onChange={(event) => setFees(event.target.value)} className="mt-1 h-10 w-full rounded-lg border border-[var(--border)] px-3 text-sm" placeholder="₦0" />
+            </label>
           </div>
 
           <div className="flex justify-between py-5 text-lg font-semibold">
@@ -371,6 +421,10 @@ export default function POSPage() {
           </div>
 
           <form onSubmit={checkout} className="space-y-3">
+            <select value={customerId} onChange={(event) => setCustomerId(event.target.value)} className="h-11 w-full rounded-xl border border-[var(--border)] bg-white px-3 text-sm">
+              <option value="">Walk-in customer</option>
+              {customers.map((customer) => <option key={customer.id} value={customer.id}>{customer.name}{customer.phone ? ` · ${customer.phone}` : ""}</option>)}
+            </select>
             <select
               value={paymentMethod}
               onChange={(event) => setPaymentMethod(event.target.value)}
@@ -387,7 +441,7 @@ export default function POSPage() {
               min="0"
               value={paymentAmount}
               onChange={(event) => setPaymentAmount(event.target.value)}
-              placeholder="Amount received"
+              placeholder="Amount received (0 for pay later)"
               className="h-11 w-full rounded-xl border border-[var(--border)] px-3 text-sm"
             />
 

@@ -1,4 +1,5 @@
 import uuid
+from decimal import Decimal
 
 from pydantic import BaseModel, ConfigDict, Field
 
@@ -32,3 +33,47 @@ class CustomerResponse(BaseModel):
     address: str
     notes: str
     is_active: bool
+
+
+class CustomerReturnLineCreate(BaseModel):
+    sale_line_id: uuid.UUID
+    quantity: Decimal = Field(gt=0)
+    location_id: uuid.UUID | None = None
+    condition: str = "unknown"
+    disposition: str = "RESTOCK"
+
+
+class CustomerReturnCreate(BaseModel):
+    organization_id: uuid.UUID
+    sale_id: uuid.UUID
+    reference_number: str = Field(min_length=1, max_length=100)
+    reason: str = ""
+    lines: list[CustomerReturnLineCreate] = Field(min_length=1)
+
+
+class CustomerReturnResponse(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: uuid.UUID
+    organization_id: uuid.UUID
+    sale_id: uuid.UUID
+    customer_id: uuid.UUID | None
+    seller_user_id: uuid.UUID | None = None
+    reference_number: str
+    reason: str
+    refund_amount: Decimal
+    status: str
+    lines: list["CustomerReturnLineResponse"]
+
+
+class CustomerReturnLineResponse(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: uuid.UUID
+    sale_line_id: uuid.UUID
+    quantity: Decimal
+    amount: Decimal
+    reason: str
+    condition: str = "unknown"
+    disposition: str = "RESTOCK"
+    original_cost: Decimal = Decimal("0")

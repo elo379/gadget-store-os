@@ -45,6 +45,8 @@ class InventoryMovementResponse(BaseModel):
     id: UUID
     organization_id: UUID
     inventory_item_id: UUID
+    product_id: UUID
+    location_id: UUID | None
     movement_type: str
     quantity: Decimal
     quantity_before: Decimal
@@ -53,3 +55,10 @@ class InventoryMovementResponse(BaseModel):
     reference_id: UUID | None
     reason: str
     performed_by_user_id: UUID | None
+
+
+class InventoryTransferCreate(BaseModel):
+    inventory_item_id: UUID
+    destination_location_id: UUID
+    quantity: Decimal = Field(gt=0)
+    reason: str = Field(default="", max_length=2000)

@@ -1,57 +1,39 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
-import { clearSession, getAccessToken } from "@/lib/session";
-import { getCurrentUser } from "@/lib/api";
+import { usePathname, useRouter } from "next/navigation";
+import { useEffect, useState, type ReactNode } from "react";
+import { getAccessToken } from "@/lib/session";
 
-export function AuthGate({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export function AuthGate({ children }: { children: ReactNode }) {
+  const pathname = usePathname();
   const router = useRouter();
-  const [checking, setChecking] = useState(true);
+  const [ready, setReady] = useState(false);
 
   useEffect(() => {
-    let active = true;
+    const check = () => {
+      const token = getAccessToken();
 
-    async function checkSession() {
-      if (!getAccessToken()) {
+      if (pathname !== "/login" && !token) {
         router.replace("/login");
         return;
       }
 
-      try {
-        await getCurrentUser();
-
-        if (active) {
-          setChecking(false);
-        }
-      } catch {
-        clearSession();
-        router.replace("/login");
-      }
-    }
-
-    checkSession();
-
-    return () => {
-      active = false;
+      setReady(true);
     };
-  }, [router]);
 
-  if (checking) {
-    return (
-      <div className="flex min-h-screen items-center justify-center bg-[var(--background)]">
-        <div className="text-center">
-          <div className="mx-auto h-8 w-8 animate-pulse rounded-full bg-neutral-900" />
-          <p className="mt-4 text-sm text-[var(--muted)]">
-            Securing your workspace...
-          </p>
-        </div>
-      </div>
-    );
+    check();
+
+    const timer = window.setInterval(check, 300);
+
+    return () => window.clearInterval(timer);
+  }, [pathname, router]);
+
+  if (pathname === "/login") {
+    return <>{children}</>;
+  }
+
+  if (!ready) {
+    return null;
   }
 
   return <>{children}</>;

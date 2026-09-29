@@ -3,18 +3,10 @@
 import Link from "next/link";
 import { ThemeToggle, Toggle } from "@/components/premium-ui";
 
-import { useState } from "react";
 import { useOrganization } from "@/components/organization-provider";
 
 export default function SettingsPage() {
   const { organizationId, setOrganizationId } = useOrganization();
-  const [organizationInput, setOrganizationInput] = useState(organizationId ?? "");
-  const [saved, setSaved] = useState(false);
-
-  function save() {
-    setSaved(true);
-    window.setTimeout(() => setSaved(false), 2500);
-  }
 
   return (
     <div className="space-y-6">
@@ -62,18 +54,9 @@ export default function SettingsPage() {
           </label>
         </div>
 
-        <button
-          onClick={save}
-          className="mt-6 rounded-xl bg-black px-5 py-3 text-white"
-        >
-          Save settings
-        </button>
-
-        {saved && (
-          <p className="mt-3 text-sm text-[var(--muted)]">
-            Settings saved.
-          </p>
-        )}
+        <p className="mt-4 text-sm text-[var(--muted)]">
+          Organization identity and currency are controlled by your organization administrator.
+        </p>
       </section>
 
       <section className="grid gap-4 md:grid-cols-3">

@@ -9,6 +9,7 @@ from app.auth.schemas import AuthenticatedUser
 from app.auth.tokens import decode_access_token
 from app.db.dependencies import get_db
 from app.models.user import User
+from app.models.membership import Membership
 
 bearer_scheme = HTTPBearer()
 
@@ -55,6 +56,19 @@ def get_current_user(
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="User account is inactive or does not exist",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+
+    memberships = db.scalars(
+        select(Membership).where(Membership.user_id == user.id)
+    ).all()
+    if memberships and not any(
+        membership.is_active and membership.account_status == "active"
+        for membership in memberships
+    ):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Personnel account is suspended or revoked",
             headers={"WWW-Authenticate": "Bearer"},
         )
 

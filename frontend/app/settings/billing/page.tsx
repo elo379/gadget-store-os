@@ -1,16 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import Link from "next/link";
 
 export default function BillingPage() {
-  const [message, setMessage] = useState("");
-
-  function manage() {
-    setMessage(
-      "Billing management is prepared for the organization billing provider integration.",
-    );
-  }
-
   return (
     <div className="space-y-6">
       <header>
@@ -31,19 +23,10 @@ export default function BillingPage() {
             </p>
           </div>
 
-          <button
-            onClick={manage}
-            className="rounded-xl bg-black px-5 py-3 text-white"
-          >
-            Manage billing
-          </button>
         </div>
-
-        {message && (
-          <p className="mt-5 rounded-xl bg-[var(--background)] p-4 text-sm text-[var(--muted)]">
-            {message}
-          </p>
-        )}
+        <p className="mt-5 rounded-xl bg-[var(--background)] p-4 text-sm text-[var(--muted)]">
+          Subscription billing is not configured for this organization. Store financial activity is available in <Link className="font-semibold underline" href="/finance">Finance</Link>.
+        </p>
       </section>
 
       <div className="grid gap-4 md:grid-cols-3">

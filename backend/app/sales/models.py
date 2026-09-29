@@ -1,7 +1,7 @@
 import uuid
 from decimal import Decimal
 
-from sqlalchemy import ForeignKey, Numeric, String, Text
+from sqlalchemy import ForeignKey, Index, Numeric, String, Text, UniqueConstraint, text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.db.base import Base
@@ -10,6 +10,7 @@ from app.db.mixins import TimestampMixin, UUIDPrimaryKeyMixin
 
 class Sale(UUIDPrimaryKeyMixin, TimestampMixin, Base):
     __tablename__ = "sales"
+    __table_args__ = (UniqueConstraint("organization_id", "reference_number", name="uq_sales_org_reference"),)
 
     organization_id: Mapped[uuid.UUID] = mapped_column(
         ForeignKey("organizations.id", ondelete="CASCADE"),
@@ -18,7 +19,7 @@ class Sale(UUIDPrimaryKeyMixin, TimestampMixin, Base):
     )
 
     customer_id: Mapped[uuid.UUID | None] = mapped_column(
-        ForeignKey("users.id", ondelete="SET NULL"),
+        ForeignKey("customers.id", ondelete="SET NULL"),
         nullable=True,
         index=True,
     )
@@ -42,6 +43,10 @@ class Sale(UUIDPrimaryKeyMixin, TimestampMixin, Base):
         index=True,
     )
 
+    payment_status: Mapped[str] = mapped_column(
+        String(30), nullable=False, default="unpaid", index=True
+    )
+
     subtotal: Mapped[Decimal] = mapped_column(
         Numeric(14, 2),
         nullable=False,
@@ -53,6 +58,9 @@ class Sale(UUIDPrimaryKeyMixin, TimestampMixin, Base):
         nullable=False,
         default=Decimal("0"),
     )
+
+    tax: Mapped[Decimal] = mapped_column(Numeric(14, 2), nullable=False, default=Decimal("0"))
+    fees: Mapped[Decimal] = mapped_column(Numeric(14, 2), nullable=False, default=Decimal("0"))
 
     total: Mapped[Decimal] = mapped_column(
         Numeric(14, 2),
@@ -79,7 +87,7 @@ class Sale(UUIDPrimaryKeyMixin, TimestampMixin, Base):
     )
 
     organization = relationship("Organization")
-    customer = relationship("User", foreign_keys=[customer_id])
+    customer = relationship("Customer")
     sold_by = relationship("User", foreign_keys=[sold_by_user_id])
 
     lines = relationship(
@@ -149,6 +157,10 @@ class SaleLine(UUIDPrimaryKeyMixin, TimestampMixin, Base):
 
 class SalePayment(UUIDPrimaryKeyMixin, TimestampMixin, Base):
     __tablename__ = "sale_payments"
+    __table_args__ = (Index(
+        "uq_sale_payments_sale_reference", "sale_id", "reference", unique=True,
+        sqlite_where=text("reference != ''"), postgresql_where=text("reference != ''"),
+    ),)
 
     sale_id: Mapped[uuid.UUID] = mapped_column(
         ForeignKey("sales.id", ondelete="CASCADE"),

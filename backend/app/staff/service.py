@@ -3,6 +3,7 @@ import uuid
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
+from app.models import Membership
 from app.models.user import User
 from app.staff.models import StaffProfile
 from app.staff.schemas import StaffProfileCreate
@@ -14,7 +15,7 @@ def create_staff(
 ):
     user = db.scalar(
         select(User).where(
-            User.id == payload.user_id,
+            User.email == payload.email,
             User.is_active.is_(True),
         )
     )
@@ -22,20 +23,43 @@ def create_staff(
     if user is None:
         raise ValueError("User not found")
 
+    membership = db.scalar(
+        select(Membership).where(
+            Membership.organization_id == payload.organization_id,
+            Membership.user_id == user.id,
+            Membership.is_active.is_(True),
+            Membership.account_status == "active",
+        )
+    )
+    if membership is None:
+        raise ValueError("User does not belong to organization")
+
+    staff_code = payload.staff_code.strip()
+    if not staff_code:
+        count = len(db.scalars(
+            select(StaffProfile).where(
+                StaffProfile.organization_id == payload.organization_id,
+            )
+        ).all())
+        staff_code = f"GSOS-STF-{count + 1:03d}"
+
     existing = db.scalar(
         select(StaffProfile).where(
             StaffProfile.organization_id == payload.organization_id,
-            StaffProfile.staff_code == payload.staff_code.strip(),
+            StaffProfile.staff_code == staff_code,
         )
     )
 
     if existing is not None:
         raise ValueError("Staff code already exists")
 
+    if db.scalar(select(StaffProfile).where(StaffProfile.organization_id == payload.organization_id, StaffProfile.user_id == user.id)) is not None:
+        raise ValueError("Staff profile already exists")
+
     profile = StaffProfile(
         organization_id=payload.organization_id,
-        user_id=payload.user_id,
-        staff_code=payload.staff_code.strip(),
+        user_id=user.id,
+        staff_code=staff_code,
         phone=payload.phone.strip(),
         job_title=payload.job_title.strip(),
         notes=payload.notes.strip(),

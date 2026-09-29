@@ -20,6 +20,8 @@ from app.purchasing.service import (
     get_supplier_balance,
     list_purchase_orders,
 )
+from app.auth.schemas import AuthenticatedUser
+from app.permissions.access import require_organization_permission
 
 router = APIRouter(prefix="/purchasing", tags=["purchasing"])
 
@@ -28,9 +30,10 @@ router = APIRouter(prefix="/purchasing", tags=["purchasing"])
 def create_purchase_order_route(
     payload: PurchaseOrderCreate,
     db: Session = Depends(get_db),
-    current_user=Depends(get_current_user),
+    current_user: AuthenticatedUser=Depends(get_current_user),
 ):
     try:
+        require_organization_permission(db, uuid.UUID(current_user.user_id), payload.organization_id, "purchases.manage")
         return create_purchase_order(db, payload)
     except ValueError as exc:
         raise HTTPException(status_code=409, detail=str(exc))
@@ -42,6 +45,7 @@ def list_purchase_order_route(
     db: Session = Depends(get_db),
     current_user=Depends(get_current_user),
 ):
+    require_organization_permission(db, uuid.UUID(current_user.user_id), organization_id, "purchases.view")
     return list_purchase_orders(db, organization_id)
 
 
@@ -52,6 +56,7 @@ def get_purchase_order_route(
     db: Session = Depends(get_db),
     current_user=Depends(get_current_user),
 ):
+    require_organization_permission(db, uuid.UUID(current_user.user_id), organization_id, "purchases.view")
     purchase = get_purchase_order(
         db,
         organization_id,
@@ -74,10 +79,14 @@ def get_purchase_order_route(
 def create_supplier_transaction_route(
     payload: SupplierTransactionCreate,
     db: Session = Depends(get_db),
-    current_user=Depends(get_current_user),
+    current_user: AuthenticatedUser=Depends(get_current_user),
 ):
     try:
-        return create_supplier_transaction(db, payload)
+        require_organization_permission(db, uuid.UUID(current_user.user_id), payload.organization_id, "purchases.manage")
+        transaction = create_supplier_transaction(db, payload, uuid.UUID(current_user.user_id))
+        db.commit()
+        db.refresh(transaction)
+        return transaction
     except ValueError as exc:
         raise HTTPException(
             status_code=404,
@@ -92,6 +101,7 @@ def get_supplier_balance_route(
     db: Session = Depends(get_db),
     current_user=Depends(get_current_user),
 ):
+    require_organization_permission(db, uuid.UUID(current_user.user_id), organization_id, "purchases.view")
     try:
         balance = get_supplier_balance(
             db,
@@ -114,10 +124,11 @@ def get_supplier_balance_route(
 def receive_purchase_route(
     payload: PurchaseReceiveRequest,
     db: Session = Depends(get_db),
-    current_user=Depends(get_current_user),
+    current_user: AuthenticatedUser=Depends(get_current_user),
 ):
     try:
-        return receive_purchase(db, payload)
+        require_organization_permission(db, uuid.UUID(current_user.user_id), payload.organization_id, "purchases.manage")
+        return receive_purchase(db, payload.model_copy(update={"received_by_user_id": uuid.UUID(current_user.user_id)}))
     except ValueError as exc:
         raise HTTPException(
             status_code=409,

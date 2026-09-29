@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { WorkspaceProvider } from "@/components/workspace-provider";
-import { AppShell } from "@/components/app-shell";
+import { ConditionalShell } from "@/components/conditional-shell";
+import { AuthGate } from "@/components/auth-gate";
 import { OfflineBanner } from "@/components/offline-banner";
 import "./globals.css";
 
@@ -31,7 +32,7 @@ export default function RootLayout({
     <html lang="en">
       <body>
         <WorkspaceProvider>
-          <AppShell>{children}</AppShell>
+          <AuthGate><ConditionalShell>{children}</ConditionalShell></AuthGate>
           <OfflineBanner />
         </WorkspaceProvider>
       </body>

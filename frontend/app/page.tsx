@@ -1,17 +1,20 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import { apiGet } from "@/lib/api";
 import { useOrganization } from "@/components/organization-provider";
 import { PageHeader } from "@/components/page-header";
 
-type DashboardData = Record<string, unknown>;
+type DashboardData = { revenue?: number | string; gross_profit?: number | string; operating_result?: number | string; today_revenue?: number | string; today_gross_profit?: number | string; outstanding?: number | string; today_sales_count?: number; product_count?: number; customer_count?: number; inventory_quantity?: number | string; device_count?: number };
+type OperationalData = { sales_count?: number; active_inventory_items?: number; out_of_stock_items?: number; active_devices?: number; active_staff?: number; active_customers?: number };
 
 export default function DashboardPage() {
   const { organizationId } = useOrganization();
   const [data, setData] = useState<DashboardData>({});
   const [loading, setLoading] = useState(true);
   const [message, setMessage] = useState("");
+  const [operations, setOperations] = useState<OperationalData>({});
 
   async function loadDashboard() {
     if (!organizationId) return;
@@ -19,11 +22,12 @@ export default function DashboardPage() {
     setLoading(true);
 
     try {
-      const result = await apiGet<DashboardData>(
-        `/dashboard?organization_id=${organizationId}`,
-      );
-
+      const [result, operational] = await Promise.all([
+        apiGet<DashboardData>(`/dashboard/${organizationId}/summary`),
+        apiGet<OperationalData>(`/dashboard/${organizationId}/operational`),
+      ]);
       setData(result ?? {});
+      setOperations(operational ?? {});
       setMessage("");
     } catch {
       setData({});
@@ -37,31 +41,22 @@ export default function DashboardPage() {
     void loadDashboard();
   }, [organizationId]);
 
-  const entries = Object.entries(data).filter(
-    ([, value]) =>
-      typeof value === "string" ||
-      typeof value === "number" ||
-      typeof value === "boolean",
-  );
+  const money = (value?: number | string) => value == null ? "—" : new Intl.NumberFormat(undefined, { maximumFractionDigits: 2 }).format(Number(value));
+  const metrics = [
+    { label: "Today revenue", value: money(data.today_revenue), note: "Completed sales today", href: "/sales" },
+    { label: "Sales today", value: data.today_sales_count?.toLocaleString() ?? "—", note: "Completed transactions", href: "/sales" },
+    { label: "Gross profit today", value: money(data.today_gross_profit), note: "Revenue less recorded COGS", href: "/finance" },
+    { label: "Outstanding", value: money(data.outstanding), note: "Unpaid customer balances", href: "/sales" },
+  ];
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-7">
       <PageHeader
-        eyebrow="Overview"
+        eyebrow="Command center"
         title="Dashboard"
-        description="Live operational overview for your store."
+        description="A live view of store performance and the work that needs attention. Figures reflect the data currently available to your workspace."
+        action={{ label: "New sale", onClick: () => { window.location.href = "/sales/pos" } }}
       />
-
-      <div className="flex justify-end">
-        <button
-          type="button"
-          onClick={() => void loadDashboard()}
-          disabled={loading}
-          className="rounded-xl border border-[var(--border)] bg-[var(--surface)] px-4 py-2 text-sm font-semibold disabled:opacity-50"
-        >
-          {loading ? "Refreshing…" : "Refresh"}
-        </button>
-      </div>
 
       {message && (
         <div className="rounded-xl border border-[var(--border)] bg-[var(--surface)] p-4 text-sm">
@@ -69,31 +64,35 @@ export default function DashboardPage() {
         </div>
       )}
 
-      {loading ? (
-        <div className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-6 text-sm">
-          Loading dashboard…
-        </div>
-      ) : entries.length === 0 ? (
-        <div className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-6 text-sm">
-          No dashboard metrics available yet.
-        </div>
-      ) : (
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          {entries.map(([key, value]) => (
-            <div
-              key={key}
-              className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-5 shadow-sm"
-            >
-              <p className="text-xs font-semibold uppercase tracking-wide text-[var(--muted)]">
-                {key.replaceAll("_", " ")}
-              </p>
-              <p className="mt-3 text-2xl font-bold">
-                {String(value)}
-              </p>
-            </div>
-          ))}
-        </div>
-      )}
+      <section aria-label="Business summary" className="grid gap-px overflow-hidden rounded-2xl border border-[var(--border)] bg-[var(--border)] sm:grid-cols-2 xl:grid-cols-4">
+        {metrics.map((item, index) => <Link href={item.href} key={item.label} className="bg-white p-5 transition hover:bg-neutral-50 sm:p-6">
+          <p className="text-xs font-semibold uppercase tracking-[.12em] text-[var(--muted)]">{item.label}</p>
+          <p className={`mt-3 text-2xl font-semibold tracking-tight ${index === 0 ? "text-[var(--accent)]" : ""}`}>{loading ? "···" : item.value}</p>
+          <p className="mt-1 text-xs text-[var(--muted)]">{item.note}</p>
+        </Link>)}
+      </section>
+
+      <div className="grid gap-5 xl:grid-cols-[1.4fr_.9fr]">
+        <section className="rounded-2xl border border-[var(--border)] bg-white p-5 sm:p-6">
+          <div className="flex items-start justify-between gap-4"><div><p className="text-xs font-semibold uppercase tracking-[.12em] text-[var(--muted)]">Sales activity</p><h2 className="mt-1 text-lg font-semibold">Store performance</h2></div><button onClick={() => void loadDashboard()} disabled={loading} className="min-h-10 rounded-xl border border-[var(--border)] px-3 text-sm font-semibold hover:bg-neutral-50 disabled:opacity-50">{loading ? "Refreshing…" : "Refresh"}</button></div>
+          <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-3"><Metric label="Inventory units" value={data.inventory_quantity == null ? "—" : Number(data.inventory_quantity).toLocaleString()} /><Metric label="Active products" value={data.product_count?.toLocaleString() ?? "—"} /><Metric label="Active devices" value={operations.active_devices?.toLocaleString() ?? "—"} /></div>
+          <p className="mt-5 rounded-xl bg-neutral-50 p-3 text-xs leading-5 text-[var(--muted)]">All figures are calculated from completed sales and current inventory records for this organization.</p>
+        </section>
+        <section className="rounded-2xl border border-[var(--border)] bg-white p-5 sm:p-6">
+          <p className="text-xs font-semibold uppercase tracking-[.12em] text-[var(--muted)]">Inventory health</p><h2 className="mt-1 text-lg font-semibold">Stock at a glance</h2>
+          <HealthRow label="In-stock items" value={operations.active_inventory_items} href="/inventory" />
+          <HealthRow label="Out of stock" value={operations.out_of_stock_items} href="/inventory" danger />
+          <HealthRow label="Serialized devices" value={operations.active_devices} href="/devices" />
+        </section>
+      </div>
+
+      <section className="rounded-2xl border border-[var(--border)] bg-white p-5 sm:p-6">
+        <div className="flex flex-wrap items-end justify-between gap-3"><div><p className="text-xs font-semibold uppercase tracking-[.12em] text-[var(--muted)]">Your workspace</p><h2 className="mt-1 text-lg font-semibold">Get work moving</h2><p className="mt-1 text-sm text-[var(--muted)]">Shortcuts to the workflows your team uses every day.</p></div></div>
+        <div className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">{[["New sale","/sales/pos","Start a checkout"],["Add product","/products","Build your catalogue"],["Receive stock","/purchasing","Record incoming goods"],["Transfer stock","/inventory","Manage stock movement"],["Add customer","/customers","Create a customer profile"],["Purchase orders","/purchasing","Review supplier orders"]].map(([label, href, note]) => <Link key={label} href={href} className="group flex min-h-20 items-center justify-between rounded-xl border border-[var(--border)] p-4 hover:border-neutral-400 hover:bg-neutral-50"><span><span className="block text-sm font-semibold">{label}</span><span className="mt-1 block text-xs text-[var(--muted)]">{note}</span></span><span aria-hidden="true" className="text-lg text-neutral-400 group-hover:text-[var(--accent)]">↗</span></Link>)}</div>
+      </section>
     </div>
   );
 }
+
+function Metric({ label, value }: { label: string; value: string }) { return <div className="rounded-xl bg-neutral-50 p-4"><p className="text-xs text-[var(--muted)]">{label}</p><p className="mt-2 text-xl font-semibold">{value}</p></div>; }
+function HealthRow({ label, value, href, danger = false }: { label: string; value?: number; href: string; danger?: boolean }) { return <Link href={href} className="mt-3 flex min-h-14 items-center justify-between border-b border-[var(--border)] py-2 last:border-0"><span className="text-sm font-medium">{label}</span><span className={`rounded-full px-3 py-1 text-sm font-semibold ${danger && value ? "bg-red-50 text-red-700" : "bg-emerald-50 text-emerald-800"}`}>{value?.toLocaleString() ?? "—"}<span className="ml-2 text-xs">↗</span></span></Link>; }

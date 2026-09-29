@@ -1,11 +1,13 @@
 from uuid import UUID
 
 from fastapi import APIRouter, Depends, HTTPException, status
+from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from app.db.dependencies import get_db
 from app.auth.dependencies import get_current_user
 from app.auth.schemas import AuthenticatedUser
+from app.permissions.access import require_organization_permission
 from app.organizations.schemas import (
     MembershipResponse,
     OrganizationCreate,
@@ -18,11 +20,38 @@ from app.organizations.service import (
     get_membership,
     get_organization,
 )
+from app.models import Membership
+from app.auth.dependencies import get_current_user
+from app.auth.schemas import AuthenticatedUser
 
 router = APIRouter(
     prefix="/organizations",
     tags=["organizations"],
 )
+
+
+@router.get("")
+def list_my_organizations(
+    db: Session = Depends(get_db),
+    user: AuthenticatedUser = Depends(get_current_user),
+):
+    memberships = db.scalars(
+        select(Membership).where(
+            Membership.user_id == UUID(user.user_id),
+            Membership.is_active.is_(True),
+            Membership.account_status == "active",
+        )
+    ).all()
+    return [
+        {
+            "organization_id": str(item.organization.id),
+            "name": item.organization.name,
+            "slug": item.organization.slug,
+            "role_name": item.role_name,
+            "is_owner": item.is_owner,
+        }
+        for item in memberships
+    ]
 
 
 @router.post(
@@ -62,7 +91,9 @@ def create_new_organization(
 def read_organization(
     organization_id: UUID,
     db: Session = Depends(get_db),
+    user: AuthenticatedUser = Depends(get_current_user),
 ):
+    require_organization_permission(db, UUID(user.user_id), organization_id, "organization.view")
     organization = get_organization(db, organization_id)
 
     if organization is None:
@@ -82,12 +113,30 @@ def read_membership(
     organization_id: UUID,
     user_id: UUID,
     db: Session = Depends(get_db),
+    user: AuthenticatedUser = Depends(get_current_user),
 ):
+    caller = UUID(user.user_id)
+    require_organization_permission(db, caller, organization_id, "members.view")
     membership = get_membership(
         db,
         organization_id,
         user_id,
     )
+
+    caller_membership = db.scalar(select(Membership).where(
+        Membership.organization_id == organization_id,
+        Membership.user_id == caller,
+        Membership.is_active.is_(True),
+        Membership.account_status == "active",
+    ))
+    if membership is not None and caller_membership is not None and not caller_membership.is_owner:
+        ancestor = membership
+        visible = membership.user_id == caller
+        while ancestor is not None and not visible:
+            visible = ancestor.parent_membership_id == caller_membership.id
+            ancestor = ancestor.parent_membership
+        if not visible:
+            membership = None
 
     if membership is None:
         raise HTTPException(

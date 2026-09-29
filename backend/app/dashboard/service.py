@@ -1,5 +1,6 @@
 import uuid
 from decimal import Decimal
+from datetime import datetime, timezone
 
 from sqlalchemy import func, select
 from sqlalchemy.orm import Session
@@ -9,7 +10,7 @@ from app.devices.models import DeviceRecord
 from app.expenses.models import Expense
 from app.inventory.models import InventoryItem
 from app.products.models import Product
-from app.sales.models import Sale
+from app.sales.models import Sale, SalePayment
 from app.staff.models import StaffProfile
 
 
@@ -17,6 +18,7 @@ def get_dashboard_summary(
     db: Session,
     organization_id: uuid.UUID,
 ):
+    today = datetime.now(timezone.utc).date().isoformat()
     revenue = db.scalar(
         select(func.coalesce(func.sum(Sale.total), 0)).where(
             Sale.organization_id == organization_id,
@@ -80,7 +82,27 @@ def get_dashboard_summary(
     expenses = Decimal(str(expenses or 0))
 
     gross_profit = revenue - cogs
-    net_operating_profit = gross_profit - expenses
+    operating_result = gross_profit - expenses
+
+    today_sales = db.scalars(
+        select(Sale).where(
+            Sale.organization_id == organization_id,
+            Sale.status == "completed",
+            func.date(Sale.created_at) == today,
+        )
+    ).all()
+    today_revenue = sum((Decimal(str(sale.total or 0)) for sale in today_sales), Decimal("0"))
+    today_gross_profit = sum((Decimal(str(sale.gross_profit or 0)) for sale in today_sales), Decimal("0"))
+    payments_by_sale = (
+        select(SalePayment.sale_id, func.sum(SalePayment.amount).label("paid"))
+        .group_by(SalePayment.sale_id)
+        .subquery()
+    )
+    outstanding = db.scalar(
+        select(func.coalesce(func.sum(Sale.total - func.coalesce(payments_by_sale.c.paid, 0)), 0))
+        .outerjoin(payments_by_sale, payments_by_sale.c.sale_id == Sale.id)
+        .where(Sale.organization_id == organization_id, Sale.status == "completed")
+    )
 
     return {
         "organization_id": organization_id,
@@ -88,7 +110,11 @@ def get_dashboard_summary(
         "cogs": cogs,
         "gross_profit": gross_profit,
         "expenses": expenses,
-        "net_operating_profit": net_operating_profit,
+        "operating_result": operating_result,
+        "today_revenue": today_revenue,
+        "today_sales_count": len(today_sales),
+        "today_gross_profit": today_gross_profit,
+        "outstanding": Decimal(str(outstanding or 0)),
         "product_count": product_count or 0,
         "customer_count": customer_count or 0,
         "staff_count": staff_count or 0,
@@ -170,22 +196,29 @@ def get_operational_metrics(
 def get_low_stock_inventory(
     db: Session,
     organization_id: uuid.UUID,
-    threshold: Decimal = Decimal("5"),
+    threshold: Decimal | None = None,
 ):
-    rows = db.scalars(
-        select(InventoryItem).where(
+    rows = db.execute(
+        select(InventoryItem, Product).join(Product, Product.id == InventoryItem.product_id).where(
             InventoryItem.organization_id == organization_id,
             InventoryItem.status == "active",
-            InventoryItem.quantity <= threshold,
         ).order_by(InventoryItem.quantity.asc())
     ).all()
 
-    return [
-        {
+    result = []
+    for item, product in rows:
+        reorder_at = Decimal(str(threshold)) if threshold is not None else max(
+            Decimal(str(item.reorder_threshold or 0)), Decimal(str(product.reorder_threshold or 0))
+        )
+        quantity = Decimal(str(item.quantity))
+        if quantity > reorder_at or (reorder_at <= 0 and quantity > 0):
+            continue
+        result.append({
             "inventory_item_id": item.id,
             "product_id": item.product_id,
             "location_id": item.location_id,
-            "quantity": Decimal(str(item.quantity)),
-        }
-        for item in rows
-    ]
+            "quantity": quantity,
+            "reorder_threshold": reorder_at,
+            "stock_status": "out_of_stock" if quantity <= 0 else "low_stock",
+        })
+    return result

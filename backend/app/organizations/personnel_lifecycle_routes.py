@@ -5,13 +5,14 @@ from sqlalchemy.orm import Session
 
 from app.auth.dependencies import get_current_user
 from app.db.dependencies import get_db
-from app.models import User
+from app.auth.schemas import AuthenticatedUser
 from app.organizations.authority import get_membership_for_user
 from app.organizations.personnel_lifecycle import (
     get_personnel,
     reactivate_personnel,
     revoke_personnel,
     suspend_personnel,
+    deactivate_personnel,
 )
 
 router = APIRouter(
@@ -23,12 +24,12 @@ router = APIRouter(
 def get_actor(
     db: Session,
     organization_id: uuid.UUID,
-    user: User,
+    user: AuthenticatedUser,
 ):
     actor = get_membership_for_user(
         db,
         organization_id,
-        user.id,
+        uuid.UUID(user.user_id),
     )
 
     if actor is None:
@@ -67,7 +68,7 @@ def suspend_member(
     organization_id: uuid.UUID,
     membership_id: uuid.UUID,
     db: Session = Depends(get_db),
-    user: User = Depends(get_current_user),
+    user: AuthenticatedUser = Depends(get_current_user),
 ):
     actor = get_actor(db, organization_id, user)
     target = get_target(db, organization_id, membership_id)
@@ -91,7 +92,7 @@ def reactivate_member(
     organization_id: uuid.UUID,
     membership_id: uuid.UUID,
     db: Session = Depends(get_db),
-    user: User = Depends(get_current_user),
+    user: AuthenticatedUser = Depends(get_current_user),
 ):
     actor = get_actor(db, organization_id, user)
     target = get_target(db, organization_id, membership_id)
@@ -115,7 +116,7 @@ def revoke_member(
     organization_id: uuid.UUID,
     membership_id: uuid.UUID,
     db: Session = Depends(get_db),
-    user: User = Depends(get_current_user),
+    user: AuthenticatedUser = Depends(get_current_user),
 ):
     actor = get_actor(db, organization_id, user)
     target = get_target(db, organization_id, membership_id)
@@ -130,3 +131,16 @@ def revoke_member(
             status_code=403,
             detail=str(exc),
         ) from exc
+
+
+@router.patch("/{organization_id}/store-tree/personnel/{membership_id}/deactivate")
+def deactivate_member(organization_id: uuid.UUID, membership_id: uuid.UUID, db: Session = Depends(get_db), user: AuthenticatedUser = Depends(get_current_user)):
+    actor = get_actor(db, organization_id, user)
+    target = get_target(db, organization_id, membership_id)
+    try:
+        deactivate_personnel(db, actor, target)
+        db.commit()
+        return {"status": "deactivated"}
+    except ValueError as exc:
+        db.rollback()
+        raise HTTPException(status_code=403, detail=str(exc)) from exc

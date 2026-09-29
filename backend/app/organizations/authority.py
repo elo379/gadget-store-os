@@ -68,5 +68,6 @@ def get_membership_for_user(
             Membership.organization_id == organization_id,
             Membership.user_id == user_id,
             Membership.is_active.is_(True),
+            Membership.account_status == "active",
         )
     )

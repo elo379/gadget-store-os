@@ -1,6 +1,7 @@
 import uuid
+from datetime import time
 
-from sqlalchemy import Boolean, ForeignKey, String, Text
+from sqlalchemy import Boolean, ForeignKey, String, Text, Time, Integer
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.db.base import Base
@@ -35,6 +36,9 @@ class StaffProfile(UUIDPrimaryKeyMixin, TimestampMixin, Base):
     is_active: Mapped[bool] = mapped_column(
         Boolean, nullable=False, default=True
     )
+    shift_start: Mapped[time] = mapped_column(Time, nullable=False, default=time(9, 0))
+    shift_end: Mapped[time] = mapped_column(Time, nullable=False, default=time(17, 0))
+    grace_minutes: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
 
     organization = relationship("Organization")
     user = relationship("User")

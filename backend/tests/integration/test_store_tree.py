@@ -1,10 +1,13 @@
 import uuid
+from datetime import datetime, timedelta, timezone
 
 import pytest
 from sqlalchemy import create_engine
+from sqlalchemy import select
 from sqlalchemy.orm import sessionmaker
 
 from app.db.base import Base
+from app.audit.models import AuditLog
 from app.models import Membership, Organization, User
 from app.organizations.authority import can_create_personnel
 from app.organizations.invitation_model import PersonnelInvitation
@@ -197,6 +200,43 @@ def test_invitation_token_is_hashed_and_acceptance_creates_staff(db):
     assert staff.created_by_membership_id == owner.id
     assert invitation.status == "accepted"
     assert invitation.accepted_at is not None
+    audit = db.scalars(
+        select(AuditLog).where(AuditLog.entity_id.in_([invitation.id, staff.id]))
+    ).all()
+    assert {event.action for event in audit} == {
+        "personnel.invitation_created",
+        "personnel.activated",
+    }
+    assert all(token not in event.metadata_json for event in audit)
+    with pytest.raises(ValueError, match="no longer active"):
+        accept_invitation(db, token, "Password123!", invitation.id)
+
+
+def test_activation_credential_requires_matching_activation_id(db):
+    organization, owner = create_owner(db)
+    invitation, token = create_invitation(
+        db, organization.id, owner, f"staff-{uuid.uuid4().hex[:8]}@example.com", "staff"
+    )
+    db.commit()
+
+    with pytest.raises(ValueError, match="invalid"):
+        accept_invitation(db, token, "Password123!", uuid.uuid4())
+
+    member = accept_invitation(db, token, "Password123!", invitation.id)
+    db.commit()
+    assert member.account_status == "active"
+
+
+def test_expired_activation_credential_is_rejected(db):
+    organization, owner = create_owner(db)
+    invitation, token = create_invitation(
+        db, organization.id, owner, f"staff-{uuid.uuid4().hex[:8]}@example.com", "staff"
+    )
+    invitation.expires_at = datetime.now(timezone.utc) - timedelta(seconds=1)
+    db.commit()
+
+    with pytest.raises(ValueError, match="expired"):
+        accept_invitation(db, token, "Password123!", invitation.id)
 
 
 def test_suspension_reactivation_and_revoke(db):
@@ -242,6 +282,14 @@ def test_suspension_reactivation_and_revoke(db):
 
     assert manager.account_status == "revoked"
     assert manager.is_active is False
+    lifecycle_events = db.scalars(
+        select(AuditLog).where(AuditLog.entity_id == manager.id)
+    ).all()
+    assert {event.action for event in lifecycle_events} >= {
+        "personnel.suspended",
+        "personnel.reactivated",
+        "personnel.revoked",
+    }
 
 
 def test_manager_cannot_manage_personnel_outside_its_tree(db):

@@ -5,7 +5,7 @@ from sqlalchemy.orm import Session
 
 from app.auth.dependencies import get_current_user
 from app.db.dependencies import get_db
-from app.models import User
+from app.auth.schemas import AuthenticatedUser
 from app.organizations.authority import get_membership_for_user
 from app.organizations.store_tree_schemas import (
     PersonnelCreate,
@@ -20,6 +20,7 @@ from app.organizations.store_tree_service import (
     get_store_tree_policy,
     update_store_tree_policy,
 )
+from app.permissions.access import user_has_permission
 
 router = APIRouter(
     prefix="",
@@ -30,12 +31,12 @@ router = APIRouter(
 def require_owner(
     db: Session,
     organization_id: uuid.UUID,
-    user: User,
+    user: AuthenticatedUser,
 ):
     membership = get_membership_for_user(
         db,
         organization_id,
-        user.id,
+        uuid.UUID(user.user_id),
     )
 
     if membership is None:
@@ -53,6 +54,20 @@ def require_owner(
     return membership
 
 
+def visible_personnel(db: Session, organization_id: uuid.UUID, membership, members):
+    if membership.is_owner:
+        return members
+    visible = {membership.id}
+    changed = True
+    while changed:
+        changed = False
+        for member in members:
+            if member.parent_membership_id in visible and member.id not in visible:
+                visible.add(member.id)
+                changed = True
+    return [member for member in members if member.id in visible]
+
+
 @router.get(
     "/{organization_id}/store-tree",
     response_model=StoreTreeResponse,
@@ -60,12 +75,12 @@ def require_owner(
 def read_store_tree(
     organization_id: uuid.UUID,
     db: Session = Depends(get_db),
-    user: User = Depends(get_current_user),
+    user: AuthenticatedUser = Depends(get_current_user),
 ):
     membership = get_membership_for_user(
         db,
         organization_id,
-        user.id,
+        uuid.UUID(user.user_id),
     )
 
     if membership is None:
@@ -74,10 +89,19 @@ def read_store_tree(
             detail="Organization membership required",
         )
 
+    if not membership.is_owner and not user_has_permission(
+        db, uuid.UUID(user.user_id), organization_id, "members.view"
+    ):
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Personnel view permission required",
+        )
+
     members = get_store_tree(
         db,
         organization_id,
     )
+    members = visible_personnel(db, organization_id, membership, members)
 
     return StoreTreeResponse(
         organization_id=organization_id,
@@ -95,7 +119,7 @@ def read_store_tree(
 def read_store_tree_policy(
     organization_id: uuid.UUID,
     db: Session = Depends(get_db),
-    user: User = Depends(get_current_user),
+    user: AuthenticatedUser = Depends(get_current_user),
 ):
     require_owner(
         db,
@@ -103,10 +127,12 @@ def read_store_tree_policy(
         user,
     )
 
-    return get_store_tree_policy(
+    policy = get_store_tree_policy(
         db,
         organization_id,
     )
+    db.commit()
+    return policy
 
 
 @router.patch(
@@ -117,7 +143,7 @@ def change_store_tree_policy(
     organization_id: uuid.UUID,
     payload: StoreTreePolicyUpdate,
     db: Session = Depends(get_db),
-    user: User = Depends(get_current_user),
+    user: AuthenticatedUser = Depends(get_current_user),
 ):
     require_owner(
         db,
@@ -125,11 +151,13 @@ def change_store_tree_policy(
         user,
     )
 
-    return update_store_tree_policy(
+    policy = update_store_tree_policy(
         db,
         organization_id,
         payload,
     )
+    db.commit()
+    return policy
 
 
 @router.post(
@@ -141,13 +169,13 @@ def create_personnel_member(
     organization_id: uuid.UUID,
     payload: PersonnelCreate,
     db: Session = Depends(get_db),
-    user: User = Depends(get_current_user),
+    user: AuthenticatedUser = Depends(get_current_user),
 ):
     try:
         membership = create_store_tree_personnel(
             db,
             organization_id,
-            user.id,
+            uuid.UUID(user.user_id),
             payload,
         )
         db.commit()

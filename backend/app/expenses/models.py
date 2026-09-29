@@ -1,7 +1,8 @@
 import uuid
+from datetime import date, datetime
 from decimal import Decimal
 
-from sqlalchemy import Boolean, ForeignKey, Numeric, String, Text
+from sqlalchemy import Boolean, Date, DateTime, ForeignKey, Numeric, String, Text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.db.base import Base
@@ -57,6 +58,13 @@ class Expense(UUIDPrimaryKeyMixin, TimestampMixin, Base):
     status: Mapped[str] = mapped_column(
         String(50), nullable=False, default="recorded", index=True
     )
+    expense_date: Mapped[date] = mapped_column(Date, nullable=False, default=date.today, index=True)
+    store_id: Mapped[uuid.UUID | None] = mapped_column(nullable=True, index=True)
+    payment_account: Mapped[str] = mapped_column(String(100), nullable=False, default="")
+    actor_id: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("users.id", ondelete="SET NULL"), nullable=True, index=True)
+    approved_by_user_id: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("users.id", ondelete="SET NULL"), nullable=True)
+    approved_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    attachment_reference: Mapped[str] = mapped_column(String(255), nullable=False, default="")
 
     organization = relationship("Organization")
     category = relationship("ExpenseCategory")

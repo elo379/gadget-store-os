@@ -14,6 +14,7 @@ from app.devices.service import (
     get_device_record,
     search_devices,
 )
+from app.permissions.access import require_organization_permission
 
 router = APIRouter(prefix="/devices", tags=["devices"])
 
@@ -24,11 +25,18 @@ def create_device(
     db: Session = Depends(get_db),
     current_user=Depends(get_current_user),
 ):
-    return create_device_record(
-        db,
-        payload,
-        current_user.id,
-    )
+    require_organization_permission(db, uuid.UUID(current_user.user_id), payload.organization_id, "inventory.manage")
+    authoritative_payload = payload.model_copy(update={
+        "received_by_user_id": uuid.UUID(current_user.user_id),
+    })
+    try:
+        device = create_device_record(db, payload.organization_id, authoritative_payload)
+        db.commit()
+        db.refresh(device)
+        return device
+    except ValueError as exc:
+        db.rollback()
+        raise HTTPException(status_code=409, detail=str(exc))
 
 
 @router.get("/search", response_model=list[DeviceRecordResponse])
@@ -38,6 +46,7 @@ def search_device_records(
     db: Session = Depends(get_db),
     current_user=Depends(get_current_user),
 ):
+    require_organization_permission(db, uuid.UUID(current_user.user_id), organization_id, "inventory.view")
     if not q:
         return []
 
@@ -55,6 +64,7 @@ def lookup_imei(
     db: Session = Depends(get_db),
     current_user=Depends(get_current_user),
 ):
+    require_organization_permission(db, uuid.UUID(current_user.user_id), organization_id, "inventory.view")
     device = find_device_by_imei(
         db,
         organization_id,
@@ -77,6 +87,7 @@ def lookup_serial(
     db: Session = Depends(get_db),
     current_user=Depends(get_current_user),
 ):
+    require_organization_permission(db, uuid.UUID(current_user.user_id), organization_id, "inventory.view")
     device = find_device_by_serial(
         db,
         organization_id,
@@ -99,6 +110,7 @@ def lookup_barcode(
     db: Session = Depends(get_db),
     current_user=Depends(get_current_user),
 ):
+    require_organization_permission(db, uuid.UUID(current_user.user_id), organization_id, "inventory.view")
     device = find_device_by_barcode(
         db,
         organization_id,
@@ -118,6 +130,7 @@ def get_device(
     db: Session = Depends(get_db),
     current_user=Depends(get_current_user),
 ):
+    require_organization_permission(db, uuid.UUID(current_user.user_id), organization_id, "inventory.view")
     device = get_device_record(
         db,
         organization_id,

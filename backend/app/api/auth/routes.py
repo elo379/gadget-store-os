@@ -17,6 +17,7 @@ from app.auth.service import (
 )
 from app.db.dependencies import get_db
 from app.models.user import User
+from app.models.membership import Membership
 
 router = APIRouter(
     prefix="/auth",
@@ -40,6 +41,18 @@ def login(
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Invalid email or password",
+        )
+
+    memberships = db.scalars(
+        select(Membership).where(Membership.user_id == user.id)
+    ).all()
+    if memberships and not any(
+        membership.is_active and membership.account_status == "active"
+        for membership in memberships
+    ):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="This personnel account is suspended or revoked",
         )
 
     token = authenticate_user(

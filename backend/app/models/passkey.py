@@ -1,6 +1,7 @@
+import uuid
 from datetime import datetime
 
-from sqlalchemy import Boolean, DateTime, ForeignKey, Integer, String, Text
+from sqlalchemy import Boolean, DateTime, ForeignKey, Integer, String, Text, UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column
 
 from app.db.base import Base
@@ -9,15 +10,15 @@ from app.db.mixins import TimestampMixin, UUIDPrimaryKeyMixin
 
 class PasskeyCredential(UUIDPrimaryKeyMixin, TimestampMixin, Base):
     __tablename__ = "passkey_credentials"
+    __table_args__ = (UniqueConstraint("credential_id"),)
 
-    user_id: Mapped[str] = mapped_column(
+    user_id: Mapped[uuid.UUID] = mapped_column(
         ForeignKey("users.id", ondelete="CASCADE"),
         nullable=False,
         index=True,
     )
     credential_id: Mapped[str] = mapped_column(
         Text,
-        unique=True,
         nullable=False,
         index=True,
     )
@@ -52,15 +53,15 @@ class PasskeyCredential(UUIDPrimaryKeyMixin, TimestampMixin, Base):
 
 class PasskeyChallenge(UUIDPrimaryKeyMixin, Base):
     __tablename__ = "passkey_challenges"
+    __table_args__ = (UniqueConstraint("challenge"),)
 
-    user_id: Mapped[str | None] = mapped_column(
+    user_id: Mapped[uuid.UUID | None] = mapped_column(
         ForeignKey("users.id", ondelete="CASCADE"),
         nullable=True,
         index=True,
     )
     challenge: Mapped[str] = mapped_column(
         Text,
-        unique=True,
         nullable=False,
         index=True,
     )

@@ -1,7 +1,7 @@
 import uuid
 from datetime import datetime
 
-from sqlalchemy import DateTime, ForeignKey, String
+from sqlalchemy import DateTime, ForeignKey, String, UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.db.base import Base
@@ -10,6 +10,7 @@ from app.db.mixins import TimestampMixin, UUIDPrimaryKeyMixin
 
 class PersonnelInvitation(UUIDPrimaryKeyMixin, TimestampMixin, Base):
     __tablename__ = "personnel_invitations"
+    __table_args__ = (UniqueConstraint("token_hash"),)
 
     organization_id: Mapped[uuid.UUID] = mapped_column(
         ForeignKey("organizations.id", ondelete="CASCADE"),
@@ -31,7 +32,6 @@ class PersonnelInvitation(UUIDPrimaryKeyMixin, TimestampMixin, Base):
     token_hash: Mapped[str] = mapped_column(
         String(64),
         nullable=False,
-        unique=True,
         index=True,
     )
 

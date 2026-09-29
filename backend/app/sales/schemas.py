@@ -18,6 +18,11 @@ class SaleCreate(BaseModel):
     sold_by_user_id: uuid.UUID | None = None
     reference_number: str = Field(min_length=1, max_length=100)
     discount: Decimal = Field(ge=0, default=Decimal("0"))
+    tax: Decimal = Field(ge=0, default=Decimal("0"))
+    fees: Decimal = Field(ge=0, default=Decimal("0"))
+    payment_method: str | None = Field(default=None, max_length=50)
+    amount_paid: Decimal = Field(ge=0, default=Decimal("0"))
+    payment_reference: str = ""
     lines: list[SaleLineCreate] = Field(min_length=1)
     notes: str = ""
 
@@ -58,8 +63,11 @@ class SaleResponse(BaseModel):
     sold_by_user_id: uuid.UUID | None
     reference_number: str
     status: str
+    payment_status: str
     subtotal: Decimal
     discount: Decimal
+    tax: Decimal = Decimal("0")
+    fees: Decimal = Decimal("0")
     total: Decimal
     cogs: Decimal
     gross_profit: Decimal
@@ -72,6 +80,7 @@ class SaleReceiptResponse(BaseModel):
     sale_id: uuid.UUID
     reference_number: str
     status: str
+    payment_status: str
     customer_id: uuid.UUID | None
     sold_by_user_id: uuid.UUID | None
     subtotal: Decimal

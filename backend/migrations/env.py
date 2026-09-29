@@ -2,7 +2,7 @@ import importlib
 import pkgutil
 
 from alembic import context
-from sqlalchemy import engine_from_config
+from sqlalchemy import UUID, NUMERIC, engine_from_config
 from sqlalchemy import pool
 
 from app.core.config import settings
@@ -19,6 +19,7 @@ def import_model_modules():
         ".membership_roles",
         ".store_tree",
         ".invitation_model",
+        ".attendance",
     )
 
     for module_info in pkgutil.walk_packages(
@@ -51,6 +52,29 @@ config.set_main_option(
 target_metadata = Base.metadata
 
 
+def compare_type(context, inspected_column, metadata_column, inspected_type, metadata_type):
+    # SQLite frequently reflects UUID-backed columns as NUMERIC.
+    # Treat these as equivalent so Alembic does not generate destructive
+    # UUID/NUMERIC migrations against the existing SQLite database.
+    if context.dialect.name == "sqlite":
+        inspected_name = inspected_type.__class__.__name__.lower()
+        metadata_name = metadata_type.__class__.__name__.lower()
+
+        uuid_names = {"uuid"}
+        numeric_names = {"numeric", "decimal"}
+
+        if (
+            inspected_name in uuid_names
+            and metadata_name in numeric_names
+        ) or (
+            metadata_name in uuid_names
+            and inspected_name in numeric_names
+        ):
+            return False
+
+    return None
+
+
 def run_migrations_offline():
     url = config.get_main_option("sqlalchemy.url")
 
@@ -59,7 +83,7 @@ def run_migrations_offline():
         target_metadata=target_metadata,
         literal_binds=True,
         dialect_opts={"paramstyle": "named"},
-        compare_type=True,
+        compare_type=compare_type,
     )
 
     with context.begin_transaction():
@@ -80,7 +104,7 @@ def run_migrations_online():
         context.configure(
             connection=connection,
             target_metadata=target_metadata,
-            compare_type=True,
+            compare_type=compare_type,
         )
 
         with context.begin_transaction():

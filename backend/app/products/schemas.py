@@ -1,6 +1,7 @@
 from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict, Field
+from decimal import Decimal
 
 
 class ProductCategoryCreate(BaseModel):
@@ -26,6 +27,11 @@ class ProductCreate(BaseModel):
     description: str = Field(default="", max_length=2000)
     category_id: UUID | None = None
     is_serialized: bool = False
+    product_type: str = Field(default="other", pattern="^(smartphone|laptop|tablet|accessory|screen_protector|charger_cable|wearable|audio|other)$")
+    barcode: str = Field(default="", max_length=150)
+    unit_cost: Decimal = Field(default=Decimal("0"), ge=0)
+    selling_price: Decimal = Field(default=Decimal("0"), ge=0)
+    reorder_threshold: Decimal = Field(default=Decimal("0"), ge=0)
 
 
 class ProductResponse(BaseModel):
@@ -41,3 +47,8 @@ class ProductResponse(BaseModel):
     description: str
     is_serialized: bool
     is_active: bool
+    product_type: str
+    barcode: str
+    unit_cost: Decimal
+    selling_price: Decimal
+    reorder_threshold: Decimal

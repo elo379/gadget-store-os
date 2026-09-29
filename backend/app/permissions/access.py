@@ -6,6 +6,27 @@ from sqlalchemy.orm import Session
 from app.models.membership import Membership
 from app.permissions.membership_roles import MembershipRole
 from app.permissions.models import Permission, Role, RolePermission
+from fastapi import HTTPException, status
+
+
+def require_organization_permission(
+    db: Session, user_id: uuid.UUID, organization_id: uuid.UUID,
+    permission_name: str,
+) -> Membership:
+    """Resolve the caller's active membership and authorize within that tenant."""
+    membership = db.scalar(select(Membership).where(
+        Membership.user_id == user_id,
+        Membership.organization_id == organization_id,
+        Membership.is_active.is_(True),
+        Membership.account_status == "active",
+    ))
+    if membership is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Resource not found")
+    if not membership.is_owner and not user_has_permission(
+        db, user_id, organization_id, permission_name
+    ):
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Permission denied")
+    return membership
 
 
 def is_owner(
@@ -18,6 +39,7 @@ def is_owner(
             Membership.user_id == user_id,
             Membership.organization_id == organization_id,
             Membership.is_active.is_(True),
+            Membership.account_status == "active",
         )
     )
 
@@ -38,6 +60,7 @@ def user_has_permission(
             Membership.user_id == user_id,
             Membership.organization_id == organization_id,
             Membership.is_active.is_(True),
+            Membership.account_status == "active",
         )
     )
 

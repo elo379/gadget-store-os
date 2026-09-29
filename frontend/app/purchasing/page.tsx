@@ -35,7 +35,7 @@ export default function PurchasingPage() {
 
     const [supplierResult, orderResult] = await Promise.allSettled([
       apiGet<Supplier[]>(
-        `/purchasing/suppliers?organization_id=${organizationId}`,
+        `/suppliers?organization_id=${organizationId}`,
       ),
       apiGet<Purchase[]>(
         `/purchasing/orders?organization_id=${organizationId}`,

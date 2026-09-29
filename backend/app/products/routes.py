@@ -4,6 +4,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
 from app.db.dependencies import get_db
+from app.permissions.dependencies import require_permission
 from app.products.schemas import (
     ProductCategoryCreate,
     ProductCategoryResponse,
@@ -31,13 +32,17 @@ def create_product_category(
     organization_id: uuid.UUID,
     payload: ProductCategoryCreate,
     db: Session = Depends(get_db),
+    _user=Depends(require_permission("products.manage")),
 ):
-    return create_category(
+    category = create_category(
         db=db,
         organization_id=organization_id,
         name=payload.name,
         description=payload.description,
     )
+    db.commit()
+    db.refresh(category)
+    return category
 
 
 @router.get(
@@ -47,6 +52,7 @@ def create_product_category(
 def list_product_categories(
     organization_id: uuid.UUID,
     db: Session = Depends(get_db),
+    _user=Depends(require_permission("products.view")),
 ):
     return list_categories(
         db=db,
@@ -62,6 +68,7 @@ def get_product_category(
     organization_id: uuid.UUID,
     category_id: uuid.UUID,
     db: Session = Depends(get_db),
+    _user=Depends(require_permission("products.view")),
 ):
     category = get_category(
         db=db,
@@ -87,9 +94,10 @@ def create_product_endpoint(
     organization_id: uuid.UUID,
     payload: ProductCreate,
     db: Session = Depends(get_db),
+    _user=Depends(require_permission("products.manage")),
 ):
     try:
-        return create_product(
+        product = create_product(
             db=db,
             organization_id=organization_id,
             name=payload.name,
@@ -99,7 +107,15 @@ def create_product_endpoint(
             description=payload.description,
             category_id=payload.category_id,
             is_serialized=payload.is_serialized,
+            product_type=payload.product_type,
+            barcode=payload.barcode,
+            unit_cost=payload.unit_cost,
+            selling_price=payload.selling_price,
+            reorder_threshold=payload.reorder_threshold,
         )
+        db.commit()
+        db.refresh(product)
+        return product
     except ValueError as exc:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
@@ -114,6 +130,7 @@ def create_product_endpoint(
 def list_product_items(
     organization_id: uuid.UUID,
     db: Session = Depends(get_db),
+    _user=Depends(require_permission("products.view")),
 ):
     return list_products(
         db=db,
@@ -129,6 +146,7 @@ def get_product_item(
     organization_id: uuid.UUID,
     product_id: uuid.UUID,
     db: Session = Depends(get_db),
+    _user=Depends(require_permission("products.view")),
 ):
     product = get_product(
         db=db,
@@ -153,6 +171,7 @@ def search_product_items(
     organization_id: uuid.UUID,
     search: str,
     db: Session = Depends(get_db),
+    _user=Depends(require_permission("products.view")),
 ):
     from app.products.queries import search_products
 

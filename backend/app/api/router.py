@@ -17,6 +17,9 @@ from app.api.notifications import router as notifications_router
 from app.api.stocktake import router as stocktake_router
 from app.api.reports import router as reports_router
 from app.api.audit import router as audit_router
+from app.api.customers import router as customers_router
+from app.api.search import router as search_router
+from app.aftersales.routes import router as aftersales_router
 
 api_router = APIRouter()
 
@@ -38,8 +41,6 @@ api_router.include_router(stocktake_router)
 api_router.include_router(reports_router)
 api_router.include_router(audit_router)
 
-from app.api.customers import router as customers_router
 api_router.include_router(customers_router)
-
-from app.api.customers import router as customers_router
-api_router.include_router(customers_router)
+api_router.include_router(aftersales_router)
+api_router.include_router(search_router)

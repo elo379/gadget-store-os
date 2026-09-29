@@ -7,6 +7,7 @@ from app.inventory.constants import VALID_MOVEMENT_TYPES
 from app.inventory.ledger import InventoryMovement
 from app.inventory.models import InventoryItem, InventoryLocation
 from app.products.models import Product
+from app.audit.models import AuditLog
 
 
 def create_location(
@@ -31,6 +32,7 @@ def create_inventory_item(
     product_id,
     location_id=None,
     quantity=0,
+    notes: str = "",
 ):
     product = db.scalar(
         select(Product).where(
@@ -55,6 +57,15 @@ def create_inventory_item(
         if location is None:
             raise ValueError("Inventory location not found")
 
+    existing_inventory = db.scalar(select(InventoryItem).where(
+        InventoryItem.organization_id == organization_id,
+        InventoryItem.product_id == product_id,
+        InventoryItem.location_id == location_id,
+        InventoryItem.status == "active",
+    ))
+    if existing_inventory is not None:
+        raise ValueError("Inventory already exists for this product and location")
+
     initial_quantity = Decimal(str(quantity))
 
     if initial_quantity < 0:
@@ -67,6 +78,7 @@ def create_inventory_item(
         quantity=Decimal("0"),
         reserved_quantity=Decimal("0"),
         status="active",
+        notes=notes,
     )
 
     db.add(item)
@@ -94,7 +106,7 @@ def get_inventory_item(
         select(InventoryItem).where(
             InventoryItem.id == inventory_item_id,
             InventoryItem.organization_id == organization_id,
-        )
+        ).with_for_update()
     )
 
 
@@ -146,6 +158,8 @@ def record_movement(
     movement = InventoryMovement(
         organization_id=organization_id,
         inventory_item_id=inventory_item_id,
+        product_id=item.product_id,
+        location_id=item.location_id,
         movement_type=movement_type,
         quantity=quantity,
         quantity_before=quantity_before,
@@ -158,6 +172,15 @@ def record_movement(
 
     db.add(movement)
     db.flush()
+    db.add(AuditLog(
+        organization_id=organization_id,
+        user_id=performed_by_user_id,
+        action=f"inventory.{movement_type}",
+        entity_type="inventory_item",
+        entity_id=item.id,
+        description=reason or f"Inventory {movement_type}: {quantity}",
+        metadata_json="{}",
+    ))
 
     return movement
 
@@ -196,6 +219,8 @@ def transfer_stock(
 
     if source_item is None:
         raise ValueError("Source inventory item not found")
+    if source_item.status != "active":
+        raise ValueError("Source inventory item is not active")
 
     if source_item.location_id == destination_location_id:
         raise ValueError(
@@ -227,6 +252,7 @@ def transfer_stock(
             InventoryItem.organization_id == organization_id,
             InventoryItem.product_id == source_item.product_id,
             InventoryItem.location_id == destination_location_id,
+            InventoryItem.status == "active",
         )
     )
 

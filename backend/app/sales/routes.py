@@ -10,8 +10,10 @@ from app.sales.schemas import (
     SalePaymentCreate,
     SalePaymentResponse,
     SaleResponse,
+    SaleReceiptResponse,
     SalesSummaryResponse,
 )
+from app.sales.models import Sale
 from app.sales.service import (
     add_sale_payment,
     create_sale,
@@ -19,6 +21,10 @@ from app.sales.service import (
     get_sales_summary,
     list_sales,
 )
+from sqlalchemy import func, select
+from app.sales.models import SalePayment
+from app.auth.schemas import AuthenticatedUser
+from app.permissions.access import require_organization_permission
 
 router = APIRouter(prefix="/sales", tags=["sales"])
 
@@ -27,10 +33,14 @@ router = APIRouter(prefix="/sales", tags=["sales"])
 def create_sale_route(
     payload: SaleCreate,
     db: Session = Depends(get_db),
-    current_user=Depends(get_current_user),
+    current_user: AuthenticatedUser = Depends(get_current_user),
 ):
     try:
-        return create_sale(db, payload)
+        require_organization_permission(db, uuid.UUID(current_user.user_id), payload.organization_id, "sales.create")
+        authoritative_payload = payload.model_copy(update={"sold_by_user_id": uuid.UUID(current_user.user_id)})
+        sale = create_sale(db, authoritative_payload)
+        db.commit()
+        return sale
     except ValueError as exc:
         raise HTTPException(
             status_code=409,
@@ -44,6 +54,7 @@ def list_sales_route(
     db: Session = Depends(get_db),
     current_user=Depends(get_current_user),
 ):
+    require_organization_permission(db, uuid.UUID(current_user.user_id), organization_id, "sales.view")
     return list_sales(db, organization_id)
 
 
@@ -53,6 +64,7 @@ def sales_summary_route(
     db: Session = Depends(get_db),
     current_user=Depends(get_current_user),
 ):
+    require_organization_permission(db, uuid.UUID(current_user.user_id), organization_id, "sales.view")
     return get_sales_summary(db, organization_id)
 
 
@@ -66,7 +78,13 @@ def add_sale_payment_route(
     current_user=Depends(get_current_user),
 ):
     try:
-        return add_sale_payment(db, payload)
+        sale = db.get(Sale, payload.sale_id)
+        if sale is None:
+            raise ValueError("Sale not found")
+        require_organization_permission(db, uuid.UUID(current_user.user_id), sale.organization_id, "sales.manage")
+        payment = add_sale_payment(db, payload.sale_id, payload.payment_method, payload.amount, payload.reference, payload.notes, uuid.UUID(current_user.user_id))
+        db.commit()
+        return payment
     except ValueError as exc:
         raise HTTPException(
             status_code=409,
@@ -81,6 +99,7 @@ def get_sale_route(
     db: Session = Depends(get_db),
     current_user=Depends(get_current_user),
 ):
+    require_organization_permission(db, uuid.UUID(current_user.user_id), organization_id, "sales.view")
     sale = get_sale(db, organization_id, sale_id)
 
     if sale is None:
@@ -90,3 +109,11 @@ def get_sale_route(
         )
 
     return sale
+
+
+@router.get("/{sale_id}/receipt", response_model=SaleReceiptResponse)
+def sale_receipt_route(sale_id: uuid.UUID, organization_id: uuid.UUID, db: Session = Depends(get_db), current_user=Depends(get_current_user)):
+    require_organization_permission(db, uuid.UUID(current_user.user_id), organization_id, "sales.view")
+    sale = get_sale(db, organization_id, sale_id)
+    paid = db.scalar(select(func.coalesce(func.sum(SalePayment.amount), 0)).where(SalePayment.sale_id == sale.id)) or 0
+    return {"sale_id": sale.id, "reference_number": sale.reference_number, "status": sale.status, "payment_status": sale.payment_status, "customer_id": sale.customer_id, "sold_by_user_id": sale.sold_by_user_id, "subtotal": sale.subtotal, "discount": sale.discount, "total": sale.total, "amount_paid": paid, "amount_due": sale.total - paid, "cogs": sale.cogs, "gross_profit": sale.gross_profit, "lines": sale.lines}

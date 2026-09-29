@@ -1,0 +1,1788 @@
+INFO:     Will watch for changes in these directories: ['/workspaces/gadget-store-os/backend']
+INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+INFO:     Started reloader process [2285] using StatReload
+INFO:     Started server process [2377]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     102.90.81.70:0 - "GET /auth/me HTTP/1.1" 401 Unauthorized
+INFO:     102.90.81.70:0 - "GET /auth/me HTTP/1.1" 401 Unauthorized
+INFO:     102.90.81.70:0 - "GET /organizations HTTP/1.1" 401 Unauthorized
+INFO:     102.90.81.70:0 - "GET /organizations HTTP/1.1" 401 Unauthorized
+INFO:     102.90.81.70:0 - "POST /auth/login HTTP/1.1" 200 OK
+INFO:     102.90.81.70:0 - "GET /organizations HTTP/1.1" 200 OK
+INFO:     102.90.81.70:0 - "GET /organizations HTTP/1.1" 200 OK
+INFO:     102.90.81.70:0 - "GET /notifications/10c8d676-bbfc-4ea0-ab4c-db0cb3794754/unread-count HTTP/1.1" 200 OK
+INFO:     102.90.81.70:0 - "GET /notifications/10c8d676-bbfc-4ea0-ab4c-db0cb3794754/unread-count HTTP/1.1" 200 OK
+INFO:     102.90.81.70:0 - "GET /dashboard/10c8d676-bbfc-4ea0-ab4c-db0cb3794754/operational HTTP/1.1" 200 OK
+INFO:     102.90.81.70:0 - "GET /dashboard/10c8d676-bbfc-4ea0-ab4c-db0cb3794754/summary HTTP/1.1" 200 OK
+INFO:     102.90.81.70:0 - "GET /dashboard/10c8d676-bbfc-4ea0-ab4c-db0cb3794754/summary HTTP/1.1" 200 OK
+INFO:     102.90.81.70:0 - "GET /dashboard/10c8d676-bbfc-4ea0-ab4c-db0cb3794754/operational HTTP/1.1" 200 OK
+INFO:     102.90.81.70:0 - "GET /auth/me HTTP/1.1" 200 OK
+INFO:     102.90.81.70:0 - "GET /organizations HTTP/1.1" 200 OK
+INFO:     102.90.81.70:0 - "GET /auth/me HTTP/1.1" 200 OK
+INFO:     102.90.81.70:0 - "GET /organizations HTTP/1.1" 200 OK
+INFO:     102.90.81.70:0 - "GET /organizations HTTP/1.1" 200 OK
+INFO:     102.90.81.70:0 - "GET /organizations HTTP/1.1" 200 OK
+INFO:     102.90.81.70:0 - "GET /products?organization_id=10c8d676-bbfc-4ea0-ab4c-db0cb3794754 HTTP/1.1" 200 OK
+INFO:     102.90.81.70:0 - "GET /notifications/10c8d676-bbfc-4ea0-ab4c-db0cb3794754/unread-count HTTP/1.1" 200 OK
+INFO:     102.90.81.70:0 - "GET /products?organization_id=10c8d676-bbfc-4ea0-ab4c-db0cb3794754 HTTP/1.1" 200 OK
+INFO:     102.90.81.70:0 - "GET /notifications/10c8d676-bbfc-4ea0-ab4c-db0cb3794754/unread-count HTTP/1.1" 200 OK
+INFO:     102.90.81.70:0 - "GET /auth/me HTTP/1.1" 200 OK
+INFO:     102.90.81.70:0 - "POST /sales HTTP/1.1" 409 Conflict
+INFO:     102.90.81.70:0 - "GET /products/categories?organization_id=10c8d676-bbfc-4ea0-ab4c-db0cb3794754 HTTP/1.1" 200 OK
+INFO:     102.90.81.70:0 - "GET /products/categories?organization_id=10c8d676-bbfc-4ea0-ab4c-db0cb3794754 HTTP/1.1" 200 OK
+INFO:     102.90.81.70:0 - "GET /products?organization_id=10c8d676-bbfc-4ea0-ab4c-db0cb3794754 HTTP/1.1" 200 OK
+INFO:     102.90.81.70:0 - "GET /products?organization_id=10c8d676-bbfc-4ea0-ab4c-db0cb3794754 HTTP/1.1" 200 OK
+INFO:     102.90.81.70:0 - "POST /products?organization_id=10c8d676-bbfc-4ea0-ab4c-db0cb3794754 HTTP/1.1" 201 Created
+INFO:     102.90.81.70:0 - "GET /products/categories?organization_id=10c8d676-bbfc-4ea0-ab4c-db0cb3794754 HTTP/1.1" 200 OK
+INFO:     102.90.81.70:0 - "GET /products?organization_id=10c8d676-bbfc-4ea0-ab4c-db0cb3794754 HTTP/1.1" 200 OK
+INFO:     102.90.81.70:0 - "GET /inventory/locations?organization_id=10c8d676-bbfc-4ea0-ab4c-db0cb3794754 HTTP/1.1" 200 OK
+INFO:     102.90.81.70:0 - "GET /products?organization_id=10c8d676-bbfc-4ea0-ab4c-db0cb3794754 HTTP/1.1" 200 OK
+INFO:     102.90.81.70:0 - "GET /inventory/locations?organization_id=10c8d676-bbfc-4ea0-ab4c-db0cb3794754 HTTP/1.1" 200 OK
+INFO:     102.90.81.70:0 - "GET /products?organization_id=10c8d676-bbfc-4ea0-ab4c-db0cb3794754 HTTP/1.1" 200 OK
+INFO:     102.90.81.70:0 - "GET /inventory?organization_id=10c8d676-bbfc-4ea0-ab4c-db0cb3794754 HTTP/1.1" 200 OK
+INFO:     102.90.81.70:0 - "GET /inventory?organization_id=10c8d676-bbfc-4ea0-ab4c-db0cb3794754 HTTP/1.1" 200 OK
+INFO:     102.90.81.70:0 - "GET /dashboard/10c8d676-bbfc-4ea0-ab4c-db0cb3794754/summary HTTP/1.1" 200 OK
+INFO:     102.90.81.70:0 - "GET /dashboard/10c8d676-bbfc-4ea0-ab4c-db0cb3794754/operational HTTP/1.1" 200 OK
+INFO:     102.90.81.70:0 - "GET /dashboard/10c8d676-bbfc-4ea0-ab4c-db0cb3794754/operational HTTP/1.1" 200 OK
+INFO:     102.90.81.70:0 - "GET /dashboard/10c8d676-bbfc-4ea0-ab4c-db0cb3794754/summary HTTP/1.1" 200 OK
+INFO:     102.90.81.70:0 - "GET /customers?organization_id=10c8d676-bbfc-4ea0-ab4c-db0cb3794754 HTTP/1.1" 200 OK
+INFO:     102.90.81.70:0 - "GET /customers?organization_id=10c8d676-bbfc-4ea0-ab4c-db0cb3794754 HTTP/1.1" 200 OK
+INFO:     102.90.81.70:0 - "GET /dashboard/10c8d676-bbfc-4ea0-ab4c-db0cb3794754/operational HTTP/1.1" 200 OK
+INFO:     102.90.81.70:0 - "GET /dashboard/10c8d676-bbfc-4ea0-ab4c-db0cb3794754/operational HTTP/1.1" 200 OK
+INFO:     102.90.81.70:0 - "GET /dashboard/10c8d676-bbfc-4ea0-ab4c-db0cb3794754/summary HTTP/1.1" 200 OK
+INFO:     102.90.81.70:0 - "GET /dashboard/10c8d676-bbfc-4ea0-ab4c-db0cb3794754/summary HTTP/1.1" 200 OK
+INFO:     102.90.81.70:0 - "GET /suppliers?organization_id=10c8d676-bbfc-4ea0-ab4c-db0cb3794754 HTTP/1.1" 200 OK
+INFO:     102.90.81.70:0 - "GET /purchasing/orders?organization_id=10c8d676-bbfc-4ea0-ab4c-db0cb3794754 HTTP/1.1" 200 OK
+INFO:     102.90.81.70:0 - "GET /purchasing/orders?organization_id=10c8d676-bbfc-4ea0-ab4c-db0cb3794754 HTTP/1.1" 200 OK
+INFO:     102.90.81.70:0 - "GET /suppliers?organization_id=10c8d676-bbfc-4ea0-ab4c-db0cb3794754 HTTP/1.1" 200 OK
+INFO:     102.90.81.70:0 - "GET /auth/me HTTP/1.1" 200 OK
+INFO:     102.90.81.70:0 - "GET /organizations HTTP/1.1" 200 OK
+INFO:     102.90.81.70:0 - "GET /organizations HTTP/1.1" 200 OK
+INFO:     102.90.81.70:0 - "GET /auth/me HTTP/1.1" 200 OK
+INFO:     102.90.81.70:0 - "GET /purchasing/orders?organization_id=10c8d676-bbfc-4ea0-ab4c-db0cb3794754 HTTP/1.1" 200 OK
+INFO:     102.90.81.70:0 - "GET /organizations HTTP/1.1" 200 OK
+INFO:     102.90.81.70:0 - "GET /notifications/10c8d676-bbfc-4ea0-ab4c-db0cb3794754/unread-count HTTP/1.1" 200 OK
+INFO:     102.90.81.70:0 - "GET /notifications/10c8d676-bbfc-4ea0-ab4c-db0cb3794754/unread-count HTTP/1.1" 200 OK
+INFO:     102.90.81.70:0 - "GET /suppliers?organization_id=10c8d676-bbfc-4ea0-ab4c-db0cb3794754 HTTP/1.1" 200 OK
+INFO:     102.90.81.70:0 - "GET /organizations HTTP/1.1" 200 OK
+INFO:     102.90.81.70:0 - "GET /suppliers?organization_id=10c8d676-bbfc-4ea0-ab4c-db0cb3794754 HTTP/1.1" 200 OK
+INFO:     102.90.81.70:0 - "GET /purchasing/orders?organization_id=10c8d676-bbfc-4ea0-ab4c-db0cb3794754 HTTP/1.1" 200 OK
+INFO:     102.90.81.70:0 - "POST /suppliers HTTP/1.1" 200 OK
+INFO:     102.90.81.70:0 - "GET /suppliers?organization_id=10c8d676-bbfc-4ea0-ab4c-db0cb3794754 HTTP/1.1" 200 OK
+INFO:     102.90.81.70:0 - "GET /purchasing/orders?organization_id=10c8d676-bbfc-4ea0-ab4c-db0cb3794754 HTTP/1.1" 200 OK
+INFO:     102.90.81.70:0 - "GET /organizations/10c8d676-bbfc-4ea0-ab4c-db0cb3794754/store-tree/policy HTTP/1.1" 200 OK
+INFO:     102.90.81.70:0 - "GET /organizations/10c8d676-bbfc-4ea0-ab4c-db0cb3794754/store-tree/invitations HTTP/1.1" 200 OK
+INFO:     102.90.81.70:0 - "GET /organizations/10c8d676-bbfc-4ea0-ab4c-db0cb3794754/store-tree HTTP/1.1" 200 OK
+INFO:     102.90.81.70:0 - "GET /organizations/10c8d676-bbfc-4ea0-ab4c-db0cb3794754/store-tree HTTP/1.1" 200 OK
+INFO:     102.90.81.70:0 - "GET /organizations/10c8d676-bbfc-4ea0-ab4c-db0cb3794754/store-tree/policy HTTP/1.1" 200 OK
+INFO:     102.90.81.70:0 - "GET /organizations/10c8d676-bbfc-4ea0-ab4c-db0cb3794754/store-tree/invitations HTTP/1.1" 200 OK
+INFO:     102.90.81.70:0 - "GET /organizations/10c8d676-bbfc-4ea0-ab4c-db0cb3794754/store-tree HTTP/1.1" 200 OK
+INFO:     102.90.81.70:0 - "GET /organizations/10c8d676-bbfc-4ea0-ab4c-db0cb3794754/store-tree HTTP/1.1" 200 OK
+INFO:     102.90.81.70:0 - "GET /auth/passkeys HTTP/1.1" 200 OK
+INFO:     102.90.81.70:0 - "GET /auth/passkeys HTTP/1.1" 200 OK
+INFO:     102.90.81.70:0 - "GET /reports/10c8d676-bbfc-4ea0-ab4c-db0cb3794754/sales HTTP/1.1" 200 OK
+INFO:     102.90.81.70:0 - "GET /reports/10c8d676-bbfc-4ea0-ab4c-db0cb3794754/sales HTTP/1.1" 200 OK
+INFO:     102.90.81.70:0 - "GET /finance/10c8d676-bbfc-4ea0-ab4c-db0cb3794754/summary HTTP/1.1" 200 OK
+INFO:     102.90.81.70:0 - "GET /finance/10c8d676-bbfc-4ea0-ab4c-db0cb3794754/summary HTTP/1.1" 200 OK
+INFO:     102.90.81.70:0 - "GET /organizations HTTP/1.1" 200 OK
+INFO:     102.90.81.70:0 - "GET /auth/me HTTP/1.1" 200 OK
+INFO:     102.90.81.70:0 - "GET /finance/10c8d676-bbfc-4ea0-ab4c-db0cb3794754/summary HTTP/1.1" 200 OK
+INFO:     102.90.81.70:0 - "GET /notifications/10c8d676-bbfc-4ea0-ab4c-db0cb3794754/unread-count HTTP/1.1" 200 OK
+INFO:     102.90.81.70:0 - "GET /notifications/10c8d676-bbfc-4ea0-ab4c-db0cb3794754/unread-count HTTP/1.1" 200 OK
+INFO:     102.90.81.70:0 - "GET /organizations HTTP/1.1" 200 OK
+INFO:     102.90.81.70:0 - "GET /organizations HTTP/1.1" 200 OK
+INFO:     102.90.81.70:0 - "GET /finance/10c8d676-bbfc-4ea0-ab4c-db0cb3794754/summary HTTP/1.1" 200 OK
+INFO:     102.90.81.70:0 - "GET /auth/me HTTP/1.1" 200 OK
+INFO:     102.90.81.70:0 - "GET /organizations HTTP/1.1" 200 OK
+INFO:     102.90.81.70:0 - "GET /auth/me HTTP/1.1" 401 Unauthorized
+INFO:     102.90.81.70:0 - "GET /organizations HTTP/1.1" 401 Unauthorized
+INFO:     102.90.81.70:0 - "GET /auth/me HTTP/1.1" 401 Unauthorized
+INFO:     102.90.81.70:0 - "GET /organizations HTTP/1.1" 401 Unauthorized
+WARNING:  StatReload detected changes in 'app/customers/returns.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [2377]
+INFO:     Started server process [15413]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  StatReload detected changes in 'app/customers/schemas.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [15413]
+INFO:     Started server process [15560]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  StatReload detected changes in 'app/api/customers.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [15560]
+INFO:     Started server process [15752]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  StatReload detected changes in 'app/customers/returns.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [15752]
+INFO:     Started server process [16056]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  StatReload detected changes in 'tests/integration/test_business_flow.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [16056]
+INFO:     Started server process [16257]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  StatReload detected changes in 'migrations/versions/6c1e8a42b7d0_return_attribution.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [16257]
+INFO:     Started server process [19307]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  StatReload detected changes in 'app/customers/returns.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [19307]
+INFO:     Started server process [19633]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  StatReload detected changes in 'migrations/env.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [19633]
+INFO:     Started server process [21627]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  StatReload detected changes in 'app/models/session.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [21627]
+INFO:     Started server process [21715]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  StatReload detected changes in 'app/audit/routes.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [21715]
+INFO:     Started server process [23021]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  StatReload detected changes in 'app/finance/routes.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [23021]
+INFO:     Started server process [23134]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  StatReload detected changes in 'app/customers/returns.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [23134]
+INFO:     Started server process [27676]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  StatReload detected changes in 'tests/integration/test_business_flow.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [27676]
+INFO:     Started server process [27786]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  StatReload detected changes in 'app/models/passkey.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [27786]
+INFO:     Started server process [28726]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  StatReload detected changes in 'app/models/session.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [28726]
+INFO:     Started server process [28809]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  StatReload detected changes in 'app/organizations/invitation_model.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [28809]
+INFO:     Started server process [28853]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  StatReload detected changes in 'app/organizations/store_tree.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [28853]
+INFO:     Started server process [28915]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  StatReload detected changes in 'migrations/versions/768f8f0e5a1d_add_authentication_sessions.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [28915]
+INFO:     Started server process [28999]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  StatReload detected changes in 'app/audit/routes.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [28999]
+INFO:     Started server process [37747]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  StatReload detected changes in 'app/products/models.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [37747]
+Process SpawnProcess-21:
+Traceback (most recent call last):
+  File "/home/codespace/.python/current/lib/python3.14/multiprocessing/process.py", line 320, in _bootstrap
+    self.run()
+    ~~~~~~~~^^
+  File "/home/codespace/.python/current/lib/python3.14/multiprocessing/process.py", line 108, in run
+    self._target(*self._args, **self._kwargs)
+    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/uvicorn/_subprocess.py", line 80, in subprocess_started
+    target(sockets=sockets)
+    ~~~~~~^^^^^^^^^^^^^^^^^
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/uvicorn/server.py", line 86, in run
+    return asyncio_run(self.serve(sockets=sockets), loop_factory=self.config.get_loop_factory())
+  File "/home/codespace/.python/current/lib/python3.14/asyncio/runners.py", line 204, in run
+    return runner.run(main)
+           ~~~~~~~~~~^^^^^^
+  File "/home/codespace/.python/current/lib/python3.14/asyncio/runners.py", line 127, in run
+    return self._loop.run_until_complete(task)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "/home/codespace/.python/current/lib/python3.14/asyncio/base_events.py", line 719, in run_until_complete
+    return future.result()
+           ~~~~~~~~~~~~~^^
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/uvicorn/server.py", line 90, in serve
+    await self._serve(sockets)
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/uvicorn/server.py", line 97, in _serve
+    config.load()
+    ~~~~~~~~~~~^^
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/uvicorn/config.py", line 511, in load
+    self.loaded_app = self.load_app()
+                      ~~~~~~~~~~~~~^^
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/uvicorn/config.py", line 434, in load_app
+    return import_from_string(self.app)
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/uvicorn/importer.py", line 19, in import_from_string
+    module = importlib.import_module(module_str)
+  File "/home/codespace/.python/current/lib/python3.14/importlib/__init__.py", line 88, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<frozen importlib._bootstrap>", line 1398, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 1371, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1342, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 938, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 759, in exec_module
+  File "<frozen importlib._bootstrap>", line 491, in _call_with_frames_removed
+  File "/workspaces/gadget-store-os/backend/app/main.py", line 4, in <module>
+    from app.api.router import api_router
+  File "/workspaces/gadget-store-os/backend/app/api/__init__.py", line 1, in <module>
+    from app.api.router import api_router
+  File "/workspaces/gadget-store-os/backend/app/api/router.py", line 6, in <module>
+    from app.api.products.routes import router as products_router
+  File "/workspaces/gadget-store-os/backend/app/api/products/__init__.py", line 1, in <module>
+    from app.api.products.routes import router
+  File "/workspaces/gadget-store-os/backend/app/api/products/routes.py", line 1, in <module>
+    from app.products.routes import router
+  File "/workspaces/gadget-store-os/backend/app/products/__init__.py", line 1, in <module>
+    from app.products.models import Product, ProductCategory
+  File "/workspaces/gadget-store-os/backend/app/products/models.py", line 39, in <module>
+    class Product(UUIDPrimaryKeyMixin, TimestampMixin, Base):
+    ...<63 lines>...
+        category = relationship("ProductCategory")
+  File "/workspaces/gadget-store-os/backend/app/products/models.py", line 92, in Product
+    unit_cost: Mapped[Decimal] = mapped_column(Numeric(14, 2), nullable=False, default=Decimal("0"))
+                                                                                       ^^^^^^^
+NameError: name 'Decimal' is not defined
+WARNING:  StatReload detected changes in 'app/products/models.py'. Reloading...
+INFO:     Started server process [44067]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  StatReload detected changes in 'app/devices/models.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [44067]
+INFO:     Started server process [44138]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  StatReload detected changes in 'app/inventory/models.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [44138]
+INFO:     Started server process [44238]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  StatReload detected changes in 'app/products/schemas.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [44238]
+INFO:     Started server process [44309]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  StatReload detected changes in 'app/products/service.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [44309]
+INFO:     Started server process [44412]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  StatReload detected changes in 'app/products/routes.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [44412]
+INFO:     Started server process [44450]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  StatReload detected changes in 'app/devices/schemas.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [44450]
+INFO:     Started server process [44533]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  StatReload detected changes in 'app/devices/service.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [44533]
+INFO:     Started server process [44600]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  StatReload detected changes in 'app/purchasing/schemas.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [44600]
+INFO:     Started server process [44911]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  StatReload detected changes in 'app/purchasing/receiving.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [44911]
+INFO:     Started server process [44982]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  StatReload detected changes in 'app/inventory/ledger.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [44982]
+INFO:     Started server process [45310]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  StatReload detected changes in 'app/inventory/service.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [45310]
+INFO:     Started server process [45341]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  StatReload detected changes in 'migrations/versions/7d9f2a1c4e60_catalog_device_inventory_fields.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [45341]
+INFO:     Started server process [45500]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  StatReload detected changes in 'app/inventory/schemas.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [45500]
+INFO:     Started server process [45560]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  StatReload detected changes in 'app/purchasing/receiving.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [45560]
+INFO:     Started server process [45607]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  StatReload detected changes in 'app/sales/service.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [45607]
+INFO:     Started server process [45697]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  StatReload detected changes in 'migrations/versions/7d9f2a1c4e60_catalog_device_inventory_fields.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [45697]
+INFO:     Started server process [46349]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  StatReload detected changes in 'app/devices/models.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [46349]
+INFO:     Started server process [46435]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  StatReload detected changes in 'app/dashboard/service.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [46435]
+INFO:     Started server process [55927]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  StatReload detected changes in 'app/sales/service.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [55927]
+INFO:     Started server process [58313]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  StatReload detected changes in 'app/sales/models.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [58313]
+INFO:     Started server process [58460]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  StatReload detected changes in 'migrations/versions/7d9f2a1c4e60_catalog_device_inventory_fields.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [58460]
+INFO:     Started server process [58596]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  StatReload detected changes in 'app/purchasing/receiving.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [58596]
+INFO:     Started server process [61111]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  StatReload detected changes in 'app/sales/models.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [61111]
+INFO:     Started server process [63905]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  StatReload detected changes in 'app/sales/service.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [63905]
+Process SpawnProcess-46:
+Traceback (most recent call last):
+  File "/home/codespace/.python/current/lib/python3.14/multiprocessing/process.py", line 320, in _bootstrap
+    self.run()
+    ~~~~~~~~^^
+  File "/home/codespace/.python/current/lib/python3.14/multiprocessing/process.py", line 108, in run
+    self._target(*self._args, **self._kwargs)
+    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/uvicorn/_subprocess.py", line 80, in subprocess_started
+    target(sockets=sockets)
+    ~~~~~~^^^^^^^^^^^^^^^^^
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/uvicorn/server.py", line 86, in run
+    return asyncio_run(self.serve(sockets=sockets), loop_factory=self.config.get_loop_factory())
+  File "/home/codespace/.python/current/lib/python3.14/asyncio/runners.py", line 204, in run
+    return runner.run(main)
+           ~~~~~~~~~~^^^^^^
+  File "/home/codespace/.python/current/lib/python3.14/asyncio/runners.py", line 127, in run
+    return self._loop.run_until_complete(task)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "/home/codespace/.python/current/lib/python3.14/asyncio/base_events.py", line 719, in run_until_complete
+    return future.result()
+           ~~~~~~~~~~~~~^^
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/uvicorn/server.py", line 90, in serve
+    await self._serve(sockets)
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/uvicorn/server.py", line 97, in _serve
+    config.load()
+    ~~~~~~~~~~~^^
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/uvicorn/config.py", line 511, in load
+    self.loaded_app = self.load_app()
+                      ~~~~~~~~~~~~~^^
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/uvicorn/config.py", line 434, in load_app
+    return import_from_string(self.app)
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/uvicorn/importer.py", line 22, in import_from_string
+    raise exc from None
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/uvicorn/importer.py", line 19, in import_from_string
+    module = importlib.import_module(module_str)
+  File "/home/codespace/.python/current/lib/python3.14/importlib/__init__.py", line 88, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<frozen importlib._bootstrap>", line 1398, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 1371, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1342, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 938, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 759, in exec_module
+  File "<frozen importlib._bootstrap>", line 491, in _call_with_frames_removed
+  File "/workspaces/gadget-store-os/backend/app/main.py", line 4, in <module>
+    from app.api.router import api_router
+  File "/workspaces/gadget-store-os/backend/app/api/__init__.py", line 1, in <module>
+    from app.api.router import api_router
+  File "/workspaces/gadget-store-os/backend/app/api/router.py", line 9, in <module>
+    from app.api.sales.routes import router as sales_router
+  File "/workspaces/gadget-store-os/backend/app/api/sales/__init__.py", line 1, in <module>
+    from app.api.sales.routes import router
+  File "/workspaces/gadget-store-os/backend/app/api/sales/routes.py", line 1, in <module>
+    from app.sales.routes import router
+  File "/workspaces/gadget-store-os/backend/app/sales/routes.py", line 16, in <module>
+    from app.sales.service import (
+    ...<5 lines>...
+    )
+  File "/workspaces/gadget-store-os/backend/app/sales/service.py", line 17, in <module>
+    from app.aftersales.models import Warranty
+ModuleNotFoundError: No module named 'app.aftersales'
+WARNING:  StatReload detected changes in 'app/sales/service.py'. Reloading...
+INFO:     Started server process [64649]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  StatReload detected changes in 'app/customers/returns.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [64649]
+INFO:     Started server process [65808]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  StatReload detected changes in 'app/customers/returns.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [65808]
+INFO:     Started server process [65983]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  StatReload detected changes in 'app/sales/service.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [65983]
+INFO:     Started server process [66194]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  StatReload detected changes in 'migrations/versions/8ab3d2f0c911_sale_after_sales_lifecycle.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [66194]
+INFO:     Started server process [66350]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  StatReload detected changes in 'tests/integration/test_business_flow.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [66350]
+INFO:     Started server process [69308]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  StatReload detected changes in 'tests/integration/test_business_flow.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [69308]
+INFO:     Started server process [69422]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  StatReload detected changes in 'tests/integration/test_business_flow.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [69422]
+INFO:     Started server process [69954]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  StatReload detected changes in 'migrations/versions/8ab3d2f0c911_sale_after_sales_lifecycle.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [69954]
+INFO:     Started server process [70418]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  StatReload detected changes in 'app/aftersales/models.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [70418]
+INFO:     Started server process [70814]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  StatReload detected changes in 'migrations/versions/8ab3d2f0c911_sale_after_sales_lifecycle.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [70814]
+INFO:     Started server process [70949]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  StatReload detected changes in 'app/sales/service.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [70949]
+INFO:     Started server process [74997]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  StatReload detected changes in 'app/customers/returns.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [74997]
+INFO:     Started server process [80814]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  StatReload detected changes in 'app/customers/schemas.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [80814]
+INFO:     Started server process [81929]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  StatReload detected changes in 'app/aftersales/routes.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [81929]
+INFO:     Started server process [82084]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  StatReload detected changes in 'app/aftersales/routes.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [82084]
+INFO:     Started server process [83638]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  StatReload detected changes in 'app/expenses/models.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [83638]
+Process SpawnProcess-63:
+Traceback (most recent call last):
+  File "/home/codespace/.python/current/lib/python3.14/multiprocessing/process.py", line 320, in _bootstrap
+    self.run()
+    ~~~~~~~~^^
+  File "/home/codespace/.python/current/lib/python3.14/multiprocessing/process.py", line 108, in run
+    self._target(*self._args, **self._kwargs)
+    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/uvicorn/_subprocess.py", line 80, in subprocess_started
+    target(sockets=sockets)
+    ~~~~~~^^^^^^^^^^^^^^^^^
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/uvicorn/server.py", line 86, in run
+    return asyncio_run(self.serve(sockets=sockets), loop_factory=self.config.get_loop_factory())
+  File "/home/codespace/.python/current/lib/python3.14/asyncio/runners.py", line 204, in run
+    return runner.run(main)
+           ~~~~~~~~~~^^^^^^
+  File "/home/codespace/.python/current/lib/python3.14/asyncio/runners.py", line 127, in run
+    return self._loop.run_until_complete(task)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "/home/codespace/.python/current/lib/python3.14/asyncio/base_events.py", line 719, in run_until_complete
+    return future.result()
+           ~~~~~~~~~~~~~^^
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/uvicorn/server.py", line 90, in serve
+    await self._serve(sockets)
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/uvicorn/server.py", line 97, in _serve
+    config.load()
+    ~~~~~~~~~~~^^
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/uvicorn/config.py", line 511, in load
+    self.loaded_app = self.load_app()
+                      ~~~~~~~~~~~~~^^
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/uvicorn/config.py", line 434, in load_app
+    return import_from_string(self.app)
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/uvicorn/importer.py", line 19, in import_from_string
+    module = importlib.import_module(module_str)
+  File "/home/codespace/.python/current/lib/python3.14/importlib/__init__.py", line 88, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<frozen importlib._bootstrap>", line 1398, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 1371, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1342, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 938, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 759, in exec_module
+  File "<frozen importlib._bootstrap>", line 491, in _call_with_frames_removed
+  File "/workspaces/gadget-store-os/backend/app/main.py", line 4, in <module>
+    from app.api.router import api_router
+  File "/workspaces/gadget-store-os/backend/app/api/__init__.py", line 1, in <module>
+    from app.api.router import api_router
+  File "/workspaces/gadget-store-os/backend/app/api/router.py", line 13, in <module>
+    from app.api.expenses import router as expenses_router
+  File "/workspaces/gadget-store-os/backend/app/api/expenses.py", line 1, in <module>
+    from app.expenses.routes import router
+  File "/workspaces/gadget-store-os/backend/app/expenses/routes.py", line 13, in <module>
+    from app.expenses.service import (
+    ...<5 lines>...
+    )
+  File "/workspaces/gadget-store-os/backend/app/expenses/service.py", line 6, in <module>
+    from app.expenses.models import Expense, ExpenseCategory
+  File "/workspaces/gadget-store-os/backend/app/expenses/models.py", line 33, in <module>
+    class Expense(UUIDPrimaryKeyMixin, TimestampMixin, Base):
+    ...<36 lines>...
+        category = relationship("ExpenseCategory")
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/sqlalchemy/orm/decl_api.py", line 979, in __init_subclass__
+    _ORMClassConfigurator._as_declarative(
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        cls._sa_registry, cls, cls.__dict__
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/sqlalchemy/orm/decl_base.py", line 294, in _as_declarative
+    return _DeclarativeMapperConfig(registry, cls_, dict_)
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/sqlalchemy/orm/decl_base.py", line 1030, in __init__
+    self._extract_mappable_attributes()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/sqlalchemy/orm/decl_base.py", line 1590, in _extract_mappable_attributes
+    value.declarative_scan(
+    ~~~~~~~~~~~~~~~~~~~~~~^
+        self,
+        ^^^^^
+    ...<7 lines>...
+        is_dataclass,
+        ^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/sqlalchemy/orm/properties.py", line 744, in declarative_scan
+    self._init_column_for_annotation(
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        cls,
+        ^^^^
+    ...<4 lines>...
+        originating_module,
+        ^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/sqlalchemy/orm/properties.py", line 957, in _init_column_for_annotation
+    raise orm_exc.MappedAnnotationError(
+    ...<5 lines>...
+    )
+sqlalchemy.orm.exc.MappedAnnotationError: Could not locate SQLAlchemy Core type when resolving for Python type indicated by '<class 'object'>' inside the Mapped[] annotation for the 'approved_at' attribute; the type object is not resolvable by the registry
+WARNING:  StatReload detected changes in 'app/expenses/models.py'. Reloading...
+INFO:     Started server process [85102]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  StatReload detected changes in 'app/expenses/schemas.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [85102]
+INFO:     Started server process [85190]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  StatReload detected changes in 'app/expenses/service.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [85190]
+INFO:     Started server process [85307]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  StatReload detected changes in 'app/expenses/routes.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [85307]
+INFO:     Started server process [85432]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  StatReload detected changes in 'app/finance/models.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [85432]
+INFO:     Started server process [85559]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  StatReload detected changes in 'app/finance/service.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [85559]
+Process SpawnProcess-69:
+Traceback (most recent call last):
+  File "/home/codespace/.python/current/lib/python3.14/multiprocessing/process.py", line 320, in _bootstrap
+    self.run()
+    ~~~~~~~~^^
+  File "/home/codespace/.python/current/lib/python3.14/multiprocessing/process.py", line 108, in run
+    self._target(*self._args, **self._kwargs)
+    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/uvicorn/_subprocess.py", line 80, in subprocess_started
+    target(sockets=sockets)
+    ~~~~~~^^^^^^^^^^^^^^^^^
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/uvicorn/server.py", line 86, in run
+    return asyncio_run(self.serve(sockets=sockets), loop_factory=self.config.get_loop_factory())
+  File "/home/codespace/.python/current/lib/python3.14/asyncio/runners.py", line 204, in run
+    return runner.run(main)
+           ~~~~~~~~~~^^^^^^
+  File "/home/codespace/.python/current/lib/python3.14/asyncio/runners.py", line 127, in run
+    return self._loop.run_until_complete(task)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "/home/codespace/.python/current/lib/python3.14/asyncio/base_events.py", line 719, in run_until_complete
+    return future.result()
+           ~~~~~~~~~~~~~^^
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/uvicorn/server.py", line 90, in serve
+    await self._serve(sockets)
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/uvicorn/server.py", line 97, in _serve
+    config.load()
+    ~~~~~~~~~~~^^
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/uvicorn/config.py", line 511, in load
+    self.loaded_app = self.load_app()
+                      ~~~~~~~~~~~~~^^
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/uvicorn/config.py", line 434, in load_app
+    return import_from_string(self.app)
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/uvicorn/importer.py", line 19, in import_from_string
+    module = importlib.import_module(module_str)
+  File "/home/codespace/.python/current/lib/python3.14/importlib/__init__.py", line 88, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<frozen importlib._bootstrap>", line 1398, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 1371, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1342, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 938, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 759, in exec_module
+  File "<frozen importlib._bootstrap>", line 491, in _call_with_frames_removed
+  File "/workspaces/gadget-store-os/backend/app/main.py", line 4, in <module>
+    from app.api.router import api_router
+  File "/workspaces/gadget-store-os/backend/app/api/__init__.py", line 1, in <module>
+    from app.api.router import api_router
+  File "/workspaces/gadget-store-os/backend/app/api/router.py", line 12, in <module>
+    from app.api.finance import router as finance_router
+  File "/workspaces/gadget-store-os/backend/app/api/finance.py", line 1, in <module>
+    from app.finance.routes import router
+  File "/workspaces/gadget-store-os/backend/app/finance/routes.py", line 8, in <module>
+    from app.finance.service import get_financial_summary
+  File "/workspaces/gadget-store-os/backend/app/finance/service.py", line 11, in <module>
+    from app.inventory.models import InventoryMovement
+ImportError: cannot import name 'InventoryMovement' from 'app.inventory.models' (/workspaces/gadget-store-os/backend/app/inventory/models.py)
+WARNING:  StatReload detected changes in 'app/finance/service.py'. Reloading...
+INFO:     Started server process [86002]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  StatReload detected changes in 'app/finance/schemas.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [86002]
+INFO:     Started server process [86091]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  StatReload detected changes in 'app/expenses/service.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [86091]
+INFO:     Started server process [86253]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     102.90.81.70:0 - "GET /expenses/10c8d676-bbfc-4ea0-ab4c-db0cb3794754 HTTP/1.1" 401 Unauthorized
+INFO:     102.90.81.70:0 - "GET /finance/10c8d676-bbfc-4ea0-ab4c-db0cb3794754/reconciliation HTTP/1.1" 401 Unauthorized
+INFO:     102.90.81.70:0 - "GET /expenses/10c8d676-bbfc-4ea0-ab4c-db0cb3794754 HTTP/1.1" 401 Unauthorized
+INFO:     102.90.81.70:0 - "GET /expenses/categories/10c8d676-bbfc-4ea0-ab4c-db0cb3794754 HTTP/1.1" 401 Unauthorized
+INFO:     102.90.81.70:0 - "GET /finance/10c8d676-bbfc-4ea0-ab4c-db0cb3794754/summary HTTP/1.1" 401 Unauthorized
+INFO:     102.90.81.70:0 - "GET /finance/10c8d676-bbfc-4ea0-ab4c-db0cb3794754/reconciliation HTTP/1.1" 401 Unauthorized
+INFO:     102.90.81.70:0 - "GET /finance/10c8d676-bbfc-4ea0-ab4c-db0cb3794754/summary HTTP/1.1" 401 Unauthorized
+INFO:     102.90.81.70:0 - "GET /expenses/categories/10c8d676-bbfc-4ea0-ab4c-db0cb3794754 HTTP/1.1" 401 Unauthorized
+INFO:     102.90.81.70:0 - "POST /auth/refresh HTTP/1.1" 500 Internal Server Error
+ERROR:    Exception in ASGI application
+Traceback (most recent call last):
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/uvicorn/protocols/http/h11_impl.py", line 411, in run_asgi
+    result = await app(  # type: ignore[func-returns-value]
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        self.scope, self.receive, self.send
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/uvicorn/middleware/proxy_headers.py", line 63, in __call__
+    return await self.app(scope, receive, send)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/fastapi/applications.py", line 1163, in __call__
+    await super().__call__(scope, receive, send)
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/starlette/applications.py", line 96, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/starlette/middleware/errors.py", line 186, in __call__
+    raise exc
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/starlette/middleware/errors.py", line 164, in __call__
+    await self.app(scope, receive, _send)
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/starlette/middleware/cors.py", line 91, in __call__
+    await self.simple_response(scope, receive, send, request_headers=headers)
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/starlette/middleware/cors.py", line 149, in simple_response
+    await self.app(scope, receive, send)
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/starlette/middleware/exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/fastapi/middleware/asyncexitstack.py", line 18, in __call__
+    await self.app(scope, receive, send)
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/starlette/routing.py", line 676, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/fastapi/routing.py", line 2734, in app
+    await route.handle(scope, receive, send)
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/fastapi/routing.py", line 1780, in handle
+    await self.original_router.handle(scope, receive, send)
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/fastapi/routing.py", line 2789, in handle
+    await included_router._handle_selected(scope, receive, send)
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/fastapi/routing.py", line 1791, in _handle_selected
+    await route.handle(scope, receive, send)
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/fastapi/routing.py", line 1780, in handle
+    await self.original_router.handle(scope, receive, send)
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/fastapi/routing.py", line 2789, in handle
+    await included_router._handle_selected(scope, receive, send)
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/fastapi/routing.py", line 1800, in _handle_selected
+    await original_route.handle(scope, receive, send)
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/fastapi/routing.py", line 1279, in handle
+    await app(scope, receive, send)
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/fastapi/routing.py", line 158, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/fastapi/routing.py", line 144, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/fastapi/routing.py", line 706, in app
+    raw_response = await run_endpoint_function(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/fastapi/routing.py", line 354, in run_endpoint_function
+    return await run_in_threadpool(dependant.call, **values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/starlette/concurrency.py", line 34, in run_in_threadpool
+    return await anyio.to_thread.run_sync(func)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/codespace/.local/lib/python3.14/site-packages/anyio/to_thread.py", line 65, in run_sync
+    return await get_async_backend().run_sync_in_worker_thread(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        func, args, abandon_on_cancel=abandon_on_cancel, limiter=limiter
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/codespace/.local/lib/python3.14/site-packages/anyio/_backends/_asyncio.py", line 2706, in run_sync_in_worker_thread
+    return await future
+           ^^^^^^^^^^^^
+  File "/home/codespace/.local/lib/python3.14/site-packages/anyio/_backends/_asyncio.py", line 1100, in run
+    result = context.run(func, *args)
+  File "/workspaces/gadget-store-os/backend/app/api/auth/routes.py", line 86, in refresh
+    access_token = refresh_login_session(
+        db,
+        payload.refresh_token,
+    )
+  File "/workspaces/gadget-store-os/backend/app/auth/service.py", line 64, in refresh_login_session
+    if session.expires_at <= now:
+       ^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: can't compare offset-naive and offset-aware datetimes
+INFO:     102.90.81.70:0 - "POST /auth/refresh HTTP/1.1" 500 Internal Server Error
+ERROR:    Exception in ASGI application
+Traceback (most recent call last):
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/uvicorn/protocols/http/h11_impl.py", line 411, in run_asgi
+    result = await app(  # type: ignore[func-returns-value]
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        self.scope, self.receive, self.send
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/uvicorn/middleware/proxy_headers.py", line 63, in __call__
+    return await self.app(scope, receive, send)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/fastapi/applications.py", line 1163, in __call__
+    await super().__call__(scope, receive, send)
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/starlette/applications.py", line 96, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/starlette/middleware/errors.py", line 186, in __call__
+    raise exc
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/starlette/middleware/errors.py", line 164, in __call__
+    await self.app(scope, receive, _send)
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/starlette/middleware/cors.py", line 91, in __call__
+    await self.simple_response(scope, receive, send, request_headers=headers)
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/starlette/middleware/cors.py", line 149, in simple_response
+    await self.app(scope, receive, send)
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/starlette/middleware/exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/fastapi/middleware/asyncexitstack.py", line 18, in __call__
+    await self.app(scope, receive, send)
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/starlette/routing.py", line 676, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/fastapi/routing.py", line 2734, in app
+    await route.handle(scope, receive, send)
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/fastapi/routing.py", line 1780, in handle
+    await self.original_router.handle(scope, receive, send)
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/fastapi/routing.py", line 2789, in handle
+    await included_router._handle_selected(scope, receive, send)
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/fastapi/routing.py", line 1791, in _handle_selected
+    await route.handle(scope, receive, send)
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/fastapi/routing.py", line 1780, in handle
+    await self.original_router.handle(scope, receive, send)
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/fastapi/routing.py", line 2789, in handle
+    await included_router._handle_selected(scope, receive, send)
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/fastapi/routing.py", line 1800, in _handle_selected
+    await original_route.handle(scope, receive, send)
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/fastapi/routing.py", line 1279, in handle
+    await app(scope, receive, send)
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/fastapi/routing.py", line 158, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/fastapi/routing.py", line 144, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/fastapi/routing.py", line 706, in app
+    raw_response = await run_endpoint_function(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/fastapi/routing.py", line 354, in run_endpoint_function
+    return await run_in_threadpool(dependant.call, **values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/starlette/concurrency.py", line 34, in run_in_threadpool
+    return await anyio.to_thread.run_sync(func)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/codespace/.local/lib/python3.14/site-packages/anyio/to_thread.py", line 65, in run_sync
+    return await get_async_backend().run_sync_in_worker_thread(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        func, args, abandon_on_cancel=abandon_on_cancel, limiter=limiter
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/codespace/.local/lib/python3.14/site-packages/anyio/_backends/_asyncio.py", line 2706, in run_sync_in_worker_thread
+    return await future
+           ^^^^^^^^^^^^
+  File "/home/codespace/.local/lib/python3.14/site-packages/anyio/_backends/_asyncio.py", line 1100, in run
+    result = context.run(func, *args)
+  File "/workspaces/gadget-store-os/backend/app/api/auth/routes.py", line 86, in refresh
+    access_token = refresh_login_session(
+        db,
+        payload.refresh_token,
+    )
+  File "/workspaces/gadget-store-os/backend/app/auth/service.py", line 64, in refresh_login_session
+    if session.expires_at <= now:
+       ^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: can't compare offset-naive and offset-aware datetimes
+INFO:     102.90.81.70:0 - "POST /auth/refresh HTTP/1.1" 500 Internal Server Error
+ERROR:    Exception in ASGI application
+Traceback (most recent call last):
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/uvicorn/protocols/http/h11_impl.py", line 411, in run_asgi
+    result = await app(  # type: ignore[func-returns-value]
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        self.scope, self.receive, self.send
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/uvicorn/middleware/proxy_headers.py", line 63, in __call__
+    return await self.app(scope, receive, send)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/fastapi/applications.py", line 1163, in __call__
+    await super().__call__(scope, receive, send)
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/starlette/applications.py", line 96, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/starlette/middleware/errors.py", line 186, in __call__
+    raise exc
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/starlette/middleware/errors.py", line 164, in __call__
+    await self.app(scope, receive, _send)
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/starlette/middleware/cors.py", line 91, in __call__
+    await self.simple_response(scope, receive, send, request_headers=headers)
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/starlette/middleware/cors.py", line 149, in simple_response
+    await self.app(scope, receive, send)
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/starlette/middleware/exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/fastapi/middleware/asyncexitstack.py", line 18, in __call__
+    await self.app(scope, receive, send)
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/starlette/routing.py", line 676, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/fastapi/routing.py", line 2734, in app
+    await route.handle(scope, receive, send)
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/fastapi/routing.py", line 1780, in handle
+    await self.original_router.handle(scope, receive, send)
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/fastapi/routing.py", line 2789, in handle
+    await included_router._handle_selected(scope, receive, send)
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/fastapi/routing.py", line 1791, in _handle_selected
+    await route.handle(scope, receive, send)
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/fastapi/routing.py", line 1780, in handle
+    await self.original_router.handle(scope, receive, send)
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/fastapi/routing.py", line 2789, in handle
+    await included_router._handle_selected(scope, receive, send)
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/fastapi/routing.py", line 1800, in _handle_selected
+    await original_route.handle(scope, receive, send)
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/fastapi/routing.py", line 1279, in handle
+    await app(scope, receive, send)
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/fastapi/routing.py", line 158, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/fastapi/routing.py", line 144, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/fastapi/routing.py", line 706, in app
+    raw_response = await run_endpoint_function(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/fastapi/routing.py", line 354, in run_endpoint_function
+    return await run_in_threadpool(dependant.call, **values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/starlette/concurrency.py", line 34, in run_in_threadpool
+    return await anyio.to_thread.run_sync(func)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/codespace/.local/lib/python3.14/site-packages/anyio/to_thread.py", line 65, in run_sync
+    return await get_async_backend().run_sync_in_worker_thread(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        func, args, abandon_on_cancel=abandon_on_cancel, limiter=limiter
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/codespace/.local/lib/python3.14/site-packages/anyio/_backends/_asyncio.py", line 2706, in run_sync_in_worker_thread
+    return await future
+           ^^^^^^^^^^^^
+  File "/home/codespace/.local/lib/python3.14/site-packages/anyio/_backends/_asyncio.py", line 1100, in run
+    result = context.run(func, *args)
+  File "/workspaces/gadget-store-os/backend/app/api/auth/routes.py", line 86, in refresh
+    access_token = refresh_login_session(
+        db,
+        payload.refresh_token,
+    )
+  File "/workspaces/gadget-store-os/backend/app/auth/service.py", line 64, in refresh_login_session
+    if session.expires_at <= now:
+       ^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: can't compare offset-naive and offset-aware datetimes
+INFO:     102.90.81.70:0 - "POST /auth/refresh HTTP/1.1" 500 Internal Server Error
+ERROR:    Exception in ASGI application
+Traceback (most recent call last):
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/uvicorn/protocols/http/h11_impl.py", line 411, in run_asgi
+    result = await app(  # type: ignore[func-returns-value]
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        self.scope, self.receive, self.send
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/uvicorn/middleware/proxy_headers.py", line 63, in __call__
+    return await self.app(scope, receive, send)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/fastapi/applications.py", line 1163, in __call__
+    await super().__call__(scope, receive, send)
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/starlette/applications.py", line 96, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/starlette/middleware/errors.py", line 186, in __call__
+    raise exc
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/starlette/middleware/errors.py", line 164, in __call__
+    await self.app(scope, receive, _send)
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/starlette/middleware/cors.py", line 91, in __call__
+    await self.simple_response(scope, receive, send, request_headers=headers)
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/starlette/middleware/cors.py", line 149, in simple_response
+    await self.app(scope, receive, send)
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/starlette/middleware/exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/fastapi/middleware/asyncexitstack.py", line 18, in __call__
+    await self.app(scope, receive, send)
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/starlette/routing.py", line 676, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/fastapi/routing.py", line 2734, in app
+    await route.handle(scope, receive, send)
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/fastapi/routing.py", line 1780, in handle
+    await self.original_router.handle(scope, receive, send)
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/fastapi/routing.py", line 2789, in handle
+    await included_router._handle_selected(scope, receive, send)
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/fastapi/routing.py", line 1791, in _handle_selected
+    await route.handle(scope, receive, send)
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/fastapi/routing.py", line 1780, in handle
+    await self.original_router.handle(scope, receive, send)
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/fastapi/routing.py", line 2789, in handle
+    await included_router._handle_selected(scope, receive, send)
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/fastapi/routing.py", line 1800, in _handle_selected
+    await original_route.handle(scope, receive, send)
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/fastapi/routing.py", line 1279, in handle
+    await app(scope, receive, send)
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/fastapi/routing.py", line 158, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/fastapi/routing.py", line 144, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/fastapi/routing.py", line 706, in app
+    raw_response = await run_endpoint_function(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/fastapi/routing.py", line 354, in run_endpoint_function
+    return await run_in_threadpool(dependant.call, **values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/starlette/concurrency.py", line 34, in run_in_threadpool
+    return await anyio.to_thread.run_sync(func)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/codespace/.local/lib/python3.14/site-packages/anyio/to_thread.py", line 65, in run_sync
+    return await get_async_backend().run_sync_in_worker_thread(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        func, args, abandon_on_cancel=abandon_on_cancel, limiter=limiter
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/codespace/.local/lib/python3.14/site-packages/anyio/_backends/_asyncio.py", line 2706, in run_sync_in_worker_thread
+    return await future
+           ^^^^^^^^^^^^
+  File "/home/codespace/.local/lib/python3.14/site-packages/anyio/_backends/_asyncio.py", line 1100, in run
+    result = context.run(func, *args)
+  File "/workspaces/gadget-store-os/backend/app/api/auth/routes.py", line 86, in refresh
+    access_token = refresh_login_session(
+        db,
+        payload.refresh_token,
+    )
+  File "/workspaces/gadget-store-os/backend/app/auth/service.py", line 64, in refresh_login_session
+    if session.expires_at <= now:
+       ^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: can't compare offset-naive and offset-aware datetimes
+INFO:     102.90.81.70:0 - "POST /auth/refresh HTTP/1.1" 500 Internal Server Error
+ERROR:    Exception in ASGI application
+Traceback (most recent call last):
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/uvicorn/protocols/http/h11_impl.py", line 411, in run_asgi
+    result = await app(  # type: ignore[func-returns-value]
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        self.scope, self.receive, self.send
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/uvicorn/middleware/proxy_headers.py", line 63, in __call__
+    return await self.app(scope, receive, send)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/fastapi/applications.py", line 1163, in __call__
+    await super().__call__(scope, receive, send)
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/starlette/applications.py", line 96, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/starlette/middleware/errors.py", line 186, in __call__
+    raise exc
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/starlette/middleware/errors.py", line 164, in __call__
+    await self.app(scope, receive, _send)
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/starlette/middleware/cors.py", line 91, in __call__
+    await self.simple_response(scope, receive, send, request_headers=headers)
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/starlette/middleware/cors.py", line 149, in simple_response
+    await self.app(scope, receive, send)
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/starlette/middleware/exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/fastapi/middleware/asyncexitstack.py", line 18, in __call__
+    await self.app(scope, receive, send)
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/starlette/routing.py", line 676, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/fastapi/routing.py", line 2734, in app
+    await route.handle(scope, receive, send)
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/fastapi/routing.py", line 1780, in handle
+    await self.original_router.handle(scope, receive, send)
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/fastapi/routing.py", line 2789, in handle
+    await included_router._handle_selected(scope, receive, send)
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/fastapi/routing.py", line 1791, in _handle_selected
+    await route.handle(scope, receive, send)
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/fastapi/routing.py", line 1780, in handle
+    await self.original_router.handle(scope, receive, send)
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/fastapi/routing.py", line 2789, in handle
+    await included_router._handle_selected(scope, receive, send)
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/fastapi/routing.py", line 1800, in _handle_selected
+    await original_route.handle(scope, receive, send)
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/fastapi/routing.py", line 1279, in handle
+    await app(scope, receive, send)
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/fastapi/routing.py", line 158, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/fastapi/routing.py", line 144, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/fastapi/routing.py", line 706, in app
+    raw_response = await run_endpoint_function(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/fastapi/routing.py", line 354, in run_endpoint_function
+    return await run_in_threadpool(dependant.call, **values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/starlette/concurrency.py", line 34, in run_in_threadpool
+    return await anyio.to_thread.run_sync(func)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/codespace/.local/lib/python3.14/site-packages/anyio/to_thread.py", line 65, in run_sync
+    return await get_async_backend().run_sync_in_worker_thread(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        func, args, abandon_on_cancel=abandon_on_cancel, limiter=limiter
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/codespace/.local/lib/python3.14/site-packages/anyio/_backends/_asyncio.py", line 2706, in run_sync_in_worker_thread
+    return await future
+           ^^^^^^^^^^^^
+  File "/home/codespace/.local/lib/python3.14/site-packages/anyio/_backends/_asyncio.py", line 1100, in run
+    result = context.run(func, *args)
+  File "/workspaces/gadget-store-os/backend/app/api/auth/routes.py", line 86, in refresh
+    access_token = refresh_login_session(
+        db,
+        payload.refresh_token,
+    )
+  File "/workspaces/gadget-store-os/backend/app/auth/service.py", line 64, in refresh_login_session
+    if session.expires_at <= now:
+       ^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: can't compare offset-naive and offset-aware datetimes
+INFO:     102.90.81.70:0 - "POST /auth/refresh HTTP/1.1" 500 Internal Server Error
+ERROR:    Exception in ASGI application
+Traceback (most recent call last):
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/uvicorn/protocols/http/h11_impl.py", line 411, in run_asgi
+    result = await app(  # type: ignore[func-returns-value]
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        self.scope, self.receive, self.send
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/uvicorn/middleware/proxy_headers.py", line 63, in __call__
+    return await self.app(scope, receive, send)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/fastapi/applications.py", line 1163, in __call__
+    await super().__call__(scope, receive, send)
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/starlette/applications.py", line 96, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/starlette/middleware/errors.py", line 186, in __call__
+    raise exc
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/starlette/middleware/errors.py", line 164, in __call__
+    await self.app(scope, receive, _send)
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/starlette/middleware/cors.py", line 91, in __call__
+    await self.simple_response(scope, receive, send, request_headers=headers)
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/starlette/middleware/cors.py", line 149, in simple_response
+    await self.app(scope, receive, send)
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/starlette/middleware/exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/fastapi/middleware/asyncexitstack.py", line 18, in __call__
+    await self.app(scope, receive, send)
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/starlette/routing.py", line 676, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/fastapi/routing.py", line 2734, in app
+    await route.handle(scope, receive, send)
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/fastapi/routing.py", line 1780, in handle
+    await self.original_router.handle(scope, receive, send)
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/fastapi/routing.py", line 2789, in handle
+    await included_router._handle_selected(scope, receive, send)
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/fastapi/routing.py", line 1791, in _handle_selected
+    await route.handle(scope, receive, send)
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/fastapi/routing.py", line 1780, in handle
+    await self.original_router.handle(scope, receive, send)
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/fastapi/routing.py", line 2789, in handle
+    await included_router._handle_selected(scope, receive, send)
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/fastapi/routing.py", line 1800, in _handle_selected
+    await original_route.handle(scope, receive, send)
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/fastapi/routing.py", line 1279, in handle
+    await app(scope, receive, send)
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/fastapi/routing.py", line 158, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/fastapi/routing.py", line 144, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/fastapi/routing.py", line 706, in app
+    raw_response = await run_endpoint_function(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/fastapi/routing.py", line 354, in run_endpoint_function
+    return await run_in_threadpool(dependant.call, **values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/starlette/concurrency.py", line 34, in run_in_threadpool
+    return await anyio.to_thread.run_sync(func)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/codespace/.local/lib/python3.14/site-packages/anyio/to_thread.py", line 65, in run_sync
+    return await get_async_backend().run_sync_in_worker_thread(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        func, args, abandon_on_cancel=abandon_on_cancel, limiter=limiter
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/codespace/.local/lib/python3.14/site-packages/anyio/_backends/_asyncio.py", line 2706, in run_sync_in_worker_thread
+    return await future
+           ^^^^^^^^^^^^
+  File "/home/codespace/.local/lib/python3.14/site-packages/anyio/_backends/_asyncio.py", line 1100, in run
+    result = context.run(func, *args)
+  File "/workspaces/gadget-store-os/backend/app/api/auth/routes.py", line 86, in refresh
+    access_token = refresh_login_session(
+        db,
+        payload.refresh_token,
+    )
+  File "/workspaces/gadget-store-os/backend/app/auth/service.py", line 64, in refresh_login_session
+    if session.expires_at <= now:
+       ^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: can't compare offset-naive and offset-aware datetimes
+INFO:     102.90.81.70:0 - "POST /auth/refresh HTTP/1.1" 500 Internal Server Error
+ERROR:    Exception in ASGI application
+Traceback (most recent call last):
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/uvicorn/protocols/http/h11_impl.py", line 411, in run_asgi
+    result = await app(  # type: ignore[func-returns-value]
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        self.scope, self.receive, self.send
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/uvicorn/middleware/proxy_headers.py", line 63, in __call__
+    return await self.app(scope, receive, send)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/fastapi/applications.py", line 1163, in __call__
+    await super().__call__(scope, receive, send)
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/starlette/applications.py", line 96, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/starlette/middleware/errors.py", line 186, in __call__
+    raise exc
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/starlette/middleware/errors.py", line 164, in __call__
+    await self.app(scope, receive, _send)
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/starlette/middleware/cors.py", line 91, in __call__
+    await self.simple_response(scope, receive, send, request_headers=headers)
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/starlette/middleware/cors.py", line 149, in simple_response
+    await self.app(scope, receive, send)
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/starlette/middleware/exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/fastapi/middleware/asyncexitstack.py", line 18, in __call__
+    await self.app(scope, receive, send)
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/starlette/routing.py", line 676, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/fastapi/routing.py", line 2734, in app
+    await route.handle(scope, receive, send)
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/fastapi/routing.py", line 1780, in handle
+    await self.original_router.handle(scope, receive, send)
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/fastapi/routing.py", line 2789, in handle
+    await included_router._handle_selected(scope, receive, send)
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/fastapi/routing.py", line 1791, in _handle_selected
+    await route.handle(scope, receive, send)
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/fastapi/routing.py", line 1780, in handle
+    await self.original_router.handle(scope, receive, send)
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/fastapi/routing.py", line 2789, in handle
+    await included_router._handle_selected(scope, receive, send)
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/fastapi/routing.py", line 1800, in _handle_selected
+    await original_route.handle(scope, receive, send)
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/fastapi/routing.py", line 1279, in handle
+    await app(scope, receive, send)
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/fastapi/routing.py", line 158, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/fastapi/routing.py", line 144, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/fastapi/routing.py", line 706, in app
+    raw_response = await run_endpoint_function(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/fastapi/routing.py", line 354, in run_endpoint_function
+    return await run_in_threadpool(dependant.call, **values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/starlette/concurrency.py", line 34, in run_in_threadpool
+    return await anyio.to_thread.run_sync(func)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/codespace/.local/lib/python3.14/site-packages/anyio/to_thread.py", line 65, in run_sync
+    return await get_async_backend().run_sync_in_worker_thread(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        func, args, abandon_on_cancel=abandon_on_cancel, limiter=limiter
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/codespace/.local/lib/python3.14/site-packages/anyio/_backends/_asyncio.py", line 2706, in run_sync_in_worker_thread
+    return await future
+           ^^^^^^^^^^^^
+  File "/home/codespace/.local/lib/python3.14/site-packages/anyio/_backends/_asyncio.py", line 1100, in run
+    result = context.run(func, *args)
+  File "/workspaces/gadget-store-os/backend/app/api/auth/routes.py", line 86, in refresh
+    access_token = refresh_login_session(
+        db,
+        payload.refresh_token,
+    )
+  File "/workspaces/gadget-store-os/backend/app/auth/service.py", line 64, in refresh_login_session
+    if session.expires_at <= now:
+       ^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: can't compare offset-naive and offset-aware datetimes
+INFO:     102.90.81.70:0 - "POST /auth/refresh HTTP/1.1" 500 Internal Server Error
+ERROR:    Exception in ASGI application
+Traceback (most recent call last):
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/uvicorn/protocols/http/h11_impl.py", line 411, in run_asgi
+    result = await app(  # type: ignore[func-returns-value]
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        self.scope, self.receive, self.send
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/uvicorn/middleware/proxy_headers.py", line 63, in __call__
+    return await self.app(scope, receive, send)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/fastapi/applications.py", line 1163, in __call__
+    await super().__call__(scope, receive, send)
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/starlette/applications.py", line 96, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/starlette/middleware/errors.py", line 186, in __call__
+    raise exc
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/starlette/middleware/errors.py", line 164, in __call__
+    await self.app(scope, receive, _send)
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/starlette/middleware/cors.py", line 91, in __call__
+    await self.simple_response(scope, receive, send, request_headers=headers)
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/starlette/middleware/cors.py", line 149, in simple_response
+    await self.app(scope, receive, send)
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/starlette/middleware/exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/fastapi/middleware/asyncexitstack.py", line 18, in __call__
+    await self.app(scope, receive, send)
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/starlette/routing.py", line 676, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/fastapi/routing.py", line 2734, in app
+    await route.handle(scope, receive, send)
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/fastapi/routing.py", line 1780, in handle
+    await self.original_router.handle(scope, receive, send)
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/fastapi/routing.py", line 2789, in handle
+    await included_router._handle_selected(scope, receive, send)
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/fastapi/routing.py", line 1791, in _handle_selected
+    await route.handle(scope, receive, send)
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/fastapi/routing.py", line 1780, in handle
+    await self.original_router.handle(scope, receive, send)
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/fastapi/routing.py", line 2789, in handle
+    await included_router._handle_selected(scope, receive, send)
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/fastapi/routing.py", line 1800, in _handle_selected
+    await original_route.handle(scope, receive, send)
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/fastapi/routing.py", line 1279, in handle
+    await app(scope, receive, send)
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/fastapi/routing.py", line 158, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/fastapi/routing.py", line 144, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/fastapi/routing.py", line 706, in app
+    raw_response = await run_endpoint_function(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/fastapi/routing.py", line 354, in run_endpoint_function
+    return await run_in_threadpool(dependant.call, **values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/codespace/.python/current/lib/python3.14/site-packages/starlette/concurrency.py", line 34, in run_in_threadpool
+    return await anyio.to_thread.run_sync(func)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/codespace/.local/lib/python3.14/site-packages/anyio/to_thread.py", line 65, in run_sync
+    return await get_async_backend().run_sync_in_worker_thread(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        func, args, abandon_on_cancel=abandon_on_cancel, limiter=limiter
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/codespace/.local/lib/python3.14/site-packages/anyio/_backends/_asyncio.py", line 2706, in run_sync_in_worker_thread
+    return await future
+           ^^^^^^^^^^^^
+  File "/home/codespace/.local/lib/python3.14/site-packages/anyio/_backends/_asyncio.py", line 1100, in run
+    result = context.run(func, *args)
+  File "/workspaces/gadget-store-os/backend/app/api/auth/routes.py", line 86, in refresh
+    access_token = refresh_login_session(
+        db,
+        payload.refresh_token,
+    )
+  File "/workspaces/gadget-store-os/backend/app/auth/service.py", line 64, in refresh_login_session
+    if session.expires_at <= now:
+       ^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: can't compare offset-naive and offset-aware datetimes
+INFO:     102.90.81.70:0 - "GET /auth/me HTTP/1.1" 401 Unauthorized
+INFO:     102.90.81.70:0 - "GET /auth/me HTTP/1.1" 401 Unauthorized
+INFO:     102.90.81.70:0 - "GET /organizations HTTP/1.1" 401 Unauthorized
+INFO:     102.90.81.70:0 - "GET /organizations HTTP/1.1" 401 Unauthorized
+WARNING:  StatReload detected changes in 'app/sales/service.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [86253]
+INFO:     Started server process [89786]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  StatReload detected changes in 'app/purchasing/service.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [89786]
+INFO:     Started server process [90007]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  StatReload detected changes in 'app/purchasing/receiving.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [90007]
+INFO:     Started server process [94410]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  StatReload detected changes in 'app/dashboard/service.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [94410]
+INFO:     Started server process [94601]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  StatReload detected changes in 'app/finance/service.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [94601]
+INFO:     Started server process [94894]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  StatReload detected changes in 'app/customers/returns.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [94894]
+INFO:     Started server process [95065]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  StatReload detected changes in 'app/finance/service.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [95065]
+INFO:     Started server process [102080]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  StatReload detected changes in 'app/finance/service.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [102080]
+INFO:     Started server process [102691]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  StatReload detected changes in 'app/finance/service.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [102691]
+INFO:     Started server process [102887]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  StatReload detected changes in 'tests/integration/test_financial_controls.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [102887]
+INFO:     Started server process [102994]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  StatReload detected changes in 'app/aftersales/routes.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [102994]
+INFO:     Started server process [105120]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  StatReload detected changes in 'app/dashboard/service.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [105120]
+INFO:     Started server process [111678]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  StatReload detected changes in 'app/aftersales/routes.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [111678]
+INFO:     Started server process [112410]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  StatReload detected changes in 'app/api/router.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [112410]
+INFO:     Started server process [116948]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.

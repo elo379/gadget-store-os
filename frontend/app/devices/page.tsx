@@ -5,6 +5,7 @@ import { AppShell } from "@/components/app-shell";
 import { PageHeader } from "@/components/page-header";
 import { apiGet, ApiError } from "@/lib/api";
 import { useOrganization } from "@/components/organization-provider";
+import { CameraScanner } from "@/components/camera-scanner";
 
 type Device = {
   id: string;
@@ -29,41 +30,31 @@ export default function DevicesPage() {
   const { organizationId } = useOrganization();
 
   const [query, setQuery] = useState("");
+  const [identifierType, setIdentifierType] = useState<"imei" | "serial" | "barcode">("imei");
   const [device, setDevice] = useState<Device | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  async function lookup(event: FormEvent) {
-    event.preventDefault();
-
-    if (!organizationId || !query.trim()) return;
+  async function lookupValue(rawValue: string) {
+    if (!organizationId || !rawValue.trim()) return;
 
     setLoading(true);
     setError("");
     setDevice(null);
 
-    const value = encodeURIComponent(query.trim());
+    const raw = rawValue.trim();
+    const value = encodeURIComponent(raw);
 
     try {
       let result: Device;
 
-      if (/^\d{14,16}$/.test(query.trim())) {
+      if (identifierType === "imei") {
         result = await apiGet<Device>(
           `/devices/lookup/imei/${value}?organization_id=${organizationId}`
         );
-      } else if (query.includes("-") || query.length >= 8) {
-        try {
-          result = await apiGet<Device>(
-            `/devices/lookup/serial/${value}?organization_id=${organizationId}`
-          );
-        } catch {
-          result = await apiGet<Device>(
-            `/devices/lookup/barcode/${value}?organization_id=${organizationId}`
-          );
-        }
       } else {
         result = await apiGet<Device>(
-          `/devices/lookup/barcode/${value}?organization_id=${organizationId}`
+          `/devices/lookup/${identifierType}/${value}?organization_id=${organizationId}`
         );
       }
 
@@ -79,21 +70,30 @@ export default function DevicesPage() {
     }
   }
 
+  function lookup(event: FormEvent) {
+    event.preventDefault();
+    void lookupValue(query);
+  }
+
   return (
     <AppShell>
       <PageHeader
-        eyebrow="Device registry"
-        title="Devices & IMEI"
+        eyebrow="Catalogue · Registry"
+        title="Device Registry"
         description="Identifier-level visibility for serialized devices from intake through sale."
       />
 
       <div className="grid gap-5 xl:grid-cols-[1fr_380px]">
         <section className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] shadow-sm p-5">
           <form onSubmit={lookup} className="flex gap-2">
+            <label className="sr-only" htmlFor="identifier-type">Identifier type</label>
+            <select id="identifier-type" value={identifierType} onChange={(event) => setIdentifierType(event.target.value as typeof identifierType)} className="h-12 rounded-xl border border-[var(--border)] bg-white px-3 text-sm">
+              <option value="imei">IMEI</option><option value="serial">Serial</option><option value="barcode">Barcode</option>
+            </select>
             <input
               value={query}
               onChange={(event) => setQuery(event.target.value)}
-              placeholder="IMEI, serial number or barcode"
+              placeholder={`Enter ${identifierType === "imei" ? "IMEI" : identifierType}`}
               className="h-12 min-w-0 flex-1 rounded-xl border border-[var(--border)] px-4 text-sm outline-none focus:border-neutral-900"
             />
 
@@ -105,6 +105,8 @@ export default function DevicesPage() {
               {loading ? "Searching…" : "Lookup"}
             </button>
           </form>
+
+          <CameraScanner onDetected={(value) => { setQuery(value); void lookupValue(value); }} />
 
           {error && (
             <div className="mt-5 rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700">
@@ -118,7 +120,7 @@ export default function DevicesPage() {
                 Search the device registry
               </p>
               <p className="mt-1 text-xs text-[var(--muted)]">
-                Enter an IMEI, serial number or barcode.
+                Choose an identifier type, enter its value or scan a device barcode.
               </p>
             </div>
           )}

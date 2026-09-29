@@ -12,6 +12,8 @@ from app.notifications.service import (
     list_notifications,
     mark_notification_read,
 )
+from app.permissions.access import require_organization_permission
+from app.organizations.authority import get_membership_for_user
 
 router = APIRouter(
     prefix="/notifications",
@@ -26,6 +28,7 @@ def create_notification_route(
     current_user=Depends(get_current_user),
 ):
     try:
+        require_organization_permission(db, uuid.UUID(current_user.user_id), payload.organization_id, "members.manage")
         return create_notification(db, payload)
     except ValueError as exc:
         raise HTTPException(status_code=409, detail=str(exc))
@@ -37,10 +40,12 @@ def notifications(
     db: Session = Depends(get_db),
     current_user=Depends(get_current_user),
 ):
+    if get_membership_for_user(db, organization_id, uuid.UUID(current_user.user_id)) is None:
+        raise HTTPException(status_code=404, detail="Resource not found")
     return list_notifications(
         db,
         organization_id,
-        current_user.id,
+        uuid.UUID(current_user.user_id),
     )
 
 
@@ -50,11 +55,13 @@ def unread_count(
     db: Session = Depends(get_db),
     current_user=Depends(get_current_user),
 ):
+    if get_membership_for_user(db, organization_id, uuid.UUID(current_user.user_id)) is None:
+        raise HTTPException(status_code=404, detail="Resource not found")
     return {
         "unread_count": get_unread_count(
             db,
             organization_id,
-            current_user.id,
+            uuid.UUID(current_user.user_id),
         )
     }
 
@@ -66,11 +73,13 @@ def mark_read(
     db: Session = Depends(get_db),
     current_user=Depends(get_current_user),
 ):
+    if get_membership_for_user(db, organization_id, uuid.UUID(current_user.user_id)) is None:
+        raise HTTPException(status_code=404, detail="Resource not found")
     try:
         return mark_notification_read(
             db,
             organization_id,
-            current_user.id,
+            uuid.UUID(current_user.user_id),
             notification_id,
         )
     except ValueError as exc:

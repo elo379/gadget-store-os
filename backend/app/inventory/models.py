@@ -1,7 +1,7 @@
 import uuid
 from decimal import Decimal
 
-from sqlalchemy import Boolean, ForeignKey, Numeric, String, Text
+from sqlalchemy import Boolean, ForeignKey, Numeric, String, Text, UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.db.base import Base
@@ -10,6 +10,7 @@ from app.db.mixins import TimestampMixin, UUIDPrimaryKeyMixin
 
 class InventoryLocation(UUIDPrimaryKeyMixin, TimestampMixin, Base):
     __tablename__ = "inventory_locations"
+    __table_args__ = (UniqueConstraint("organization_id", "name", name="uq_inventory_locations_org_name"),)
 
     organization_id: Mapped[uuid.UUID] = mapped_column(
         ForeignKey("organizations.id", ondelete="CASCADE"),
@@ -21,6 +22,11 @@ class InventoryLocation(UUIDPrimaryKeyMixin, TimestampMixin, Base):
         String(150),
         nullable=False,
     )
+
+    parent_location_id: Mapped[uuid.UUID | None] = mapped_column(
+        ForeignKey("inventory_locations.id", ondelete="SET NULL"), nullable=True, index=True
+    )
+    location_type: Mapped[str] = mapped_column(String(30), nullable=False, default="location")
 
     description: Mapped[str] = mapped_column(
         Text,
@@ -39,6 +45,7 @@ class InventoryLocation(UUIDPrimaryKeyMixin, TimestampMixin, Base):
 
 class InventoryItem(UUIDPrimaryKeyMixin, TimestampMixin, Base):
     __tablename__ = "inventory_items"
+    __table_args__ = (UniqueConstraint("organization_id", "product_id", "location_id", name="uq_inventory_org_product_location"),)
 
     organization_id: Mapped[uuid.UUID] = mapped_column(
         ForeignKey("organizations.id", ondelete="CASCADE"),
@@ -75,6 +82,8 @@ class InventoryItem(UUIDPrimaryKeyMixin, TimestampMixin, Base):
         nullable=False,
         default=Decimal("0"),
     )
+
+    reorder_threshold: Mapped[Decimal] = mapped_column(Numeric(14, 3), nullable=False, default=Decimal("0"))
 
     status: Mapped[str] = mapped_column(
         String(50),

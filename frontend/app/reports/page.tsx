@@ -12,12 +12,14 @@ type ReportRow = {
   total?: number | string;
   status?: string;
 };
+const reportTypes = ["sales", "products", "staff", "expenses", "inventory", "customers"] as const;
 
 export default function ReportsPage() {
   const { organizationId } = useOrganization();
   const [rows, setRows] = useState<ReportRow[]>([]);
   const [loading, setLoading] = useState(true);
   const [message, setMessage] = useState("");
+  const [reportType, setReportType] = useState<(typeof reportTypes)[number]>("sales");
 
   async function loadReports() {
     if (!organizationId) return;
@@ -25,11 +27,13 @@ export default function ReportsPage() {
     setLoading(true);
 
     try {
-      const data = await apiGet<ReportRow[]>(
-        `/reports?organization_id=${organizationId}`,
+      const data = await apiGet<Record<string, unknown>>(
+        `/reports/${organizationId}/${reportType}`,
       );
-
-      setRows(Array.isArray(data) ? data : []);
+      setRows(Object.entries(data).map(([name, value]) => ({
+        name: name.replaceAll("_", " "),
+        value: typeof value === "object" ? JSON.stringify(value) : String(value ?? "—"),
+      })));
       setMessage("");
     } catch {
       setRows([]);
@@ -41,14 +45,14 @@ export default function ReportsPage() {
 
   useEffect(() => {
     void loadReports();
-  }, [organizationId]);
+  }, [organizationId, reportType]);
 
   return (
     <div className="space-y-6">
       <PageHeader
         eyebrow="Analytics"
         title="Reports"
-        description="Review operational and financial reporting for the organization."
+        description="Analyze sales, product, staff, expense, inventory and customer records from live report endpoints."
       />
 
       <div className="flex justify-end">
@@ -61,6 +65,10 @@ export default function ReportsPage() {
           {loading ? "Refreshing…" : "Refresh"}
         </button>
       </div>
+
+      <nav aria-label="Report type" className="flex gap-2 overflow-x-auto rounded-xl border border-[var(--border)] bg-white p-2">
+        {reportTypes.map((type) => <button key={type} type="button" aria-pressed={reportType === type} onClick={() => setReportType(type)} className={`min-h-10 shrink-0 rounded-lg px-4 text-sm font-medium capitalize ${reportType === type ? "bg-neutral-950 text-white" : "hover:bg-neutral-100"}`}>{type}</button>)}
+      </nav>
 
       {message && (
         <div className="rounded-xl border border-[var(--border)] bg-[var(--surface)] p-4 text-sm">

@@ -5,8 +5,8 @@ from pydantic import BaseModel, Field
 
 class StaffProfileCreate(BaseModel):
     organization_id: uuid.UUID
-    user_id: uuid.UUID
-    staff_code: str = Field(min_length=1, max_length=50)
+    email: str
+    staff_code: str = ""
     phone: str = Field(default="", max_length=50)
     job_title: str = Field(default="", max_length=100)
     notes: str = ""

@@ -1,11 +1,34 @@
 const API_URL =
-  process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+  process.env.NEXT_PUBLIC_API_URL || "/api";
+
+export type AuthUser = {
+  user_id: string;
+  email: string;
+  role_name: string;
+  personnel_id: string | null;
+  is_owner: boolean;
+  is_active: boolean;
+};
+
+export type LoginResponse = {
+  access_token: string;
+  refresh_token: string;
+  token_type: string;
+};
+
+export type Organization = {
+  organization_id: string;
+  name: string;
+  slug?: string;
+  role_name?: string;
+  is_owner?: boolean;
+};
 
 const ACCESS_TOKEN_KEY = "gsos_access_token";
 const REFRESH_TOKEN_KEY = "gsos_refresh_token";
 
 type ApiErrorPayload = {
-  detail?: string;
+  detail?: unknown;
 };
 
 export class ApiError extends Error {
@@ -87,6 +110,22 @@ export async function refreshSession() {
   return true;
 }
 
+export async function login(
+  email: string,
+  password: string,
+): Promise<LoginResponse> {
+  const result = await request<LoginResponse>("/auth/login", {
+    method: "POST",
+    body: JSON.stringify({
+      email,
+      password,
+    }),
+  });
+
+  saveSession(result.access_token, result.refresh_token);
+  return result;
+}
+
 export async function logout() {
   const refreshToken = getRefreshToken();
 
@@ -103,6 +142,7 @@ export async function logout() {
   }
 
   clearToken();
+  window.location.replace("/login");
 }
 
 async function request<T>(
@@ -112,7 +152,10 @@ async function request<T>(
 ): Promise<T> {
   const token = getAccessToken();
   const headers = new Headers(options.headers);
-  headers.set("Content-Type", "application/json");
+
+  if (!headers.has("Content-Type") && options.body) {
+    headers.set("Content-Type", "application/json");
+  }
 
   if (token) {
     headers.set("Authorization", `Bearer ${token}`);
@@ -126,15 +169,22 @@ async function request<T>(
       headers,
     });
   } catch (err) {
-    const detail = err instanceof Error ? `${err.name}: ${err.message}` : String(err);
-    throw new ApiError(`GSOS NETWORK ERROR | ${API_URL}${path} | ${err instanceof Error ? `${err.name}: ${err.message}` : String(err)}`, 0);
+    throw new ApiError(
+      `GSOS NETWORK ERROR | ${API_URL}${path} | ${
+        err instanceof Error ? `${err.name}: ${err.message}` : String(err)
+      }`,
+      0,
+    );
   }
 
-  if (response.status === 401 && retry) {
+  if (response.status === 401 && retry && path !== "/auth/refresh") {
     const refreshed = await refreshSession();
+
     if (refreshed) {
       return request<T>(path, options, false);
     }
+
+    clearToken();
   }
 
   if (!response.ok) {
@@ -142,10 +192,18 @@ async function request<T>(
 
     try {
       const payload = (await response.json()) as ApiErrorPayload;
-      if (payload.detail) {
+      if (typeof payload.detail === "string") {
         message = payload.detail;
+      } else if (Array.isArray(payload.detail)) {
+        message = payload.detail.map((item) => {
+          if (typeof item === "string") return item;
+          if (item && typeof item === "object" && "msg" in item) return String(item.msg);
+          return JSON.stringify(item);
+        }).join("; ");
+      } else if (payload.detail) {
+        message = JSON.stringify(payload.detail);
       }
-    } catch (err) {
+    } catch {
       // Keep the status message.
     }
 
@@ -159,64 +217,12 @@ async function request<T>(
   return (await response.json()) as T;
 }
 
-export type AuthUser = {
-  user_id: string;
-  email: string;
-  role_name: string;
-  personnel_id: string | null;
-  is_owner: boolean;
-  is_active: boolean;
-};
-
-export type MembershipContext = {
-  id: string;
-  organization_id: string;
-  user_id: string;
-  role_name: string;
-  personnel_id: string | null;
-  is_owner: boolean;
-  is_active: boolean;
-};
-
-export type LoginResponse = {
-  access_token: string;
-  refresh_token: string;
-  token_type: string;
-};
-
-export async function login(
-  email: string,
-  password: string,
-): Promise<LoginResponse> {
-  const result = await request<LoginResponse>(
-    "/auth/login",
-    {
-      method: "POST",
-      body: JSON.stringify({
-        email,
-        password,
-      }),
-    },
-  );
-
-  saveSession(
-    result.access_token,
-    result.refresh_token,
-  );
-
-  return result;
-}
-
 export async function getCurrentUser(): Promise<AuthUser> {
   return request<AuthUser>("/auth/me");
 }
 
-export async function getMyOrganizations(): Promise<
-  MembershipContext[]
-> {
-  return request<MembershipContext[]>(
-    "/organizations/me",
-  );
+export async function getMyOrganizations(): Promise<Organization[]> {
+  return request<Organization[]>("/organizations");
 }
 
 export async function apiGet<T>(

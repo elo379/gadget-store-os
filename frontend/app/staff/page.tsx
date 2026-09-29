@@ -15,37 +15,58 @@ type Staff = {
   phone?: string;
   personnel_id?: string;
   status?: string;
+  staff_code?: string;
 };
+
+type TimebookRow = { staff_id: string; staff_code: string; date: string; clock_in: string | null; clock_out: string | null; worked_hours: number; late_minutes: number; early_departure_minutes: number; status: string };
 
 export default function StaffPage() {
   const { organizationId } = useOrganization();
   const [staff, setStaff] = useState<Staff[]>([]);
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
+  const [jobTitle, setJobTitle] = useState("");
   const [phone, setPhone] = useState("");
   const [email, setEmail] = useState("");
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState("");
+  const [month, setMonth] = useState(() => new Date().toISOString().slice(0, 7));
+  const [timebook, setTimebook] = useState<TimebookRow[]>([]);
+  const [currentUserId, setCurrentUserId] = useState("");
 
   async function load() {
     if (!organizationId) return;
     try {
+      const identity = await apiGet<{ user_id: string }>("/auth/me");
+      setCurrentUserId(identity.user_id);
       const data = await apiGet<Staff[]>(
-        `/staff?organization_id=${organizationId}`,
+        `/staff/${organizationId}`,
       );
       setStaff(Array.isArray(data) ? data : []);
+      try { setTimebook(await apiGet<TimebookRow[]>(`/staff/${organizationId}/timebook?month=${month}`)); } catch { setTimebook([]); }
     } catch {
       setStaff([]);
     }
   }
 
+  async function clockAction(person: Staff, action: "clock-in" | "clock-out") {
+    if (!organizationId || !person.id) return;
+    setBusy(true);
+    setMessage("");
+    try {
+      await apiPost(`/staff/${organizationId}/${person.id}/${action}`, {});
+      setMessage(action === "clock-in" ? "Checked in." : "Checked out.");
+      await load();
+    } catch (error) {
+      setMessage(error instanceof Error ? error.message : "Unable to update attendance.");
+    } finally { setBusy(false); }
+  }
+
   useEffect(() => {
     void load();
-  }, [organizationId]);
+  }, [organizationId, month]);
 
   async function createStaff(event: FormEvent) {
     event.preventDefault();
-    if (!organizationId || !firstName.trim()) return;
+    if (!organizationId || !email.trim()) return;
 
     setBusy(true);
     setMessage("");
@@ -53,14 +74,12 @@ export default function StaffPage() {
     try {
       await apiPost("/staff", {
         organization_id: organizationId,
-        first_name: firstName.trim(),
-        last_name: lastName.trim(),
-        phone: phone.trim(),
         email: email.trim(),
+        phone: phone.trim(),
+        job_title: jobTitle.trim(),
       });
 
-      setFirstName("");
-      setLastName("");
+      setJobTitle("");
       setPhone("");
       setEmail("");
       setMessage("Staff profile created.");
@@ -86,17 +105,11 @@ export default function StaffPage() {
         <form onSubmit={createStaff} className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] shadow-sm p-5 space-y-4">
           <h2 className="font-semibold">Create staff profile</h2>
 
+          <p className="text-sm text-[var(--muted)]">The email must belong to an active store account. Add new accounts from Settings &gt; Team &amp; Store Tree.</p>
           <input
-            value={firstName}
-            onChange={(e) => setFirstName(e.target.value)}
-            placeholder="First name"
-            className="w-full rounded-xl border px-4 py-3"
-            required
-          />
-          <input
-            value={lastName}
-            onChange={(e) => setLastName(e.target.value)}
-            placeholder="Last name"
+            value={jobTitle}
+            onChange={(e) => setJobTitle(e.target.value)}
+            placeholder="Job title"
             className="w-full rounded-xl border px-4 py-3"
           />
           <input
@@ -145,19 +158,21 @@ export default function StaffPage() {
                   <th className="px-3 py-3">Email</th>
                   <th className="px-3 py-3">Phone</th>
                   <th className="px-3 py-3">Status</th>
+                  <th className="px-3 py-3">Attendance</th>
                 </tr>
               </thead>
               <tbody>
                 {staff.map((person) => (
                   <tr key={person.id} className="border-b last:border-0">
                     <td className="px-3 py-4 font-medium">
-                      {person.name ||
+                      {person.name || person.email ||
                         `${person.first_name ?? ""} ${person.last_name ?? ""}`.trim() ||
                         "Unnamed"}
                     </td>
                     <td className="px-3 py-4">{person.email || "—"}</td>
                     <td className="px-3 py-4">{person.phone || "—"}</td>
                     <td className="px-3 py-4">{person.status || "Active"}</td>
+                    <td className="px-3 py-4">{person.user_id === currentUserId && person.id ? <div className="flex gap-2"><button disabled={busy} onClick={() => void clockAction(person, "clock-in")} className="rounded-lg border px-2 py-1 disabled:opacity-50">Check in</button><button disabled={busy} onClick={() => void clockAction(person, "clock-out")} className="rounded-lg border px-2 py-1 disabled:opacity-50">Check out</button></div> : "—"}</td>
                   </tr>
                 ))}
               </tbody>
@@ -165,6 +180,14 @@ export default function StaffPage() {
           </div>
         </section>
       </div>
+
+      <section className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-5 shadow-sm">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div><h2 className="font-semibold">Monthly timebook</h2><p className="text-sm text-[var(--muted)]">Worked hours, lateness, early departures, and absences.</p></div>
+          <input aria-label="Timebook month" type="month" value={month} onChange={(event) => setMonth(event.target.value)} className="rounded-lg border px-3 py-2" />
+        </div>
+        <div className="mt-4 overflow-x-auto"><table className="w-full text-left text-sm"><thead><tr className="border-b text-[var(--muted)]"><th className="px-3 py-2">Staff</th><th className="px-3 py-2">Date</th><th className="px-3 py-2">In / Out</th><th className="px-3 py-2">Hours</th><th className="px-3 py-2">Late</th><th className="px-3 py-2">Early</th><th className="px-3 py-2">Status</th></tr></thead><tbody>{timebook.map((row) => <tr key={`${row.staff_id}-${row.date}`} className="border-b last:border-0"><td className="px-3 py-3">{row.staff_code}</td><td className="px-3 py-3">{row.date}</td><td className="px-3 py-3">{row.clock_in ? new Date(row.clock_in).toLocaleTimeString() : "—"} / {row.clock_out ? new Date(row.clock_out).toLocaleTimeString() : "—"}</td><td className="px-3 py-3">{row.worked_hours}</td><td className="px-3 py-3">{row.late_minutes} min</td><td className="px-3 py-3">{row.early_departure_minutes} min</td><td className="px-3 py-3 capitalize">{row.status}</td></tr>)}{timebook.length === 0 ? <tr><td colSpan={7} className="px-3 py-6 text-center text-[var(--muted)]">No timebook entries for this month.</td></tr> : null}</tbody></table></div>
+      </section>
     </div>
   );
 }

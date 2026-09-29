@@ -5,6 +5,7 @@ from pydantic import BaseModel, ConfigDict, Field
 
 
 class DeviceRecordCreate(BaseModel):
+    organization_id: uuid.UUID
     product_id: uuid.UUID | None = None
 
     imei: str | None = Field(default=None, max_length=15)
@@ -16,7 +17,13 @@ class DeviceRecordCreate(BaseModel):
     model: str = Field(default="", max_length=150)
     variant: str = Field(default="", max_length=150)
     storage: str = Field(default="", max_length=50)
+    ram: str = Field(default="", max_length=50)
     color: str = Field(default="", max_length=75)
+    network_sim: str = Field(default="", max_length=100)
+    grade: str = Field(default="", max_length=50)
+    selling_price: Decimal | None = Field(default=None, ge=0)
+    warranty: str = Field(default="", max_length=150)
+    location_id: uuid.UUID | None = None
 
     source_type: str = Field(default="vendor", max_length=50)
     source_name: str = Field(default="", max_length=200)
@@ -50,7 +57,13 @@ class DeviceRecordResponse(BaseModel):
     model: str
     variant: str
     storage: str
+    ram: str
     color: str
+    network_sim: str
+    grade: str
+    selling_price: Decimal | None
+    warranty: str
+    location_id: uuid.UUID | None
 
     source_type: str
     source_name: str

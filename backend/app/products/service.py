@@ -44,7 +44,17 @@ def create_product(
     description: str = "",
     category_id: uuid.UUID | None = None,
     is_serialized: bool = False,
+    product_type: str = "other",
+    barcode: str = "",
+    unit_cost=0,
+    selling_price=0,
+    reorder_threshold=0,
 ) -> Product:
+    product_type = product_type.strip().lower()
+    if product_type not in {"smartphone", "laptop", "tablet", "accessory", "screen_protector", "charger_cable", "wearable", "audio", "other"}:
+        raise ValueError("Unsupported product type")
+    if product_type in {"smartphone", "laptop", "tablet", "wearable"} and not is_serialized:
+        raise ValueError("This product type must be serialized")
     existing = db.scalar(
         select(Product).where(
             Product.organization_id == organization_id,
@@ -76,6 +86,11 @@ def create_product(
         model=model,
         description=description,
         is_serialized=is_serialized,
+        product_type=product_type,
+        barcode=barcode.strip(),
+        unit_cost=unit_cost,
+        selling_price=selling_price,
+        reorder_threshold=reorder_threshold,
     )
 
     db.add(product)

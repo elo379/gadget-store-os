@@ -4,7 +4,10 @@ from sqlalchemy.orm import Session
 from app.devices.models import DeviceRecord
 from app.devices.validation import normalize_identifier, normalize_imei
 from app.products.models import Product
+from app.inventory.models import InventoryLocation
 from app.models.user import User
+from app.models.organization import Organization
+from app.audit.models import AuditLog
 
 
 def create_device_record(
@@ -12,6 +15,8 @@ def create_device_record(
     organization_id,
     data,
 ):
+    if db.scalar(select(Organization.id).where(Organization.id == organization_id).with_for_update()) is None:
+        raise ValueError("Organization not found")
     imei = normalize_imei(data.imei) if data.imei else None
     imei_2 = normalize_imei(data.imei_2) if data.imei_2 else None
 
@@ -43,27 +48,23 @@ def create_device_record(
         if user is None:
             raise ValueError("Receiving user not found")
 
-    if imei is not None:
-        existing = db.scalar(
-            select(DeviceRecord).where(
-                DeviceRecord.organization_id == organization_id,
-                DeviceRecord.imei == imei,
-            )
-        )
+    if data.location_id is not None and db.scalar(select(InventoryLocation.id).where(
+        InventoryLocation.id == data.location_id,
+        InventoryLocation.organization_id == organization_id,
+        InventoryLocation.is_active.is_(True),
+    )) is None:
+        raise ValueError("Inventory location not found")
 
+    imeis = [value for value in (imei, imei_2) if value]
+    if len(set(imeis)) != len(imeis):
+        raise ValueError("IMEI values must be unique")
+    for value in imeis:
+        existing = db.scalar(select(DeviceRecord).where(
+            DeviceRecord.organization_id == organization_id,
+            or_(DeviceRecord.imei == value, DeviceRecord.imei_2 == value),
+        ))
         if existing is not None:
             raise ValueError("IMEI already exists")
-
-    if imei_2 is not None:
-        existing = db.scalar(
-            select(DeviceRecord).where(
-                DeviceRecord.organization_id == organization_id,
-                DeviceRecord.imei_2 == imei_2,
-            )
-        )
-
-        if existing is not None:
-            raise ValueError("Secondary IMEI already exists")
 
     if serial_number is not None:
         existing = db.scalar(
@@ -98,20 +99,35 @@ def create_device_record(
         model=data.model.strip(),
         variant=data.variant.strip(),
         storage=data.storage.strip(),
+        ram=data.ram.strip(),
         color=data.color.strip(),
+        network_sim=data.network_sim.strip(),
+        grade=data.grade.strip(),
+        selling_price=data.selling_price,
+        warranty=data.warranty.strip(),
+        location_id=data.location_id,
         source_type=data.source_type.strip(),
         source_name=data.source_name.strip(),
         source_contact=data.source_contact.strip(),
         source_reference=data.source_reference.strip(),
         received_by_user_id=data.received_by_user_id,
         condition=data.condition.strip(),
-        status=data.status.strip(),
+        status="received",
         acquisition_cost=data.acquisition_cost,
         notes=data.notes.strip(),
     )
 
     db.add(device)
     db.flush()
+    db.add(AuditLog(
+        organization_id=organization_id,
+        user_id=data.received_by_user_id,
+        action="device.received",
+        entity_type="device",
+        entity_id=device.id,
+        description="Serialized device received into inventory",
+        metadata_json="{}",
+    ))
 
     return device
 
@@ -222,9 +238,4 @@ def get_device_by_id(
     device_id,
     user_id,
 ):
-    return get_device_record(
-        db,
-        organization_id,
-        device_id,
-        user_id,
-    )
+    return get_device_record(db, organization_id, device_id)

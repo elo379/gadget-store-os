@@ -18,7 +18,14 @@ class InvitationResponse(BaseModel):
     expires_at: datetime
 
 
+class InvitationCreatedResponse(InvitationResponse):
+    # Returned once to the creator so it can be shared with the invitee.
+    activation_id: uuid.UUID
+    activation_credential: str
+
+
 class InvitationAccept(BaseModel):
+    activation_id: uuid.UUID
     token: str = Field(min_length=20)
     password: str = Field(min_length=8)
 

@@ -38,7 +38,7 @@ export function PageHeader({
   };
 
   return (
-    <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+    <div className="mb-6 flex flex-col gap-4 border-b border-[var(--border)] pb-5 sm:flex-row sm:items-end sm:justify-between">
       <div className="min-w-0">
         {back && (
           <button
@@ -57,7 +57,7 @@ export function PageHeader({
           </div>
         )}
 
-        <h1 className="text-2xl font-semibold tracking-[-0.03em] text-neutral-950 sm:text-3xl">
+        <h1 className="text-[1.75rem] font-semibold tracking-[-0.04em] text-neutral-950 sm:text-3xl">
           {title}
         </h1>
 
@@ -72,7 +72,7 @@ export function PageHeader({
         <button
           type="button"
           onClick={action.onClick}
-          className="inline-flex h-10 shrink-0 items-center justify-center gap-2 rounded-xl bg-neutral-900 px-4 text-sm font-semibold text-white transition hover:bg-neutral-800"
+          className="inline-flex min-h-11 w-full shrink-0 items-center justify-center gap-2 rounded-xl bg-neutral-950 px-5 text-sm font-semibold text-white shadow-sm transition hover:bg-neutral-800 active:scale-[.98] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent)] sm:w-auto"
         >
           {action.icon && (
             <Icon name={action.icon as IconName} size={16} />

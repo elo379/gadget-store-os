@@ -83,6 +83,12 @@ class PurchaseLine(UUIDPrimaryKeyMixin, TimestampMixin, Base):
         nullable=False,
     )
 
+    received_quantity: Mapped[Decimal] = mapped_column(
+        Numeric(14, 3),
+        nullable=False,
+        default=Decimal("0"),
+    )
+
     unit_cost: Mapped[Decimal] = mapped_column(
         Numeric(14, 2),
         nullable=False,

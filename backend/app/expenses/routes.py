@@ -15,10 +15,19 @@ from app.expenses.service import (
     create_expense,
     get_expense_summary,
     list_expenses,
+    list_categories,
     update_expense_status,
 )
+from app.permissions.access import require_organization_permission
 
 router = APIRouter(prefix="/expenses", tags=["expenses"])
+
+
+@router.get("/categories/{organization_id}")
+def categories(organization_id: uuid.UUID, db: Session = Depends(get_db), current_user=Depends(get_current_user)):
+    from app.permissions.access import require_organization_permission
+    require_organization_permission(db, uuid.UUID(current_user.user_id), organization_id, "finance.view")
+    return list_categories(db, organization_id)
 
 
 @router.post("/categories")
@@ -28,6 +37,7 @@ def add_category(
     current_user=Depends(get_current_user),
 ):
     try:
+        require_organization_permission(db, uuid.UUID(current_user.user_id), payload.organization_id, "expenses.manage")
         return create_category(db, payload)
     except ValueError as exc:
         raise HTTPException(status_code=409, detail=str(exc))
@@ -40,7 +50,8 @@ def add_expense(
     current_user=Depends(get_current_user),
 ):
     try:
-        return create_expense(db, payload)
+        require_organization_permission(db, uuid.UUID(current_user.user_id), payload.organization_id, "expenses.manage")
+        return create_expense(db, payload, uuid.UUID(current_user.user_id))
     except ValueError as exc:
         raise HTTPException(status_code=409, detail=str(exc))
 
@@ -54,11 +65,13 @@ def change_status(
     current_user=Depends(get_current_user),
 ):
     try:
+        require_organization_permission(db, uuid.UUID(current_user.user_id), organization_id, "expenses.manage")
         return update_expense_status(
             db,
             organization_id,
             expense_id,
             status,
+            uuid.UUID(current_user.user_id),
         )
     except ValueError as exc:
         raise HTTPException(status_code=409, detail=str(exc))
@@ -70,6 +83,8 @@ def expenses(
     db: Session = Depends(get_db),
     current_user=Depends(get_current_user),
 ):
+    from app.permissions.access import require_organization_permission
+    require_organization_permission(db, uuid.UUID(current_user.user_id), organization_id, "finance.view")
     return list_expenses(db, organization_id)
 
 
@@ -79,4 +94,6 @@ def summary(
     db: Session = Depends(get_db),
     current_user=Depends(get_current_user),
 ):
+    from app.permissions.access import require_organization_permission
+    require_organization_permission(db, uuid.UUID(current_user.user_id), organization_id, "finance.view")
     return get_expense_summary(db, organization_id)

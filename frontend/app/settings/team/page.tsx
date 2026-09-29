@@ -1,7 +1,7 @@
 "use client";
 
 import { FormEvent, useCallback, useEffect, useState } from "react";
-import { apiGet, apiPost } from "@/lib/api";
+import { apiGet, apiPost, apiPatch } from "@/lib/api";
 import { useOrganization } from "@/components/organization-provider";
 
 type Member = {
@@ -32,6 +32,14 @@ type Policy = {
   managers_can_modify_permissions: boolean;
 };
 
+type Invitation = {
+  id: string;
+  email: string;
+  role_name: string;
+  status: string;
+  expires_at: string;
+};
+
 const roles = ["manager", "staff"];
 
 export default function TeamPage() {
@@ -39,10 +47,11 @@ export default function TeamPage() {
 
   const [tree, setTree] = useState<Tree | null>(null);
   const [policy, setPolicy] = useState<Policy | null>(null);
+  const [invitations, setInvitations] = useState<Invitation[]>([]);
 
   const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
   const [roleName, setRoleName] = useState("staff");
+  const [activation, setActivation] = useState<{ id: string; credential: string } | null>(null);
 
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -55,13 +64,15 @@ export default function TeamPage() {
     setMessage("");
 
     try {
-      const [treeData, policyData] = await Promise.all([
+      const [treeData, policyData, inviteData] = await Promise.all([
         apiGet<Tree>(`/organizations/${organizationId}/store-tree`),
         apiGet<Policy>(`/organizations/${organizationId}/store-tree/policy`),
+        apiGet<Invitation[]>(`/organizations/${organizationId}/store-tree/invitations`),
       ]);
 
       setTree(treeData);
       setPolicy(policyData);
+      setInvitations(inviteData);
     } catch (error) {
       setMessage(
         error instanceof Error ? error.message : "Unable to load team.",
@@ -72,14 +83,15 @@ export default function TeamPage() {
   }, [organizationId]);
 
   useEffect(() => {
-    void load();
+    const timer = window.setTimeout(() => void load(), 0);
+    return () => window.clearTimeout(timer);
   }, [load]);
 
   async function invite(event: FormEvent) {
     event.preventDefault();
 
-    if (!organizationId || !email.trim() || password.length < 8) {
-      setMessage("Enter a valid email and a password of at least 8 characters.");
+    if (!organizationId || !email.trim()) {
+      setMessage("Enter a valid email address.");
       return;
     }
 
@@ -87,18 +99,17 @@ export default function TeamPage() {
     setMessage("");
 
     try {
-      await apiPost(
+      const created = await apiPost<{ activation_id: string; activation_credential: string }>(
         `/organizations/${organizationId}/store-tree/invitations`,
         {
           email: email.trim(),
-          password,
           role_name: roleName,
         },
       );
 
       setEmail("");
-      setPassword("");
-      setMessage("Personnel invitation created.");
+      setActivation({ id: created.activation_id, credential: created.activation_credential });
+      setMessage("Invitation created. Share the activation ID and credential with the invitee now.");
       await load();
     } catch (error) {
       setMessage(
@@ -113,38 +124,23 @@ export default function TeamPage() {
 
   async function personnelAction(
     membershipId: string,
-    action: "suspend" | "reactivate" | "revoke",
+    action: string,
   ) {
-    if (!organizationId) return;
-
     setSaving(true);
     setMessage("");
 
     try {
-      const token = localStorage.getItem("gsos_access_token");
-
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000"}/organizations/${organizationId}/store-tree/personnel/${membershipId}/${action}`,
-        {
-          method: "PATCH",
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        },
+      await apiPatch(
+        `/organizations/${organizationId}/store-tree/personnel/${membershipId}/${action}`,
+        {}
       );
-
-      if (!response.ok) {
-        const body = await response.text();
-        throw new Error(body || `Unable to ${action} personnel.`);
-      }
-
-      setMessage(`Personnel ${action}d successfully.`);
+      setMessage("Personnel action completed.");
       await load();
     } catch (error) {
       setMessage(
         error instanceof Error
           ? error.message
-          : `Unable to ${action} personnel.`,
+          : "Unable to update personnel.",
       );
     } finally {
       setSaving(false);
@@ -172,6 +168,18 @@ export default function TeamPage() {
         </div>
       ) : null}
 
+      {activation ? (
+        <section className="rounded-xl border border-amber-300 bg-amber-50 p-4 text-sm text-zinc-900" aria-live="polite">
+          <h2 className="font-semibold">One time activation details</h2>
+          <p className="mt-1">This credential is shown only now and expires after 72 hours.</p>
+          <dl className="mt-3 grid gap-2 sm:grid-cols-2">
+            <div><dt className="text-zinc-500">Activation ID</dt><dd className="break-all font-mono">{activation.id}</dd></div>
+            <div><dt className="text-zinc-500">Activation credential</dt><dd className="break-all font-mono">{activation.credential}</dd></div>
+          </dl>
+          <a className="mt-3 inline-block underline" href="/activate">Open activation</a>
+        </section>
+      ) : null}
+
       <section className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.4fr)]">
         <form
           onSubmit={invite}
@@ -197,21 +205,6 @@ export default function TeamPage() {
                 required
                 className="mt-1 w-full rounded-xl border border-zinc-200 px-3 py-2.5 text-sm outline-none focus:border-zinc-500"
                 placeholder="staff@example.com"
-              />
-            </label>
-
-            <label className="block">
-              <span className="text-sm font-medium text-zinc-700">
-                Temporary password
-              </span>
-              <input
-                value={password}
-                onChange={(event) => setPassword(event.target.value)}
-                type="password"
-                minLength={8}
-                required
-                className="mt-1 w-full rounded-xl border border-zinc-200 px-3 py-2.5 text-sm outline-none focus:border-zinc-500"
-                placeholder="Minimum 8 characters"
               />
             </label>
 
@@ -269,7 +262,7 @@ export default function TeamPage() {
               </>
             ) : (
               <p className="text-sm text-zinc-500">
-                Loading policy...
+                {loading ? "Loading policy..." : "Policy could not be loaded."}
               </p>
             )}
           </div>
@@ -376,7 +369,16 @@ export default function TeamPage() {
                           </button>
                         ) : null}
 
-                        {status !== "revoked" ? (
+                        {status === "active" ? (
+                          <button
+                            type="button"
+                            disabled={saving}
+                            onClick={() => void personnelAction(membershipId, "deactivate")}
+                            className="rounded-lg border border-zinc-200 px-3 py-1.5 text-xs font-medium text-zinc-700 disabled:opacity-50"
+                          >Deactivate</button>
+                        ) : null}
+
+                        {status !== "revoked" && status !== "deactivated" ? (
                           <button
                             type="button"
                             disabled={saving}
@@ -399,6 +401,28 @@ export default function TeamPage() {
             })
           )}
         </div>
+      </section>
+
+      <section className="rounded-2xl border border-zinc-200 bg-white p-5">
+        <div className="flex items-center justify-between gap-4">
+          <div>
+            <h2 className="font-semibold text-zinc-950">Activation invitations</h2>
+            <p className="mt-1 text-sm text-zinc-500">Credentials are never shown again after creation.</p>
+          </div>
+          <span className="rounded-full bg-zinc-100 px-3 py-1 text-xs font-medium text-zinc-600">{invitations.length}</span>
+        </div>
+        {invitations.length === 0 ? (
+          <p className="py-4 text-sm text-zinc-500">No invitations yet. Add personnel to generate an activation credential.</p>
+        ) : (
+          <div className="mt-3 divide-y divide-zinc-100">
+            {invitations.map((invitation) => (
+              <div key={invitation.id} className="flex flex-wrap items-center justify-between gap-3 py-3 text-sm">
+                <div><p className="font-medium">{invitation.email}</p><p className="mt-1 text-zinc-500">{invitation.role_name} · Expires {new Date(invitation.expires_at).toLocaleString()}</p></div>
+                <div className="flex items-center gap-2"><span className="rounded-full bg-zinc-100 px-3 py-1 text-xs font-medium capitalize">{invitation.status}</span>{invitation.status === "pending" ? <button disabled={saving} onClick={async () => { try { await apiPatch(`/organizations/${organizationId}/store-tree/invitations/${invitation.id}/revoke`, {}); await load(); } catch (error) { setMessage(error instanceof Error ? error.message : "Unable to revoke invitation."); } }} className="rounded-lg border border-red-200 px-3 py-1.5 text-xs text-red-600 disabled:opacity-50">Revoke</button> : null}</div>
+              </div>
+            ))}
+          </div>
+        )}
       </section>
     </main>
   );

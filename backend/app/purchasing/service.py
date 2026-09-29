@@ -15,6 +15,8 @@ from app.purchasing.schemas import (
     SupplierTransactionCreate,
 )
 from app.suppliers.models import Supplier
+from app.audit.models import AuditLog
+from app.finance.models import FinancialTransaction
 
 
 def create_purchase_order(
@@ -119,6 +121,7 @@ def list_purchase_orders(
 def create_supplier_transaction(
     db: Session,
     payload: SupplierTransactionCreate,
+    performed_by_user_id: uuid.UUID | None = None,
 ) -> SupplierTransaction:
     supplier = db.scalar(
         select(Supplier).where(
@@ -142,8 +145,22 @@ def create_supplier_transaction(
     )
 
     db.add(transaction)
-    db.commit()
-    db.refresh(transaction)
+    db.flush()
+    db.add(AuditLog(
+        organization_id=payload.organization_id,
+        user_id=performed_by_user_id,
+        action="supplier.transaction_recorded",
+        entity_type="supplier_transaction",
+        entity_id=transaction.id,
+        description=f"Supplier {transaction.transaction_type} transaction recorded",
+        metadata_json="{}",
+    ))
+    if transaction.transaction_type in {"payment", "credit"}:
+        db.add(FinancialTransaction(
+            organization_id=payload.organization_id, transaction_type="supplier_payment", direction="debit",
+            amount=transaction.amount, reference_type="supplier_transaction", reference_id=transaction.id,
+            description=f"Payment to supplier {supplier.name}", actor_id=performed_by_user_id,
+        ))
 
     return transaction
 

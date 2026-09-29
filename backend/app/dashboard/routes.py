@@ -3,7 +3,7 @@ import uuid
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
-from app.auth.dependencies import get_current_user
+from app.auth.dependencies import get_current_user_model
 from app.dashboard.access import require_dashboard_access
 from app.dashboard.service import (
     get_dashboard_summary,
@@ -22,7 +22,7 @@ router = APIRouter(
 def dashboard_summary(
     organization_id: uuid.UUID,
     db: Session = Depends(get_db),
-    current_user=Depends(get_current_user),
+    current_user=Depends(get_current_user_model),
 ):
     try:
         require_dashboard_access(db, current_user, organization_id)
@@ -39,7 +39,7 @@ def dashboard_summary(
 def dashboard_operational(
     organization_id: uuid.UUID,
     db: Session = Depends(get_db),
-    current_user=Depends(get_current_user),
+    current_user=Depends(get_current_user_model),
 ):
     try:
         require_dashboard_access(db, current_user, organization_id)
@@ -56,7 +56,7 @@ def dashboard_operational(
 def dashboard_low_stock(
     organization_id: uuid.UUID,
     db: Session = Depends(get_db),
-    current_user=Depends(get_current_user),
+    current_user=Depends(get_current_user_model),
 ):
     try:
         require_dashboard_access(db, current_user, organization_id)

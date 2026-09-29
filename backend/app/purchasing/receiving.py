@@ -10,6 +10,7 @@ from app.inventory.constants import MOVEMENT_RECEIVE
 from app.inventory.models import InventoryItem, InventoryLocation
 from app.inventory.service import record_movement
 from app.products.models import Product
+from app.models.organization import Organization
 from app.purchasing.models import PurchaseLine, PurchaseOrder
 from app.purchasing.schemas import PurchaseReceiveRequest
 from app.purchasing.service import create_supplier_transaction
@@ -19,12 +20,16 @@ def receive_purchase(
     db: Session,
     payload: PurchaseReceiveRequest,
 ):
+    if db.scalar(select(Organization.id).where(Organization.id == payload.organization_id).with_for_update()) is None:
+        raise ValueError("Organization not found")
     purchase_ids = set()
+    receipt_totals = {}
 
     for item in payload.lines:
         line = db.scalar(
             select(PurchaseLine)
             .where(PurchaseLine.id == item.purchase_line_id)
+            .with_for_update()
         )
 
         if line is None:
@@ -44,7 +49,7 @@ def receive_purchase(
         if purchase.status == "received":
             raise ValueError("Purchase order already received")
 
-        if item.quantity > line.quantity:
+        if item.quantity + line.received_quantity > line.quantity:
             raise ValueError("Received quantity exceeds purchased quantity")
 
         product = db.scalar(
@@ -57,6 +62,11 @@ def receive_purchase(
 
         if product is None:
             raise ValueError("Product not found")
+
+        if product.is_serialized and item.quantity != 1:
+            raise ValueError("Serialized products must be received one unit at a time")
+        if not product.is_serialized and any((item.imei, item.imei_2, item.serial_number, item.barcode)):
+            raise ValueError("Identifiers may only be supplied for serialized products")
 
         location = None
 
@@ -95,6 +105,16 @@ def receive_purchase(
             db.add(inventory)
             db.flush()
 
+        if not product.is_serialized:
+            old_quantity = Decimal(str(inventory.quantity))
+            old_cost = Decimal(str(inventory.average_unit_cost))
+            received_quantity = Decimal(str(item.quantity))
+            if old_quantity > 0 and old_cost <= 0:
+                raise ValueError("Existing quantity inventory has no acquisition cost basis; reconcile its opening cost before receipt")
+            if line.unit_cost <= 0:
+                raise ValueError("Received stock requires a positive acquisition cost")
+            inventory.average_unit_cost = ((old_quantity * old_cost) + (received_quantity * line.unit_cost)) / (old_quantity + received_quantity)
+
         record_movement(
             db=db,
             organization_id=payload.organization_id,
@@ -102,8 +122,12 @@ def receive_purchase(
             movement_type=MOVEMENT_RECEIVE,
             quantity=item.quantity,
             reason=f"Purchase receipt {purchase.reference_number}",
+            reference_type="purchase_order",
+            reference_id=purchase.id,
             performed_by_user_id=payload.received_by_user_id,
         )
+        line.received_quantity += item.quantity
+        receipt_totals[purchase.id] = receipt_totals.get(purchase.id, Decimal("0")) + item.quantity * line.unit_cost
 
         if product.is_serialized:
             imei = normalize_imei(item.imei)
@@ -152,14 +176,20 @@ def receive_purchase(
                 model=item.model.strip() or product.model,
                 variant=item.variant.strip(),
                 storage=item.storage.strip(),
+                ram=item.ram.strip(),
                 color=item.color.strip(),
+                network_sim=item.network_sim.strip(),
+                grade=item.grade.strip(),
+                selling_price=item.selling_price,
+                warranty=item.warranty.strip(),
+                location_id=item.location_id,
                 source_type="supplier",
-                source_name="",
-                source_contact="",
+                source_name=purchase.supplier.name,
+                source_contact=purchase.supplier.phone,
                 source_reference=purchase.reference_number,
                 received_by_user_id=payload.received_by_user_id,
                 condition=item.condition.strip(),
-                status="received",
+                status="in_stock",
                 acquisition_cost=line.unit_cost,
                 notes=item.notes.strip(),
                 is_active=True,
@@ -182,7 +212,10 @@ def receive_purchase(
         if purchase is None:
             continue
 
-        purchase.status = "received"
+        lines = db.scalars(select(PurchaseLine).where(PurchaseLine.purchase_id == purchase_id)).all()
+        purchase.status = "received" if all(
+            line.received_quantity >= line.quantity for line in lines
+        ) else "partially_received"
 
         create_supplier_transaction(
             db,
@@ -193,12 +226,13 @@ def receive_purchase(
                     "organization_id": purchase.organization_id,
                     "supplier_id": purchase.supplier_id,
                     "transaction_type": "purchase",
-                    "amount": purchase.total,
+                    "amount": receipt_totals[purchase.id],
                     "reference_type": "purchase_order",
                     "reference_id": purchase.id,
                     "notes": f"Purchase receipt {purchase.reference_number}",
                 },
             )(),
+            performed_by_user_id=payload.received_by_user_id,
         )
 
     db.commit()

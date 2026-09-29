@@ -1,6 +1,7 @@
 import uuid
+from decimal import Decimal
 
-from sqlalchemy import Boolean, ForeignKey, String, Text
+from sqlalchemy import Boolean, ForeignKey, Numeric, String, Text, UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.db.base import Base
@@ -38,6 +39,7 @@ class ProductCategory(UUIDPrimaryKeyMixin, TimestampMixin, Base):
 
 class Product(UUIDPrimaryKeyMixin, TimestampMixin, Base):
     __tablename__ = "products"
+    __table_args__ = (UniqueConstraint("organization_id", "sku", name="uq_products_org_sku"),)
 
     organization_id: Mapped[uuid.UUID] = mapped_column(
         ForeignKey("organizations.id", ondelete="CASCADE"),
@@ -85,6 +87,12 @@ class Product(UUIDPrimaryKeyMixin, TimestampMixin, Base):
         nullable=False,
         default=False,
     )
+
+    product_type: Mapped[str] = mapped_column(String(40), nullable=False, default="other")
+    barcode: Mapped[str] = mapped_column(String(150), nullable=False, default="")
+    unit_cost: Mapped[Decimal] = mapped_column(Numeric(14, 2), nullable=False, default=Decimal("0"))
+    selling_price: Mapped[Decimal] = mapped_column(Numeric(14, 2), nullable=False, default=Decimal("0"))
+    reorder_threshold: Mapped[Decimal] = mapped_column(Numeric(14, 3), nullable=False, default=Decimal("0"))
 
     is_active: Mapped[bool] = mapped_column(
         Boolean,

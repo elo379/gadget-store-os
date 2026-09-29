@@ -1,6 +1,6 @@
 import uuid
 
-from sqlalchemy import Boolean, ForeignKey
+from sqlalchemy import Boolean, ForeignKey, UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.db.base import Base
@@ -9,11 +9,11 @@ from app.db.mixins import TimestampMixin, UUIDPrimaryKeyMixin
 
 class StoreTreePolicy(UUIDPrimaryKeyMixin, TimestampMixin, Base):
     __tablename__ = "store_tree_policies"
+    __table_args__ = (UniqueConstraint("organization_id"),)
 
     organization_id: Mapped[uuid.UUID] = mapped_column(
         ForeignKey("organizations.id", ondelete="CASCADE"),
         nullable=False,
-        unique=True,
         index=True,
     )
 

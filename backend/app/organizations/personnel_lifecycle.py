@@ -5,6 +5,20 @@ from sqlalchemy.orm import Session
 
 from app.models import Membership
 from app.organizations.authority import get_membership_for_user
+from app.audit.models import AuditLog
+import json
+
+
+def _audit_status(db: Session, actor: Membership, target: Membership, action: str) -> None:
+    db.add(AuditLog(
+        organization_id=target.organization_id,
+        user_id=actor.user_id,
+        action=action,
+        entity_type="membership",
+        entity_id=target.id,
+        description=f"Personnel {action.rsplit('.', 1)[-1]}",
+        metadata_json=json.dumps({"account_status": target.account_status}),
+    ))
 
 
 def get_personnel(
@@ -57,6 +71,11 @@ def suspend_personnel(
 
     target.account_status = "suspended"
     target.is_active = False
+    from app.staff.models import StaffProfile
+    profile = db.scalar(select(StaffProfile).where(StaffProfile.organization_id == target.organization_id, StaffProfile.user_id == target.user_id))
+    if profile is not None:
+        profile.is_active = False
+    _audit_status(db, actor, target, "personnel.suspended")
     db.flush()
 
     return target
@@ -95,8 +114,29 @@ def reactivate_personnel(
 
     target.account_status = "active"
     target.is_active = True
+    from app.staff.models import StaffProfile
+    profile = db.scalar(select(StaffProfile).where(StaffProfile.organization_id == target.organization_id, StaffProfile.user_id == target.user_id))
+    if profile is not None:
+        profile.is_active = True
+    _audit_status(db, actor, target, "personnel.reactivated")
     db.flush()
 
+    return target
+
+
+def deactivate_personnel(db: Session, actor: Membership, target: Membership) -> Membership:
+    if not actor.is_owner or actor.organization_id != target.organization_id or target.is_owner:
+        raise ValueError("Only the owner can deactivate non-owner personnel in this organization")
+    if target.account_status != "active":
+        raise ValueError("Only active personnel can be deactivated")
+    target.account_status = "deactivated"
+    target.is_active = False
+    from app.staff.models import StaffProfile
+    profile = db.scalar(select(StaffProfile).where(StaffProfile.organization_id == target.organization_id, StaffProfile.user_id == target.user_id))
+    if profile is not None:
+        profile.is_active = False
+    _audit_status(db, actor, target, "personnel.deactivated")
+    db.flush()
     return target
 
 
@@ -127,6 +167,11 @@ def revoke_personnel(
 
     target.account_status = "revoked"
     target.is_active = False
+    from app.staff.models import StaffProfile
+    profile = db.scalar(select(StaffProfile).where(StaffProfile.organization_id == target.organization_id, StaffProfile.user_id == target.user_id))
+    if profile is not None:
+        profile.is_active = False
+    _audit_status(db, actor, target, "personnel.revoked")
     db.flush()
 
     return target
