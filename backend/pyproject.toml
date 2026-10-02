@@ -1,3 +1,7 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
 [project]
 name = "gadget-store-os-api"
 version = "0.1.0"
@@ -21,4 +25,10 @@ dependencies = [
 testpaths = ["tests"]
 
 [project.optional-dependencies]
-test = ["pytest", "httpx2"]
+test = [
+    "pytest",
+    "httpx2>=2.0,<3.0",
+]
+
+[tool.setuptools.packages.find]
+include = ["app*"]
