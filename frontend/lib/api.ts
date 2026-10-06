@@ -172,11 +172,9 @@ async function request<T>(
       headers,
     });
   } catch (err) {
-    // Fetch errors can contain internal proxy hosts and request metadata. Keep
-    // the actionable offline state while leaving diagnostic detail to redacted
-    // server-side request logs.
-    void err;
-    throw new ApiError("Unable to reach GSOS. Check your connection and retry.", 0);
+    const message =
+      err instanceof Error ? err.message : String(err);
+    throw new ApiError(`GSOS network error: ${message}`, 0);
   }
 
   if (response.status === 401 && retry && path !== "/auth/refresh") {
