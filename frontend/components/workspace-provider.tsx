@@ -1,12 +1,13 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import {
   getCurrentUser,
   getMyOrganizations,
   type AuthUser,
 } from "@/lib/api";
 import {
+  getAccessToken,
   getActiveOrganizationId,
   setActiveOrganizationId,
 } from "@/lib/session";
@@ -19,43 +20,51 @@ export function WorkspaceProvider({
 }) {
   const [user, setUser] = useState<AuthUser | null>(null);
 
-  useEffect(() => {
-    let active = true;
-
-    async function loadWorkspace() {
-      try {
-        const [currentUser, memberships] = await Promise.all([
-          getCurrentUser(),
-          getMyOrganizations(),
-        ]);
-
-        if (!active) return;
-
-        setUser(currentUser);
-
-        const existingOrganizationId = getActiveOrganizationId();
-
-        const validExistingMembership = memberships.some(
-          (membership) =>
-            membership.organization_id === existingOrganizationId,
-        );
-
-        if (!validExistingMembership && memberships.length > 0) {
-          setActiveOrganizationId(memberships[0].organization_id);
-        }
-      } catch {
-        if (active) {
-          setUser(null);
-        }
-      }
+  const loadWorkspace = useCallback(async () => {
+    if (!getAccessToken()) {
+      setUser(null);
+      return;
     }
 
-    loadWorkspace();
+    try {
+      const [currentUser, memberships] = await Promise.all([
+        getCurrentUser(),
+        getMyOrganizations(),
+      ]);
+
+      setUser(currentUser);
+
+      const existingOrganizationId = getActiveOrganizationId();
+
+      const validExistingMembership = memberships.some(
+        (membership) =>
+          membership.organization_id === existingOrganizationId,
+      );
+
+      if (!validExistingMembership && memberships.length > 0) {
+        setActiveOrganizationId(memberships[0].organization_id);
+      }
+    } catch {
+      setUser(null);
+    }
+  }, []);
+
+  useEffect(() => {
+    void loadWorkspace();
+
+    const handleAuthChanged = () => {
+      void loadWorkspace();
+    };
+
+    window.addEventListener("gsos:auth-changed", handleAuthChanged);
 
     return () => {
-      active = false;
+      window.removeEventListener(
+        "gsos:auth-changed",
+        handleAuthChanged,
+      );
     };
-  }, []);
+  }, [loadWorkspace]);
 
   return (
     <OrganizationProvider>

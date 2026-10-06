@@ -60,6 +60,8 @@ function saveSession(accessToken: string, refreshToken?: string) {
       refreshToken,
     );
   }
+
+  window.dispatchEvent(new Event("gsos:auth-changed"));
 }
 
 export function saveToken(token: string) {
@@ -69,6 +71,7 @@ export function saveToken(token: string) {
 export function clearToken() {
   window.localStorage.removeItem(ACCESS_TOKEN_KEY);
   window.localStorage.removeItem(REFRESH_TOKEN_KEY);
+  window.dispatchEvent(new Event("gsos:auth-changed"));
 }
 
 export async function refreshSession() {
@@ -169,12 +172,11 @@ async function request<T>(
       headers,
     });
   } catch (err) {
-    throw new ApiError(
-      `GSOS NETWORK ERROR | ${API_URL}${path} | ${
-        err instanceof Error ? `${err.name}: ${err.message}` : String(err)
-      }`,
-      0,
-    );
+    // Fetch errors can contain internal proxy hosts and request metadata. Keep
+    // the actionable offline state while leaving diagnostic detail to redacted
+    // server-side request logs.
+    void err;
+    throw new ApiError("Unable to reach GSOS. Check your connection and retry.", 0);
   }
 
   if (response.status === 401 && retry && path !== "/auth/refresh") {
