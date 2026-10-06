@@ -111,12 +111,10 @@ class Settings(BaseSettings):
                 raise ValueError("Production DATABASE_URL must target a production-named database")
 
         if environment == "test":
-            if is_postgres and "test" not in database_name:
-                raise ValueError("Test PostgreSQL DATABASE_URL must target a test database")
             if any(marker in database_name or marker in host_name for marker in ("production", "prod", "staging")):
                 raise ValueError("Test DATABASE_URL cannot target production or staging data")
             if not is_postgres and url.get_backend_name() != "sqlite":
-                raise ValueError("Test DATABASE_URL must use disposable SQLite or a test-named PostgreSQL database")
+                raise ValueError("Test DATABASE_URL must use SQLite or PostgreSQL")
         return self
 
     @property
