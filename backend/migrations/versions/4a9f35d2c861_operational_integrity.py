@@ -12,6 +12,8 @@ depends_on: Union[str, Sequence[str], None] = None
 
 
 def upgrade() -> None:
+    bind = op.get_bind()
+    is_sqlite = bind.dialect.name == "sqlite"
     inspector = sa.inspect(op.get_bind())
     if "received_quantity" not in {c["name"] for c in inspector.get_columns("purchase_lines")}:
         op.add_column(
@@ -30,8 +32,11 @@ def upgrade() -> None:
 
     constraints = inspector.get_unique_constraints("sales")
     if not any(set(c.get("column_names") or ()) == {"organization_id", "reference_number"} for c in constraints):
-        with op.batch_alter_table("sales", recreate="always") as batch:
-            batch.create_unique_constraint("uq_sales_org_reference", ["organization_id", "reference_number"])
+        if is_sqlite:
+            with op.batch_alter_table("sales", recreate="always") as batch:
+                batch.create_unique_constraint("uq_sales_org_reference", ["organization_id", "reference_number"])
+        else:
+            op.create_unique_constraint("uq_sales_org_reference", "sales", ["organization_id", "reference_number"])
 
     # Do not rewrite existing customer values; a legacy orphan should stop the
     # migration for explicit repair instead of silently discarding data.
@@ -42,11 +47,19 @@ def upgrade() -> None:
         for fk in foreign_keys
     )
     if not target_customer_fk:
-        with op.batch_alter_table("sales", recreate="always") as batch:
+        if is_sqlite:
+            with op.batch_alter_table("sales", recreate="always") as batch:
+                if old_fk and old_fk.get("name"):
+                    batch.drop_constraint(old_fk["name"], type_="foreignkey")
+                batch.create_foreign_key(
+                    "fk_sales_customer_id_customers", "customers",
+                    ["customer_id"], ["id"], ondelete="SET NULL",
+                )
+        else:
             if old_fk and old_fk.get("name"):
-                batch.drop_constraint(old_fk["name"], type_="foreignkey")
-            batch.create_foreign_key(
-                "fk_sales_customer_id_customers", "customers",
+                op.drop_constraint(old_fk["name"], "sales", type_="foreignkey")
+            op.create_foreign_key(
+                "fk_sales_customer_id_customers", "sales", "customers",
                 ["customer_id"], ["id"], ondelete="SET NULL",
             )
 

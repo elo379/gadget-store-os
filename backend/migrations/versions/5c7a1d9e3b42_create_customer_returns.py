@@ -76,6 +76,10 @@ def upgrade() -> None:
             ),
         )
 
+    return_columns = {
+        column["name"]
+        for column in sa.inspect(bind).get_columns("customer_returns")
+    }
     indexes = {
         idx["name"]
         for idx in sa.inspect(bind).get_indexes("customer_returns")
@@ -95,6 +99,10 @@ def upgrade() -> None:
             ["performed_by_user_id"],
         ),
     ):
+        # The baseline migration may already have created this table without
+        # the later attribution column. Revision 6c1e8a42b7d0 adds that column.
+        if not set(columns).issubset(return_columns):
+            continue
         if name not in indexes:
             op.create_index(name, "customer_returns", columns)
 
