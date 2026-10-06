@@ -38,7 +38,7 @@ export function PageHeader({
   };
 
   return (
-    <div className="mb-6 flex flex-col gap-4 border-b border-[var(--border)] pb-5 sm:flex-row sm:items-end sm:justify-between">
+    <div className="mb-7 flex flex-col gap-4 border-b border-[var(--border)] pb-6 sm:flex-row sm:items-end sm:justify-between">
       <div className="min-w-0">
         {back && (
           <button
@@ -52,17 +52,17 @@ export function PageHeader({
         )}
 
         {eyebrow && (
-          <div className="mb-1 text-[10px] font-semibold uppercase tracking-[0.18em] text-neutral-400">
+          <div className="mb-2 text-[10px] font-bold uppercase tracking-[0.18em] text-[var(--accent)]">
             {eyebrow}
           </div>
         )}
 
-        <h1 className="text-[1.75rem] font-semibold tracking-[-0.04em] text-neutral-950 sm:text-3xl">
+        <h1 className="gsos-page-title text-[1.75rem] font-semibold sm:text-3xl">
           {title}
         </h1>
 
         {description && (
-          <p className="mt-1 max-w-2xl text-sm leading-6 text-neutral-500">
+          <p className="mt-2 max-w-2xl text-sm leading-6 text-[var(--muted)]">
             {description}
           </p>
         )}
@@ -72,7 +72,7 @@ export function PageHeader({
         <button
           type="button"
           onClick={action.onClick}
-          className="inline-flex min-h-11 w-full shrink-0 items-center justify-center gap-2 rounded-xl bg-neutral-950 px-5 text-sm font-semibold text-white shadow-sm transition hover:bg-neutral-800 active:scale-[.98] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent)] sm:w-auto"
+          className="inline-flex min-h-12 w-full shrink-0 items-center justify-center gap-2 rounded-xl bg-[var(--accent-strong)] px-5 text-sm font-semibold text-white shadow-sm transition hover:bg-[var(--accent)] active:scale-[.98] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent)] sm:w-auto"
         >
           {action.icon && (
             <Icon name={action.icon as IconName} size={16} />

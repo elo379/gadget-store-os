@@ -3,6 +3,7 @@
 import { FormEvent, useEffect, useState } from "react";
 import { apiGet, apiPost } from "@/lib/api";
 import { useOrganization } from "@/components/organization-provider";
+import { PageHeader } from "@/components/page-header";
 
 type Staff = {
   id: string;
@@ -31,9 +32,12 @@ export default function StaffPage() {
   const [month, setMonth] = useState(() => new Date().toISOString().slice(0, 7));
   const [timebook, setTimebook] = useState<TimebookRow[]>([]);
   const [currentUserId, setCurrentUserId] = useState("");
+  const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState("");
 
   async function load() {
     if (!organizationId) return;
+    setLoading(true); setLoadError("");
     try {
       const identity = await apiGet<{ user_id: string }>("/auth/me");
       setCurrentUserId(identity.user_id);
@@ -44,7 +48,8 @@ export default function StaffPage() {
       try { setTimebook(await apiGet<TimebookRow[]>(`/staff/${organizationId}/timebook?month=${month}`)); } catch { setTimebook([]); }
     } catch {
       setStaff([]);
-    }
+      setLoadError("Staff records could not be loaded.");
+    } finally { setLoading(false); }
   }
 
   async function clockAction(person: Staff, action: "clock-in" | "clock-out") {
@@ -61,7 +66,7 @@ export default function StaffPage() {
   }
 
   useEffect(() => {
-    void load();
+    queueMicrotask(() => void load());
   }, [organizationId, month]);
 
   async function createStaff(event: FormEvent) {
@@ -93,13 +98,8 @@ export default function StaffPage() {
 
   return (
     <div className="space-y-6">
-      <header>
-        <p className="text-sm font-medium text-[var(--muted)]">People</p>
-        <h1 className="text-3xl font-semibold tracking-tight">Staff</h1>
-        <p className="mt-1 text-sm text-[var(--muted)]">
-          Manage staff profiles and store personnel.
-        </p>
-      </header>
+      <PageHeader eyebrow="People · Store team" title="Staff" description="Staff access, current status and attendance for this organization." />
+      {loadError && <div role="alert" className="rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-800">{loadError}<button type="button" onClick={() => void load()} className="ml-2 min-h-10 underline">Retry</button></div>}
 
       <div className="grid gap-6 lg:grid-cols-[1fr_2fr]">
         <form onSubmit={createStaff} className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] shadow-sm p-5 space-y-4">
@@ -171,10 +171,12 @@ export default function StaffPage() {
                     </td>
                     <td className="px-3 py-4">{person.email || "—"}</td>
                     <td className="px-3 py-4">{person.phone || "—"}</td>
-                    <td className="px-3 py-4">{person.status || "Active"}</td>
+                    <td className="px-3 py-4"><span className={`inline-flex rounded-full px-2.5 py-1 text-xs font-semibold capitalize ${person.status === "suspended" || person.status === "revoked" ? "bg-red-50 text-red-800" : person.status === "invited" || person.status === "pending" ? "bg-amber-50 text-amber-900" : "bg-emerald-50 text-emerald-800"}`}>{person.status || "Active"}</span></td>
                     <td className="px-3 py-4">{person.user_id === currentUserId && person.id ? <div className="flex gap-2"><button disabled={busy} onClick={() => void clockAction(person, "clock-in")} className="rounded-lg border px-2 py-1 disabled:opacity-50">Check in</button><button disabled={busy} onClick={() => void clockAction(person, "clock-out")} className="rounded-lg border px-2 py-1 disabled:opacity-50">Check out</button></div> : "—"}</td>
                   </tr>
                 ))}
+                {!loading && !loadError && staff.length === 0 && <tr><td colSpan={5} className="p-8 text-center text-sm text-[var(--muted)]">No staff profiles are available yet.</td></tr>}
+                {loading && <tr><td colSpan={5} role="status" className="p-8 text-center text-sm text-[var(--muted)]">Loading staff records…</td></tr>}
               </tbody>
             </table>
           </div>

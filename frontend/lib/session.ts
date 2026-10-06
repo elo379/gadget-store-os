@@ -24,7 +24,7 @@ export function getActiveOrganizationId() {
   }
 
   const stored = window.localStorage.getItem(ORGANIZATION_KEY);
-  return stored || "10c8d676bbfc4ea0ab4cdb0cb3794754";
+  return stored || null;
 }
 
 export function setActiveOrganizationId(organizationId: string) {

@@ -2,6 +2,19 @@
 
 import { apiPost } from "@/lib/api";
 
+type PasskeyOptions = {
+  challenge: string;
+  user?: { id: string; name: string; displayName: string };
+  allowCredentials?: Array<{ id: string; type: "public-key"; transports?: AuthenticatorTransport[] }>;
+  excludeCredentials?: Array<{ id: string; type: "public-key"; transports?: AuthenticatorTransport[] }>;
+  rp?: PublicKeyCredentialRpEntity;
+  pubKeyCredParams?: PublicKeyCredentialParameters[];
+  timeout?: number;
+  attestation?: AttestationConveyancePreference;
+  authenticatorSelection?: AuthenticatorSelectionCriteria;
+  userVerification?: UserVerificationRequirement;
+};
+
 function b64(value: ArrayBuffer): string {
   return btoa(String.fromCharCode(...new Uint8Array(value)))
     .replace(/\+/g, "-")
@@ -23,26 +36,19 @@ export function supportsPasskeys() {
 }
 
 export async function registerPasskey(name = "This device") {
-  const options = await apiPost<any>(
+  const options = await apiPost<PasskeyOptions>(
     "/auth/passkeys/register/options",
     { name },
   );
 
+  const creationOptions = {
+    ...options,
+    challenge: buffer(options.challenge),
+    user: { ...options.user, id: buffer(options.user?.id ?? "") },
+    excludeCredentials: (options.excludeCredentials ?? []).map((item) => ({ ...item, id: buffer(item.id) })),
+  } as PublicKeyCredentialCreationOptions;
   const credential = await navigator.credentials.create({
-    publicKey: {
-      ...options,
-      challenge: buffer(options.challenge),
-      user: {
-        ...options.user,
-        id: buffer(options.user.id),
-      },
-      excludeCredentials: (options.excludeCredentials || []).map(
-        (item: any) => ({
-          ...item,
-          id: buffer(item.id),
-        }),
-      ),
-    },
+    publicKey: creationOptions,
   });
 
   if (!(credential instanceof PublicKeyCredential)) {
@@ -61,22 +67,18 @@ export async function registerPasskey(name = "This device") {
 }
 
 export async function authenticateWithPasskey() {
-  const options = await apiPost<any>(
+  const options = await apiPost<PasskeyOptions>(
     "/auth/passkeys/login/options",
     {},
   );
 
-  const credential = await navigator.credentials.get({
-    publicKey: {
+  const requestOptions = {
       ...options,
       challenge: buffer(options.challenge),
-      allowCredentials: (options.allowCredentials || []).map(
-        (item: any) => ({
-          ...item,
-          id: buffer(item.id),
-        }),
-      ),
-    },
+      allowCredentials: (options.allowCredentials ?? []).map((item) => ({ ...item, id: buffer(item.id) })),
+  } as PublicKeyCredentialRequestOptions;
+  const credential = await navigator.credentials.get({
+    publicKey: requestOptions,
   });
 
   if (!(credential instanceof PublicKeyCredential)) {

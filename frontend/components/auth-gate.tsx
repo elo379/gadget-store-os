@@ -13,7 +13,7 @@ export function AuthGate({ children }: { children: ReactNode }) {
     const check = () => {
       const token = getAccessToken();
 
-      if (pathname !== "/login" && !token) {
+      if (pathname !== "/login" && pathname !== "/activate" && !token) {
         router.replace("/login");
         return;
       }
@@ -28,7 +28,7 @@ export function AuthGate({ children }: { children: ReactNode }) {
     return () => window.clearInterval(timer);
   }, [pathname, router]);
 
-  if (pathname === "/login") {
+  if (pathname === "/login" || pathname === "/activate") {
     return <>{children}</>;
   }
 

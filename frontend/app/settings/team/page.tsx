@@ -51,7 +51,7 @@ export default function TeamPage() {
 
   const [email, setEmail] = useState("");
   const [roleName, setRoleName] = useState("staff");
-  const [activation, setActivation] = useState<{ id: string; credential: string } | null>(null);
+  const [activation, setActivation] = useState<{ id: string; credential: string; url: string } | null>(null);
 
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -64,11 +64,11 @@ export default function TeamPage() {
     setMessage("");
 
     try {
-      const [treeData, policyData, inviteData] = await Promise.all([
+      const [treeData, inviteData] = await Promise.all([
         apiGet<Tree>(`/organizations/${organizationId}/store-tree`),
-        apiGet<Policy>(`/organizations/${organizationId}/store-tree/policy`),
         apiGet<Invitation[]>(`/organizations/${organizationId}/store-tree/invitations`),
       ]);
+      const policyData = await apiGet<Policy>(`/organizations/${organizationId}/store-tree/policy`).catch(() => null);
 
       setTree(treeData);
       setPolicy(policyData);
@@ -108,8 +108,10 @@ export default function TeamPage() {
       );
 
       setEmail("");
-      setActivation({ id: created.activation_id, credential: created.activation_credential });
-      setMessage("Invitation created. Share the activation ID and credential with the invitee now.");
+      const params = new URLSearchParams({ activation_id: created.activation_id, token: created.activation_credential });
+      const url = `${window.location.origin}/activate#${params.toString()}`;
+      setActivation({ id: created.activation_id, credential: created.activation_credential, url });
+      setMessage("Invitation created. Share this one-time activation link with the invitee now.");
       await load();
     } catch (error) {
       setMessage(
@@ -157,8 +159,8 @@ export default function TeamPage() {
           Team & Store Tree
         </h1>
         <p className="mt-2 max-w-2xl text-sm text-zinc-500">
-          Manage store personnel, roles and account status from the owner
-          controlled identity tree.
+          Manage personnel and invitation access within the organization&apos;s
+          configured identity tree.
         </p>
       </section>
 
@@ -176,7 +178,7 @@ export default function TeamPage() {
             <div><dt className="text-zinc-500">Activation ID</dt><dd className="break-all font-mono">{activation.id}</dd></div>
             <div><dt className="text-zinc-500">Activation credential</dt><dd className="break-all font-mono">{activation.credential}</dd></div>
           </dl>
-          <a className="mt-3 inline-block underline" href="/activate">Open activation</a>
+          <p className="mt-3 break-all"><span className="font-medium">Activation link:</span> <a className="underline" href={activation.url}>{activation.url}</a></p>
         </section>
       ) : null}
 

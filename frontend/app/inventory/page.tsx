@@ -5,6 +5,8 @@ import { AppShell } from "@/components/app-shell";
 import { PageHeader } from "@/components/page-header";
 import { apiGet, apiPost, ApiError } from "@/lib/api";
 import { useOrganization } from "@/components/organization-provider";
+import { CameraScanner } from "@/components/camera-scanner";
+import type { ScanResult } from "@/lib/scanner";
 
 type InventoryItem = {
   id: string;
@@ -31,6 +33,7 @@ type Product = {
   id: string;
   name: string;
   sku: string;
+  barcode?: string | null;
 };
 
 type Location = {
@@ -108,6 +111,23 @@ export default function InventoryPage() {
     }
   }
 
+  async function resolveInventoryScan(result: ScanResult) {
+    const product = products.find((candidate) =>
+      [candidate.sku, candidate.barcode].some((value) => value?.trim().toUpperCase() === result.normalizedValue),
+    );
+    if (!product) {
+      setError("No inventory product matches that scanned identifier.");
+      return;
+    }
+    const item = items.find((candidate) => candidate.product_id === product.id);
+    if (!item) {
+      setError("The product is not currently in inventory.");
+      return;
+    }
+    setError("");
+    await loadMovements(item);
+  }
+
   async function addProductToInventory(productId: string) {
     if (!organizationId || !productId) return;
 
@@ -169,7 +189,7 @@ async function submitMovement(event: FormEvent) {
   }
 
   useEffect(() => {
-    void loadInventory();
+    queueMicrotask(() => void loadInventory());
   }, [organizationId]);
 
   const productName = (productId: string) =>
@@ -221,6 +241,12 @@ async function submitMovement(event: FormEvent) {
           {error}
         </div>
       )}
+
+      <section className="rounded-2xl border border-[var(--border)] bg-white p-5">
+        <p className="text-sm font-semibold">Find stock by barcode</p>
+        <p className="mt-1 text-xs text-[var(--muted)]">Scan a product label to open its inventory record and movement history.</p>
+        <CameraScanner expectation="barcode" onDetected={resolveInventoryScan} />
+      </section>
 
       <div className="grid gap-5 xl:grid-cols-[1fr_380px]">
         <section className="overflow-hidden rounded-2xl border border-[var(--border)] bg-white">

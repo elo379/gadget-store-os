@@ -32,8 +32,8 @@ export default function SecurityPage() {
 
   useEffect(() => {
     const supported = supportsPasskeys();
-    setPasskeySupported(supported);
-    if (supported) void loadPasskeys();
+    queueMicrotask(() => setPasskeySupported(supported));
+    if (supported) queueMicrotask(() => void loadPasskeys());
   }, []);
 
   async function addPasskey(name: string) {

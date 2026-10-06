@@ -18,7 +18,7 @@ export default function LoginPage() {
   const [passkeySupported, setPasskeySupported] = useState(false);
 
   useEffect(() => {
-    setPasskeySupported(supportsPasskeys());
+    queueMicrotask(() => setPasskeySupported(supportsPasskeys()));
   }, []);
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
@@ -169,7 +169,7 @@ export default function LoginPage() {
           Authorized store personnel only.
         </p>
         <p className="mt-3 text-center text-sm text-neutral-600">
-          Invited to join a store? <a href="/activate" className="font-semibold text-emerald-800 underline underline-offset-4">Activate your account</a>
+          <a href="/activate" className="font-semibold text-emerald-800 underline underline-offset-4">Have an activation code? Activate your account</a>
         </p>
       </div>
     </main>

@@ -36,7 +36,7 @@ export default function SalesPage() {
     }
   }, [organizationId]);
 
-  useEffect(() => { void load(); }, [load]);
+  useEffect(() => { queueMicrotask(() => void load()); }, [load]);
 
   return (
     <AppShell>

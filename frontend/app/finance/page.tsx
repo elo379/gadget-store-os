@@ -3,6 +3,7 @@
 import { FormEvent, useCallback, useEffect, useState } from "react";
 import { apiGet, apiPatch, apiPost } from "@/lib/api";
 import { useOrganization } from "@/components/organization-provider";
+import { PageHeader } from "@/components/page-header";
 
 type Summary = { revenue: number | string; cogs: number | string; gross_profit: number | string; expenses: number | string; operating_result: number | string; payments_received: number | string; customer_outstanding: number | string; supplier_outstanding: number | string; inventory_value: number | string };
 type Category = { id: string; name: string };
@@ -18,8 +19,10 @@ export default function FinancePage() {
   const [reconciliation, setReconciliation] = useState<Reconciliation>({ issue_count: 0, issues: [] });
   const [error, setError] = useState("");
   const [saving, setSaving] = useState(false);
+  const [loading, setLoading] = useState(true);
   const load = useCallback(async () => {
     if (!organizationId) return;
+    setLoading(true);
     try {
       const [s, c, e, r] = await Promise.all([
         apiGet<Summary>(`/finance/${organizationId}/summary`),
@@ -29,6 +32,7 @@ export default function FinancePage() {
       ]);
       setSummary(s); setCategories(c); setExpenses(e); setReconciliation(r); setError("");
     } catch (err) { setError(err instanceof Error ? err.message : "Unable to load finance records."); }
+    finally { setLoading(false); }
   }, [organizationId]);
   useEffect(() => {
     const timer = window.setTimeout(() => { void load(); }, 0);
@@ -52,10 +56,10 @@ export default function FinancePage() {
   }
   const cards = [["Revenue", summary?.revenue], ["Payments received", summary?.payments_received], ["Customer outstanding", summary?.customer_outstanding], ["Supplier outstanding", summary?.supplier_outstanding], ["COGS", summary?.cogs], ["Gross profit", summary?.gross_profit], ["Expenses", summary?.expenses], ["Operating result", summary?.operating_result], ["Inventory value", summary?.inventory_value]] as const;
   return <div className="space-y-6">
-    <header><p className="text-sm font-medium text-[var(--muted)]">Finance</p><h1 className="text-3xl font-semibold tracking-tight">Financial controls</h1><p className="mt-1 text-sm text-[var(--muted)]">Revenue less recorded acquisition cost gives gross profit. Operating result deducts recorded expenses.</p></header>
+    <PageHeader eyebrow="Finance · Ledger" title="Financial controls" description="Revenue less recorded acquisition cost gives gross profit. Operating result deducts recorded expenses." action={{ label: loading ? "Refreshing…" : "Refresh", onClick: () => void load() }} />
     {error && <div role="alert" className="rounded-xl border border-red-300 bg-red-50 p-3 text-sm text-red-800">{error}</div>}
-    <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">{cards.map(([label, value]) => <section key={label} className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-4"><p className="text-sm text-[var(--muted)]">{label}</p><p className="mt-2 text-xl font-semibold">{summary ? money(value) : "Loading…"}</p></section>)}</div>
-    <section className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-5"><div className="mb-3 flex items-center justify-between"><div><h2 className="font-semibold">Reconciliation</h2><p className="text-sm text-[var(--muted)]">Checks ledger payment states and linked events.</p></div><span className="rounded-full px-3 py-1 text-sm">{reconciliation.issue_count} issues</span></div>{reconciliation.issues.length === 0 ? <p className="text-sm text-green-700">No reconciliation issues found.</p> : <ul className="space-y-2">{reconciliation.issues.map((issue, i) => <li key={`${issue.code}-${i}`} className="rounded-lg bg-amber-50 p-3 text-sm"><strong>{issue.code} · {issue.reference}</strong><p>{issue.detail}</p></li>)}</ul>}</section>
+    <div aria-busy={loading} className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">{cards.map(([label, value]) => <section key={label} className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-4"><p className="text-sm text-[var(--muted)]">{label}</p><p className="mt-2 text-xl font-semibold">{loading ? "Loading…" : summary ? money(value) : "—"}</p></section>)}</div>
+    <section className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-5"><div className="mb-3 flex items-center justify-between"><div><h2 className="font-semibold">Reconciliation</h2><p className="text-sm text-[var(--muted)]">Checks ledger payment states and linked events.</p></div><span className="rounded-full px-3 py-1 text-sm">{loading ? "Checking…" : `${reconciliation.issue_count} issues`}</span></div>{loading ? <p role="status" className="text-sm text-[var(--muted)]">Loading reconciliation…</p> : error ? <p className="text-sm text-amber-800">Reconciliation is unavailable until the finance records load.</p> : reconciliation.issues.length === 0 ? <p className="text-sm text-green-700">No reconciliation issues found.</p> : <ul className="space-y-2">{reconciliation.issues.map((issue, i) => <li key={`${issue.code}-${i}`} className="rounded-lg bg-amber-50 p-3 text-sm"><strong>{issue.code} · {issue.reference}</strong><p>{issue.detail}</p></li>)}</ul>}</section>
     <section className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-5"><h2 className="mb-4 font-semibold">Record an expense</h2><form onSubmit={recordExpense} className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
       <label className="text-sm">Category<select required name="category_id" className="mt-1 w-full rounded-lg border p-2">{categories.map(c => <option value={c.id} key={c.id}>{c.name}</option>)}</select></label>
       <label className="text-sm">Amount (₦)<input required min="0.01" step="0.01" type="number" name="amount" className="mt-1 w-full rounded-lg border p-2" /></label>

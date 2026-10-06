@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { apiGet } from "@/lib/api";
+import { useEffect, useMemo, useState } from "react";
+import { apiGet, apiPut } from "@/lib/api";
 import { useOrganization } from "@/components/organization-provider";
 
 type Member = {
@@ -17,12 +17,20 @@ type StoreTree = {
   members?: Member[];
   personnel?: Member[];
 };
+type RoleConfiguration = { catalog: Record<string, string>; roles: Record<string, string[]>; can_manage: boolean };
 
 export default function RolesPage() {
   const { organizationId } = useOrganization();
   const [members, setMembers] = useState<Member[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [catalog, setCatalog] = useState<Record<string, string>>({});
+  const [rolePermissions, setRolePermissions] = useState<Record<string, string[]>>({ manager: [], staff: [] });
+  const [canManage, setCanManage] = useState(false);
+  const [selectedRole, setSelectedRole] = useState("manager");
+  const [saving, setSaving] = useState(false);
+  const [message, setMessage] = useState("");
+  const availablePermissions = useMemo(() => Object.entries(catalog), [catalog]);
 
   useEffect(() => {
     if (!organizationId) return;
@@ -32,11 +40,12 @@ export default function RolesPage() {
       setError("");
 
       try {
-        const data = await apiGet<StoreTree>(
-          `/organizations/${organizationId}/store-tree`
-        );
-
+        const data = await apiGet<StoreTree>(`/organizations/${organizationId}/store-tree`);
+        const config = await apiGet<RoleConfiguration>(`/organizations/${organizationId}/role-permissions`).catch(() => null);
         setMembers(data.members ?? data.personnel ?? []);
+        setCatalog(config?.catalog ?? {});
+        setRolePermissions(config?.roles ?? { manager: [], staff: [] });
+        setCanManage(Boolean(config?.can_manage));
       } catch (err) {
         setError(err instanceof Error ? err.message : "Unable to load roles.");
       } finally {
@@ -50,6 +59,16 @@ export default function RolesPage() {
   const roles = Array.from(
     new Set(members.map((member) => member.role_name).filter(Boolean))
   );
+
+  async function saveRolePermissions() {
+    if (!organizationId) return;
+    setSaving(true); setMessage(""); setError("");
+    try {
+      await apiPut(`/organizations/${organizationId}/role-permissions`, { role_name: selectedRole, permission_keys: rolePermissions[selectedRole] ?? [] });
+      setMessage(`${selectedRole} permissions saved.`);
+    } catch (cause) { setError(cause instanceof Error ? cause.message : "Unable to save role permissions."); }
+    finally { setSaving(false); }
+  }
 
   return (
     <main className="space-y-6">
@@ -68,6 +87,13 @@ export default function RolesPage() {
           {error}
         </div>
       )}
+      {message && <p role="status" className="rounded-xl bg-emerald-50 p-3 text-sm text-emerald-900">{message}</p>}
+
+      {canManage && <section className="rounded-2xl border border-zinc-200 bg-white p-5">
+        <div className="flex flex-wrap items-center justify-between gap-3"><div><h2 className="font-semibold text-zinc-950">Permission assignments</h2><p className="mt-1 text-sm text-zinc-500">Changes apply to active members assigned to this role.</p></div><select aria-label="Role to configure" value={selectedRole} onChange={(event) => setSelectedRole(event.target.value)} className="h-11 rounded-lg border bg-white px-3"><option value="manager">Manager</option><option value="staff">Staff</option></select></div>
+        <div className="mt-4 grid gap-2 sm:grid-cols-2 lg:grid-cols-3">{availablePermissions.map(([key, description]) => <label key={key} className="flex min-h-12 items-start gap-3 rounded-lg border border-zinc-100 p-3 text-sm"><input type="checkbox" checked={(rolePermissions[selectedRole] ?? []).includes(key)} onChange={(event) => setRolePermissions((current) => ({ ...current, [selectedRole]: event.target.checked ? [...(current[selectedRole] ?? []), key] : (current[selectedRole] ?? []).filter((item) => item !== key) }))} className="mt-0.5 h-4 w-4" /><span><span className="block font-medium">{key}</span><span className="text-xs text-zinc-500">{description}</span></span></label>)}</div>
+        <button type="button" disabled={saving || loading} onClick={() => void saveRolePermissions()} className="mt-4 min-h-11 rounded-xl bg-zinc-950 px-5 text-sm font-semibold text-white disabled:opacity-50">{saving ? "Saving…" : "Save permissions"}</button>
+      </section>}
 
       <section className="rounded-2xl border border-zinc-200 bg-white p-5">
         <h2 className="font-semibold text-zinc-950">Active roles</h2>

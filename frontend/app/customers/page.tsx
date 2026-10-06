@@ -3,6 +3,7 @@
 import { FormEvent, useEffect, useMemo, useState } from "react";
 import { apiGet, apiPost, apiPatch } from "@/lib/api";
 import { useOrganization } from "@/components/organization-provider";
+import { PageHeader } from "@/components/page-header";
 
 type Customer = {
   id: string;
@@ -25,35 +26,42 @@ export default function CustomersPage() {
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState("");
   const [editingId, setEditingId] = useState<string | null>(null);
+  const [editingName, setEditingName] = useState("");
+  const [editingPhone, setEditingPhone] = useState("");
+  const [editingEmail, setEditingEmail] = useState("");
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
   async function load() {
     if (!organizationId) return;
+    setLoading(true);
+    setError("");
     try {
       const data = await apiGet<Customer[]>(
         `/customers?organization_id=${organizationId}`,
       );
       setCustomers(Array.isArray(data) ? data : []);
-    } catch {
-      setCustomers([]);
-    }
+    } catch (cause) {
+      setError(cause instanceof Error ? cause.message : "Unable to load customers.");
+    } finally { setLoading(false); }
   }
 
   useEffect(() => {
-    void load();
+    queueMicrotask(() => void load());
   }, [organizationId]);
 
-  async function updateCustomer(id: string, name: string, phone: string, email: string) {
+  async function updateCustomer(id: string) {
     try {
       await apiPatch(`/customers/${id}?organization_id=${organizationId}`, {
-        name,
-        phone,
-        email,
+        name: editingName.trim(),
+        phone: editingPhone.trim(),
+        email: editingEmail.trim(),
       });
       setMessage("Customer updated.");
       setEditingId(null);
       await load();
-    } catch {
-      setMessage("Unable to update customer.");
+    } catch (cause) {
+      setMessage(cause instanceof Error ? cause.message : "Unable to update customer.");
     }
   }
 
@@ -96,13 +104,7 @@ export default function CustomersPage() {
 
   return (
     <div className="space-y-6">
-      <header>
-        <p className="text-sm font-medium text-[var(--muted)]">CRM</p>
-        <h1 className="text-3xl font-semibold tracking-tight">Customers</h1>
-        <p className="mt-1 text-sm text-[var(--muted)]">
-          Manage customer records and purchase relationships.
-        </p>
-      </header>
+      <PageHeader eyebrow="Customer relationships" title="Customers" description="Customer profiles and purchase relationships for this organization." />
 
       <div className="grid gap-4 md:grid-cols-3">
         <div className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] shadow-sm p-5">
@@ -182,29 +184,33 @@ export default function CustomersPage() {
                   <th className="px-3 py-3">Name</th>
                   <th className="px-3 py-3">Phone</th>
                   <th className="px-3 py-3">Email</th>
+                  <th className="px-3 py-3">Actions</th>
                   <th className="px-3 py-3">Status</th>
                 </tr>
               </thead>
               <tbody>
-                {filtered.map((customer) => (
-                  <tr key={customer.id} className="border-b last:border-0">
-                    <td className="px-3 py-4 font-medium">{customer.name}</td>
-                    <td className="px-3 py-4">{customer.phone || "—"}</td>
-                    <td className="px-3 py-4">{customer.email || "—"}</td>
+                  {!loading && !error && filtered.map((customer) => (
+                    <tr key={customer.id} className="border-b last:border-0">
+                    <td className="px-3 py-4 font-medium">{editingId === customer.id ? <input aria-label="Customer name" value={editingName} onChange={(event) => setEditingName(event.target.value)} className="w-40 rounded border p-2" /> : customer.name}</td>
+                    <td className="px-3 py-4">{editingId === customer.id ? <input aria-label="Customer phone" value={editingPhone} onChange={(event) => setEditingPhone(event.target.value)} className="w-36 rounded border p-2" /> : customer.phone || "—"}</td>
+                    <td className="px-3 py-4">{editingId === customer.id ? <input aria-label="Customer email" type="email" value={editingEmail} onChange={(event) => setEditingEmail(event.target.value)} className="w-48 rounded border p-2" /> : customer.email || "—"}</td>
 <td className="px-3 py-4">
-  <button
+  {editingId === customer.id ? <div className="flex gap-2"><button type="button" disabled={busy} onClick={() => void updateCustomer(customer.id)} className="rounded-lg border px-3 py-2 text-xs font-semibold">Save</button><button type="button" onClick={() => setEditingId(null)} className="rounded-lg border px-3 py-2 text-xs">Cancel</button></div> : <button
     type="button"
-    onClick={() => setEditingId(customer.id)}
+    onClick={() => { setEditingId(customer.id); setEditingName(customer.name); setEditingPhone(customer.phone ?? ""); setEditingEmail(customer.email ?? ""); }}
     className="rounded-lg border border-[var(--border)] px-3 py-2 text-xs font-semibold"
   >
     Edit
-  </button>
+  </button>}
 </td>
                     <td className="px-3 py-4">
                       {customer.is_active === false ? "Inactive" : "Active"}
                     </td>
                   </tr>
-                ))}
+                  ))}
+                  {loading && <tr><td colSpan={5} className="p-6 text-center text-sm text-neutral-500">Loading customers…</td></tr>}
+                  {error && <tr><td colSpan={5} className="p-6 text-center text-sm text-red-700">{error} <button type="button" onClick={() => void load()} className="underline">Retry</button></td></tr>}
+                  {!loading && !error && filtered.length === 0 && <tr><td colSpan={5} className="p-6 text-center text-sm text-neutral-500">No customers match this search.</td></tr>}
               </tbody>
             </table>
           </div>

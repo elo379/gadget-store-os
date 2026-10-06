@@ -25,10 +25,10 @@ export default function CategoriesPage() {
     try {
       const [groups, items] = await Promise.all([apiGet<Category[]>(`/products/categories?organization_id=${organizationId}`), apiGet<Product[]>(`/products?organization_id=${organizationId}`)]);
       setCategories(groups); setProducts(items);
-    } catch { setError("Categories could not be loaded. Check your access or retry."); }
+    } catch (cause) { setError(cause instanceof Error ? cause.message : "Categories could not be loaded."); }
     finally { setLoading(false); }
   }
-  useEffect(() => { void load(); }, [organizationId]);
+  useEffect(() => { queueMicrotask(() => void load()); }, [organizationId]);
   async function create(event: FormEvent) {
     event.preventDefault(); if (!organizationId) return;
     setBusy(true); setMessage("");
