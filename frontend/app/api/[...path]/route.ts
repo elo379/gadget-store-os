@@ -25,10 +25,16 @@ async function proxy(
 
   try {
     const response = await fetch(target, init);
+    const body = await response.arrayBuffer();
 
-    return new Response(response.body, {
+    const responseHeaders = new Headers(response.headers);
+    responseHeaders.delete("content-length");
+    responseHeaders.delete("content-encoding");
+    responseHeaders.delete("transfer-encoding");
+
+    return new Response(body, {
       status: response.status,
-      headers: response.headers,
+      headers: responseHeaders,
     });
   } catch {
     return Response.json(
