@@ -5,8 +5,6 @@ import {
   useContext,
   useMemo,
 } from "react";
-import { clearActiveOrganization, setActiveOrganizationId } from "@/lib/session";
-import { useState } from "react";
 
 type OrganizationContextValue = {
   organizationId: string | null;
@@ -19,22 +17,20 @@ const OrganizationContext =
 
 export function OrganizationProvider({
   children,
+  organizationId,
+  onOrganizationChange,
 }: {
   children: React.ReactNode;
+  organizationId: string | null;
+  onOrganizationChange: (organizationId: string | null) => void;
 }) {
-  const [organizationId, setOrganizationIdState] = useState<string | null>(null);
-
   const value = useMemo(
     () => ({
       organizationId,
       hasOrganization: Boolean(organizationId),
-      setOrganizationId: (nextOrganizationId: string | null) => {
-        if (nextOrganizationId) setActiveOrganizationId(nextOrganizationId);
-        else clearActiveOrganization();
-        setOrganizationIdState(nextOrganizationId);
-      },
+      setOrganizationId: onOrganizationChange,
     }),
-    [organizationId, setOrganizationIdState],
+    [organizationId, onOrganizationChange],
   );
 
   return (

@@ -13,6 +13,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { Icon, type IconName } from "./icon";
 import { apiGet, apiPatch, getMyOrganizations, logout, type Organization } from "@/lib/api";
 import { useOrganization } from "@/components/organization-provider";
+import { getOrganizationPermissionsPath } from "@/lib/workspace";
 
 const ShellContext = createContext(false);
 
@@ -74,7 +75,7 @@ function ShellFrame({ children }: { children: ReactNode }) {
   useEffect(() => {
     if (!organizationId) return;
     let active = true;
-    apiGet<{ permissions: string[] }>(`/organizations/${organizationId}/my-permissions`)
+    apiGet<{ permissions: string[] }>(getOrganizationPermissionsPath(organizationId))
       .then((data) => { if (active) setMyPermissions(data.permissions); })
       .catch(() => { if (active) setMyPermissions([]); });
     apiGet<{unread_count: number}>(`/notifications/${organizationId}/unread-count`)

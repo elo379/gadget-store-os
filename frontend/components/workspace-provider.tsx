@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import {
   getCurrentUser,
   getMyOrganizations,
@@ -9,9 +9,11 @@ import {
 import {
   getAccessToken,
   getActiveOrganizationId,
+  clearActiveOrganization,
   setActiveOrganizationId,
 } from "@/lib/session";
 import { OrganizationProvider } from "./organization-provider";
+import { resolveAndPersistActiveOrganizationId } from "@/lib/workspace";
 
 export function WorkspaceProvider({
   children,
@@ -19,10 +21,20 @@ export function WorkspaceProvider({
   children: React.ReactNode;
 }) {
   const [user, setUser] = useState<AuthUser | null>(null);
+  const [organizationId, setOrganizationIdState] = useState<string | null>(null);
+  const requestId = useRef(0);
+
+  const updateOrganizationId = useCallback((nextOrganizationId: string | null) => {
+    if (nextOrganizationId) setActiveOrganizationId(nextOrganizationId);
+    else clearActiveOrganization();
+    setOrganizationIdState(nextOrganizationId);
+  }, []);
 
   const loadWorkspace = useCallback(async () => {
+    const currentRequestId = ++requestId.current;
     if (!getAccessToken()) {
       setUser(null);
+      updateOrganizationId(null);
       return;
     }
 
@@ -32,22 +44,23 @@ export function WorkspaceProvider({
         getMyOrganizations(),
       ]);
 
+      if (currentRequestId !== requestId.current) return;
+
       setUser(currentUser);
 
       const existingOrganizationId = getActiveOrganizationId();
 
-      const validExistingMembership = memberships.some(
-        (membership) =>
-          membership.organization_id === existingOrganizationId,
+      resolveAndPersistActiveOrganizationId(
+        memberships,
+        existingOrganizationId,
+        updateOrganizationId,
       );
-
-      if (!validExistingMembership && memberships.length > 0) {
-        setActiveOrganizationId(memberships[0].organization_id);
-      }
     } catch {
+      if (currentRequestId !== requestId.current) return;
       setUser(null);
+      updateOrganizationId(null);
     }
-  }, []);
+  }, [updateOrganizationId]);
 
   useEffect(() => {
     void Promise.resolve().then(loadWorkspace);
@@ -67,7 +80,10 @@ export function WorkspaceProvider({
   }, [loadWorkspace]);
 
   return (
-    <OrganizationProvider>
+    <OrganizationProvider
+      organizationId={organizationId}
+      onOrganizationChange={updateOrganizationId}
+    >
       <div data-user-id={user?.user_id ?? ""}>{children}</div>
     </OrganizationProvider>
   );
