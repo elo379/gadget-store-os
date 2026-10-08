@@ -55,7 +55,7 @@ def list_inventory_locations(
 def create_inventory_location(
     organization_id: uuid.UUID,
     payload: InventoryLocationCreate,
-    current_user=Depends(require_permission("inventory.manage")),
+    current_user=Depends(require_permission("branches.manage")),
     db: Session = Depends(get_db),
 ):
     location = create_location(

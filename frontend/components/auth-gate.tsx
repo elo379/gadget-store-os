@@ -8,12 +8,13 @@ export function AuthGate({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   const router = useRouter();
   const [ready, setReady] = useState(false);
+  const publicPage = ["/login", "/activate", "/create-organization", "/privacy", "/guide"].includes(pathname);
 
   useEffect(() => {
     const check = () => {
       const token = getAccessToken();
 
-      if (pathname !== "/login" && pathname !== "/activate" && !token) {
+      if (!publicPage && !token) {
         router.replace("/login");
         return;
       }
@@ -26,9 +27,9 @@ export function AuthGate({ children }: { children: ReactNode }) {
     const timer = window.setInterval(check, 300);
 
     return () => window.clearInterval(timer);
-  }, [pathname, router]);
+  }, [pathname, publicPage, router]);
 
-  if (pathname === "/login" || pathname === "/activate") {
+  if (publicPage) {
     return <>{children}</>;
   }
 

@@ -1,7 +1,7 @@
 import uuid
 from decimal import Decimal
 
-from sqlalchemy import Boolean, ForeignKey, Numeric, String, Text, UniqueConstraint
+from sqlalchemy import Boolean, ForeignKey, Index, Numeric, String, Text, UniqueConstraint, text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.db.base import Base
@@ -45,7 +45,11 @@ class InventoryLocation(UUIDPrimaryKeyMixin, TimestampMixin, Base):
 
 class InventoryItem(UUIDPrimaryKeyMixin, TimestampMixin, Base):
     __tablename__ = "inventory_items"
-    __table_args__ = (UniqueConstraint("organization_id", "product_id", "location_id", name="uq_inventory_org_product_location"),)
+    __table_args__ = (
+        UniqueConstraint("organization_id", "product_id", "location_id", name="uq_inventory_org_product_location"),
+        Index("uq_inventory_org_product_unlocated", "organization_id", "product_id", unique=True,
+              sqlite_where=text("location_id IS NULL"), postgresql_where=text("location_id IS NULL")),
+    )
 
     organization_id: Mapped[uuid.UUID] = mapped_column(
         ForeignKey("organizations.id", ondelete="CASCADE"),

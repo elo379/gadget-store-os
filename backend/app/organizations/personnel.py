@@ -6,6 +6,7 @@ from sqlalchemy.orm import Session
 from app.auth.passwords import hash_password
 from app.models import Membership, User
 from app.organizations.authority import require_personnel_creation_authority
+from app.permissions.role_assignments import assign_configured_category_role
 
 
 def get_next_personnel_id(
@@ -102,5 +103,6 @@ def create_personnel(
     db.add(user)
     db.add(membership)
     db.flush()
+    assign_configured_category_role(db, membership)
 
     return membership

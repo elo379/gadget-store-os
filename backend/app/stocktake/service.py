@@ -1,16 +1,20 @@
 import uuid
+import json
+from datetime import datetime, timezone
 
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from app.inventory.models import InventoryItem
+from app.inventory.models import InventoryItem, InventoryLocation
 from app.stocktake.models import Stocktake, StocktakeLine
 from app.stocktake.schemas import StocktakeCreate
+from app.audit.models import AuditLog
 
 
 def create_stocktake(
     db: Session,
     payload: StocktakeCreate,
+    actor_user_id: uuid.UUID,
 ):
     existing = db.scalar(
         select(Stocktake).where(
@@ -23,11 +27,20 @@ def create_stocktake(
     if existing is not None:
         raise ValueError("Stocktake reference already exists")
 
+    if payload.location_id is not None:
+        location = db.scalar(select(InventoryLocation).where(
+            InventoryLocation.id == payload.location_id,
+            InventoryLocation.organization_id == payload.organization_id,
+        ))
+        if location is None:
+            raise ValueError("Stocktake location not found in organization")
+
     stocktake = Stocktake(
         organization_id=payload.organization_id,
         location_id=payload.location_id,
         reference_number=payload.reference_number.strip(),
         notes=payload.notes.strip(),
+        created_by_user_id=actor_user_id,
     )
 
     db.add(stocktake)
@@ -53,6 +66,13 @@ def create_stocktake(
                 expected_quantity=item.quantity,
             )
         )
+
+    db.add(AuditLog(
+        organization_id=payload.organization_id, user_id=actor_user_id,
+        action="stocktake.started", entity_type="stocktake", entity_id=stocktake.id,
+        description="Stocktake started",
+        metadata_json=json.dumps({"location_id": str(payload.location_id) if payload.location_id else None, "line_count": len(items)}),
+    ))
 
     db.commit()
     db.refresh(stocktake)
@@ -93,6 +113,7 @@ def count_stocktake_line(
     stocktake_id: uuid.UUID,
     line_id: uuid.UUID,
     counted_quantity,
+    actor_user_id: uuid.UUID,
     notes: str = "",
 ):
     line = db.scalar(
@@ -116,6 +137,13 @@ def count_stocktake_line(
         counted_quantity - line.expected_quantity
     )
     line.notes = notes.strip()
+    line.counted_by_user_id = actor_user_id
+    db.add(AuditLog(
+        organization_id=organization_id, user_id=actor_user_id,
+        action="stocktake.line_counted", entity_type="stocktake_line", entity_id=line.id,
+        description="Stocktake line counted",
+        metadata_json=json.dumps({"stocktake_id": str(stocktake_id), "counted_quantity": str(counted_quantity), "variance": str(line.variance)}),
+    ))
 
     db.commit()
     db.refresh(line)
@@ -126,6 +154,7 @@ def complete_stocktake(
     db: Session,
     organization_id: uuid.UUID,
     stocktake_id: uuid.UUID,
+    actor_user_id: uuid.UUID,
 ):
     from app.inventory.constants import MOVEMENT_ADJUSTMENT
     from app.inventory.service import record_movement
@@ -174,9 +203,20 @@ def complete_stocktake(
             movement_type=MOVEMENT_ADJUSTMENT,
             quantity=variance,
             reason=f"Stocktake reconciliation: {stocktake.reference_number}",
+            reference_type="stocktake",
+            reference_id=stocktake.id,
+            performed_by_user_id=actor_user_id,
         )
 
     stocktake.status = "completed"
+    stocktake.completed_by_user_id = actor_user_id
+    stocktake.completed_at = datetime.now(timezone.utc)
+    db.add(AuditLog(
+        organization_id=organization_id, user_id=actor_user_id,
+        action="stocktake.completed", entity_type="stocktake", entity_id=stocktake.id,
+        description="Stocktake completed and variances reconciled",
+        metadata_json=json.dumps({"line_count": len(lines)}),
+    ))
 
     db.commit()
     db.refresh(stocktake)

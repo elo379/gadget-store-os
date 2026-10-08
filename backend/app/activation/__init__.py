@@ -1,0 +1,1 @@
+"""Secure organization activation."""

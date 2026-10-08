@@ -8,6 +8,7 @@ class OrganizationCreate(BaseModel):
     slug: str = Field(min_length=2, max_length=100)
     owner_email: EmailStr | None = None
     owner_password: str | None = Field(default=None, min_length=8, max_length=128)
+    activation_code: str = Field(min_length=24, max_length=24)
 
 
 class OrganizationResponse(BaseModel):

@@ -18,6 +18,12 @@ class Sale(UUIDPrimaryKeyMixin, TimestampMixin, Base):
         index=True,
     )
 
+    branch_id: Mapped[uuid.UUID | None] = mapped_column(
+        ForeignKey("inventory_locations.id", ondelete="SET NULL"),
+        nullable=True,
+        index=True,
+    )
+
     customer_id: Mapped[uuid.UUID | None] = mapped_column(
         ForeignKey("customers.id", ondelete="SET NULL"),
         nullable=True,

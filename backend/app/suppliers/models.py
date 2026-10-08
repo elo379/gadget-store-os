@@ -1,6 +1,6 @@
 import uuid
 
-from sqlalchemy import Boolean, ForeignKey, String, Text
+from sqlalchemy import Boolean, ForeignKey, Integer, String, Text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.db.base import Base
@@ -56,5 +56,7 @@ class Supplier(UUIDPrimaryKeyMixin, TimestampMixin, Base):
         nullable=False,
         default=True,
     )
+
+    lead_time_days: Mapped[int | None] = mapped_column(Integer, nullable=True)
 
     organization = relationship("Organization")

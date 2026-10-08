@@ -309,6 +309,10 @@ function ShellFrame({ children }: { children: ReactNode }) {
           <span>© {new Date().getFullYear()} Gadget Store OS. All rights reserved.</span>
           <span className="mx-2 text-[var(--border)]" aria-hidden="true">·</span>
           <span className="font-medium tracking-wide">Powered by EloTech</span>
+          <span className="mx-2 text-[var(--border)]" aria-hidden="true">·</span>
+          <Link href="/guide" className="font-medium underline underline-offset-2">Role guide</Link>
+          <span className="mx-2 text-[var(--border)]" aria-hidden="true">·</span>
+          <Link href="/privacy" className="font-medium underline underline-offset-2">Privacy</Link>
         </footer>
       </div>
       <nav aria-label="Quick navigation" className="gsos-mobile-dock fixed inset-x-0 bottom-0 z-30 grid grid-cols-5 border-t border-[var(--border)] px-2 pt-2 lg:hidden">

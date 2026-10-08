@@ -25,7 +25,7 @@ def create_device(
     db: Session = Depends(get_db),
     current_user=Depends(get_current_user),
 ):
-    require_organization_permission(db, uuid.UUID(current_user.user_id), payload.organization_id, "inventory.manage")
+    require_organization_permission(db, uuid.UUID(current_user.user_id), payload.organization_id, "devices.manage")
     authoritative_payload = payload.model_copy(update={
         "received_by_user_id": uuid.UUID(current_user.user_id),
     })

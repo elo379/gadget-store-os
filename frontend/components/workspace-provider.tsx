@@ -50,7 +50,7 @@ export function WorkspaceProvider({
   }, []);
 
   useEffect(() => {
-    void loadWorkspace();
+    void Promise.resolve().then(loadWorkspace);
 
     const handleAuthChanged = () => {
       void loadWorkspace();

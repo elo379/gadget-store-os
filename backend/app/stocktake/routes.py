@@ -7,7 +7,7 @@ from sqlalchemy.orm import Session
 from app.auth.dependencies import get_current_user
 from app.db.dependencies import get_db
 from app.stocktake.access import require_stocktake_access
-from app.stocktake.models import StocktakeLine
+from app.stocktake.models import Stocktake, StocktakeLine
 from app.stocktake.schemas import StocktakeCount, StocktakeCreate
 from app.stocktake.service import (
     complete_stocktake,
@@ -31,7 +31,11 @@ def create_stocktake_route(
     current_user=Depends(get_current_user),
 ):
     try:
-        return create_stocktake(db, payload)
+        require_stocktake_access(db, current_user, payload.organization_id, manage=True)
+    except ValueError as exc:
+        raise HTTPException(status_code=403, detail=str(exc))
+    try:
+        return create_stocktake(db, payload, uuid.UUID(current_user.user_id))
     except ValueError as exc:
         raise HTTPException(status_code=409, detail=str(exc))
 
@@ -84,11 +88,17 @@ def stocktake_lines(
     db: Session = Depends(get_db),
     current_user=Depends(get_current_user),
 ):
+    try:
+        require_stocktake_access(db, current_user, organization_id)
+    except ValueError as exc:
+        raise HTTPException(status_code=403, detail=str(exc))
     return list(
         db.scalars(
             select(StocktakeLine)
+            .join(Stocktake, Stocktake.id == StocktakeLine.stocktake_id)
             .where(
-                StocktakeLine.stocktake_id == stocktake_id
+                StocktakeLine.stocktake_id == stocktake_id,
+                Stocktake.organization_id == organization_id,
             )
             .order_by(StocktakeLine.created_at.asc())
         ).all()
@@ -107,12 +117,17 @@ def count_line(
     current_user=Depends(get_current_user),
 ):
     try:
+        require_stocktake_access(db, current_user, organization_id, manage=True)
+    except ValueError as exc:
+        raise HTTPException(status_code=403, detail=str(exc))
+    try:
         return count_stocktake_line(
             db,
             organization_id,
             stocktake_id,
             line_id,
             payload.counted_quantity,
+            uuid.UUID(current_user.user_id),
             payload.notes,
         )
     except ValueError as exc:
@@ -129,10 +144,15 @@ def complete(
     current_user=Depends(get_current_user),
 ):
     try:
+        require_stocktake_access(db, current_user, organization_id, manage=True)
+    except ValueError as exc:
+        raise HTTPException(status_code=403, detail=str(exc))
+    try:
         return complete_stocktake(
             db,
             organization_id,
             stocktake_id,
+            uuid.UUID(current_user.user_id),
         )
     except ValueError as exc:
         raise HTTPException(status_code=409, detail=str(exc))

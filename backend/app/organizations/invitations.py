@@ -167,6 +167,8 @@ def accept_invitation(
     db.add(user)
     db.add(membership)
     db.flush()
+    from app.permissions.role_assignments import assign_configured_category_role
+    assign_configured_category_role(db, membership)
     if invitation.role_name.lower() == "staff":
         from app.staff.models import StaffProfile
         db.add(StaffProfile(

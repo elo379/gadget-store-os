@@ -12,12 +12,16 @@ def require_stocktake_access(
     db: Session,
     user: User,
     organization_id: uuid.UUID,
+    *,
+    manage: bool = False,
 ):
+    user_id = uuid.UUID(str(getattr(user, "user_id", getattr(user, "id", ""))))
     membership = db.scalar(
         select(Membership).where(
             Membership.organization_id == organization_id,
-            Membership.user_id == user.id,
+            Membership.user_id == user_id,
             Membership.is_active.is_(True),
+            Membership.account_status == "active",
         )
     )
 
@@ -27,12 +31,13 @@ def require_stocktake_access(
     if membership.is_owner:
         return membership
 
+    permission = "inventory.manage" if manage else "inventory.view"
     if not user_has_permission(
         db,
-        user,
+        user_id,
         organization_id,
-        "inventory.view",
+        permission,
     ):
-        raise ValueError("Stocktake access denied")
+        raise ValueError("Stocktake management permission required" if manage else "Stocktake access denied")
 
     return membership

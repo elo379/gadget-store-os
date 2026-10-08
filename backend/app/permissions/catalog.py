@@ -9,6 +9,8 @@ PERMISSION_CATALOG = {
     "products.manage": "Create and manage products",
     "inventory.view": "View inventory",
     "inventory.manage": "Manage inventory",
+    "branches.manage": "Create and manage store locations and branches",
+    "devices.manage": "Receive and manage serialized device records",
     "purchases.view": "View purchases",
     "purchases.manage": "Manage purchases",
     "sales.view": "View sales",

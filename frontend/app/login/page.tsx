@@ -171,6 +171,10 @@ export default function LoginPage() {
         <p className="mt-3 text-center text-sm text-neutral-600">
           <a href="/activate" className="font-semibold text-emerald-800 underline underline-offset-4">Have an activation code? Activate your account</a>
         </p>
+        <p className="mt-2 text-center text-sm text-neutral-600">
+          <a href="/create-organization" className="font-semibold text-emerald-800 underline underline-offset-4">Create your organization</a>
+        </p>
+        <p className="mt-5 text-center text-xs text-[var(--muted)]"><a href="/privacy" className="underline underline-offset-2">Privacy Policy</a></p>
       </div>
     </main>
   );

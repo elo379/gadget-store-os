@@ -58,9 +58,9 @@ class Product(UUIDPrimaryKeyMixin, TimestampMixin, Base):
         nullable=False,
     )
 
-    sku: Mapped[str] = mapped_column(
+    sku: Mapped[str | None] = mapped_column(
         String(100),
-        nullable=False,
+        nullable=True,
         index=True,
     )
 

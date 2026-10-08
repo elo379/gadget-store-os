@@ -8,3 +8,4 @@ alembic_dev.db
 __pycache__/
 *.pyc
 *.db
+*.egg-info/

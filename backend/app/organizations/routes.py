@@ -1,6 +1,6 @@
 from uuid import UUID
 
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, Request, status
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
@@ -16,11 +16,11 @@ from app.organizations.schemas import (
 )
 from app.models.membership import Membership
 from app.organizations.service import (
-    create_organization,
     get_membership,
     get_organization,
 )
 from app.models import Membership
+from app.activation.service import create_organization_with_code, is_rate_limited, register_failed_attempt
 from app.auth.dependencies import get_current_user
 from app.auth.schemas import AuthenticatedUser
 
@@ -61,6 +61,7 @@ def list_my_organizations(
 )
 def create_new_organization(
     payload: OrganizationCreate,
+    request: Request,
     db: Session = Depends(get_db),
 ):
     if not payload.owner_email or not payload.owner_password:
@@ -69,18 +70,28 @@ def create_new_organization(
             detail="Owner email and password are required",
         )
 
+    remote_address = request.client.host if request.client else "unknown"
+    if is_rate_limited(db, remote_address):
+        raise HTTPException(status_code=429, detail="Too many activation attempts. Try again later.")
+
     try:
-        return create_organization(
+        return create_organization_with_code(
             db,
-            payload.name,
-            payload.slug,
-            payload.owner_email,
-            payload.owner_password,
+            name=payload.name,
+            slug=payload.slug,
+            owner_email=payload.owner_email,
+            owner_password=payload.owner_password,
+            activation_code=payload.activation_code,
         )
     except ValueError as exc:
+        if "activation code" in str(exc).lower():
+            blocked = register_failed_attempt(db, remote_address)
+            db.commit()
+            if blocked:
+                raise HTTPException(status_code=429, detail="Too many activation attempts. Try again later.")
         raise HTTPException(
-            status_code=status.HTTP_409_CONFLICT,
-            detail=str(exc),
+            status_code=(status.HTTP_400_BAD_REQUEST if "activation code" in str(exc).lower() else status.HTTP_409_CONFLICT),
+            detail=("Invalid or unavailable activation code" if "activation code" in str(exc).lower() else str(exc)),
         )
 
 

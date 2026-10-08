@@ -1,7 +1,9 @@
 import uuid
 from decimal import Decimal
 
-from sqlalchemy import ForeignKey, Numeric, String, Text
+from datetime import datetime
+
+from sqlalchemy import DateTime, ForeignKey, Numeric, String, Text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.db.base import Base
@@ -30,6 +32,11 @@ class Stocktake(UUIDPrimaryKeyMixin, TimestampMixin, Base):
     notes: Mapped[str] = mapped_column(
         Text, nullable=False, default=""
     )
+    created_by_user_id: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("users.id", ondelete="SET NULL"), nullable=True, index=True)
+    submitted_by_user_id: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("users.id", ondelete="SET NULL"), nullable=True, index=True)
+    completed_by_user_id: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("users.id", ondelete="SET NULL"), nullable=True, index=True)
+    submitted_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    completed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
 
     organization = relationship("Organization")
     location = relationship("InventoryLocation")
@@ -65,6 +72,7 @@ class StocktakeLine(UUIDPrimaryKeyMixin, TimestampMixin, Base):
     notes: Mapped[str] = mapped_column(
         Text, nullable=False, default=""
     )
+    counted_by_user_id: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("users.id", ondelete="SET NULL"), nullable=True, index=True)
 
     stocktake = relationship(
         "Stocktake",

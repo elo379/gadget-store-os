@@ -13,10 +13,12 @@ def test_organization_schema():
     data = OrganizationCreate(
         name="Elo Gadgets",
         slug="elo-gadgets",
+        activation_code="A" * 24,
     )
 
     assert data.name == "Elo Gadgets"
     assert data.slug == "elo-gadgets"
+    assert data.activation_code == "A" * 24
 
 
 def test_organization_response_schema():
