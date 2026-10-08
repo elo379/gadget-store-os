@@ -1,2 +1,4 @@
 /backend/.env
 *.log
+/private/gsos-production-activation-codes.txt
+/private/gsos-production-activation-digests.txt

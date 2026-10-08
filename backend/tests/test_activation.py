@@ -1,5 +1,6 @@
 from concurrent.futures import ThreadPoolExecutor
 from datetime import timedelta
+import hashlib
 from threading import Barrier
 import uuid
 
@@ -79,25 +80,134 @@ def test_generated_activation_codes_are_24_normalized_characters():
 
 
 def test_operator_generator_exports_40_codes_private_and_never_prints_codes(activation_engine, tmp_path, monkeypatch, capsys):
-    from sqlalchemy.orm import sessionmaker
     from scripts import manage_activation_codes
 
-    monkeypatch.setattr(manage_activation_codes, "SessionLocal", sessionmaker(bind=activation_engine))
+    monkeypatch.setattr(manage_activation_codes, "create_engine", lambda *a, **k: pytest.fail("database connection attempted"))
     output = tmp_path / "launch-codes.txt"
-    manage_activation_codes.generate_batch(40, output, None)
+    manage_activation_codes.generate_batch(40, output)
     exported = output.read_text().splitlines()
     assert len(exported) == 40
-    assert all(len(code) == 24 and code.isascii() and code.isalnum() for code in exported)
+    assert len(set(exported)) == 40
+    assert all(len(code) == 24 and code.isascii() and code.isalnum() and code == code.upper() for code in exported)
     assert output.stat().st_mode & 0o777 == 0o600
     captured = capsys.readouterr().out
     assert all(code not in captured for code in exported)
     with Session(activation_engine) as db:
-        assert db.query(ActivationCode).count() == 40
+        assert db.query(ActivationCode).count() == 0
 
     output.write_text("keep-existing")
     with pytest.raises(FileExistsError):
         manage_activation_codes.generate_batch(1, output, None)
     assert output.read_text() == "keep-existing"
+
+
+def sample_digests():
+    return [hashlib.sha256(f"sample-{index}".encode()).hexdigest() for index in range(40)]
+
+
+def test_digest_batch_seed_stores_only_digests_and_is_idempotent(activation_engine, capsys):
+    from scripts.manage_activation_codes import seed_digest_batch
+
+    digests = sample_digests()
+    with Session(activation_engine) as db, db.begin():
+        assert seed_digest_batch(db, digests) == "inserted"
+    with Session(activation_engine) as db:
+        rows = db.scalars(select(ActivationCode)).all()
+        assert len(rows) == 40
+        assert {row.code_digest for row in rows} == set(digests)
+        assert all(row.status == "issued" for row in rows)
+        assert all(row.organization_id is None for row in rows)
+        assert all(row.redeemed_at is None and row.expires_at is None for row in rows)
+        row = rows[0]
+        row.status = "redeemed"
+        row.redeemed_at = utc_now()
+        db.commit()
+    with Session(activation_engine) as db, db.begin():
+        assert seed_digest_batch(db, digests) == "verified"
+    with Session(activation_engine) as db:
+        assert db.scalar(select(ActivationCode).where(ActivationCode.status == "redeemed")) is not None
+    captured = capsys.readouterr()
+    assert not any(digest in captured.out or digest in captured.err for digest in digests)
+
+
+@pytest.mark.parametrize("digests", [
+    sample_digests()[:-1],
+    sample_digests() + [hashlib.sha256(b"extra").hexdigest()],
+    ["not-a-digest"] + sample_digests()[1:],
+    sample_digests()[:-1] + [sample_digests()[0]],
+])
+def test_digest_batch_rejects_bad_count_format_and_duplicates(activation_engine, digests):
+    from scripts.manage_activation_codes import seed_digest_batch
+
+    with Session(activation_engine) as db, db.begin():
+        with pytest.raises(ValueError):
+            seed_digest_batch(db, digests)
+    with Session(activation_engine) as db:
+        assert db.query(ActivationCode).count() == 0
+
+
+def test_digest_batch_refuses_unrelated_issued_code_without_modifying_it(activation_engine):
+    from scripts.manage_activation_codes import seed_digest_batch
+
+    existing = generate_code()
+    issue(activation_engine, existing)
+    with Session(activation_engine) as db, db.begin():
+        with pytest.raises(ValueError, match="unrelated issued"):
+            seed_digest_batch(db, sample_digests())
+    with Session(activation_engine) as db:
+        assert db.query(ActivationCode).count() == 1
+        row = db.scalar(select(ActivationCode))
+        assert row.code_digest == digest_code(existing) and row.status == "issued"
+
+
+def test_private_digest_export_writes_payload_without_printing_it(tmp_path, capsys):
+    from scripts.manage_activation_codes import export_digest_payload
+
+    inventory = tmp_path / "codes.txt"
+    output = tmp_path / "digests.txt"
+    codes = [generate_code() for _ in range(40)]
+    inventory.write_text("\n".join(codes) + "\n")
+    inventory.chmod(0o600)
+    export_digest_payload(inventory, output)
+    payload = output.read_text().strip().split(",")
+    assert len(payload) == 40
+    assert set(payload) == {digest_code(code) for code in codes}
+    assert output.stat().st_mode & 0o777 == 0o600
+    captured = capsys.readouterr()
+    assert all(digest not in captured.out and digest not in captured.err for digest in payload)
+
+
+def test_production_seed_refuses_missing_explicit_production_database(tmp_path, monkeypatch):
+    from scripts import manage_activation_codes
+
+    monkeypatch.delenv("DATABASE_URL", raising=False)
+    monkeypatch.setenv("ENVIRONMENT", "production")
+    with pytest.raises(SystemExit, match="requires ENVIRONMENT=production and DATABASE_URL"):
+        manage_activation_codes.seed_production(tmp_path / "private-codes.txt")
+    assert not (tmp_path / "private-codes.txt").exists()
+
+
+@pytest.mark.parametrize("environment,url", [
+    ("development", "postgresql://user:pass@db.production.example/gsos-production"),
+    ("production", "sqlite:///production.db"),
+    ("production", "postgresql://user:pass@db.example/gsos-staging"),
+])
+def test_production_engine_rejects_nonproduction_environment_or_target(monkeypatch, environment, url):
+    from scripts.manage_activation_codes import production_engine
+
+    monkeypatch.setenv("ENVIRONMENT", environment)
+    monkeypatch.setenv("DATABASE_URL", url)
+    with pytest.raises(SystemExit):
+        production_engine()
+
+
+def test_production_digest_operation_requires_production_environment(monkeypatch):
+    from scripts.manage_activation_codes import seed_production_digests
+
+    monkeypatch.setenv("ENVIRONMENT", "staging")
+    monkeypatch.setenv("GSOS_PRODUCTION_ACTIVATION_DIGESTS", ",".join(sample_digests()))
+    with pytest.raises(SystemExit, match="requires ENVIRONMENT=production"):
+        seed_production_digests()
 
 
 def test_valid_code_creates_active_owner_and_audit_then_cannot_be_reused(activation_engine):
