@@ -1,4 +1,5 @@
 import uuid
+from datetime import datetime, timezone
 
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy import select
@@ -6,7 +7,7 @@ from sqlalchemy.orm import Session
 
 from app.auth.dependencies import get_current_user
 from app.db.dependencies import get_db
-from app.models import Membership
+from app.models import Membership, Organization
 from app.auth.schemas import AuthenticatedUser
 from app.organizations.authority import get_membership_for_user
 from app.organizations.invitation_model import PersonnelInvitation
@@ -16,10 +17,13 @@ from app.organizations.invitation_schemas import (
     InvitationCreate,
     InvitationCreatedResponse,
     InvitationResponse,
+    InvitationVerify,
+    InvitationVerifyResponse,
 )
 from app.organizations.invitations import (
     accept_invitation,
     create_invitation,
+    hash_invitation_token,
 )
 from app.permissions.access import user_has_permission
 
@@ -150,6 +154,50 @@ def list_personnel_invitations(
                     changed = True
         query = query.where(PersonnelInvitation.parent_membership_id.in_(visible_ids))
     return list(db.scalars(query.order_by(PersonnelInvitation.created_at.desc())).all())
+
+
+@router.post(
+    "/store-tree/invitations/verify",
+    response_model=InvitationVerifyResponse,
+)
+def verify_personnel_invitation(
+    payload: InvitationVerify,
+    db: Session = Depends(get_db),
+):
+    invitation = db.scalar(
+        select(PersonnelInvitation).where(
+            PersonnelInvitation.id == payload.activation_id,
+            PersonnelInvitation.token_hash == hash_invitation_token(payload.token),
+        )
+    )
+
+    if invitation is None:
+        raise HTTPException(status_code=400, detail="Invitation is invalid")
+
+    if invitation.status != "pending":
+        raise HTTPException(
+            status_code=400,
+            detail="Invitation is no longer active",
+        )
+
+    expires_at = invitation.expires_at
+    if expires_at.tzinfo is None:
+        expires_at = expires_at.replace(tzinfo=timezone.utc)
+
+    if expires_at <= datetime.now(timezone.utc):
+        raise HTTPException(status_code=400, detail="Invitation has expired")
+
+    organization = db.get(Organization, invitation.organization_id)
+    if organization is None:
+        raise HTTPException(status_code=400, detail="Invitation is invalid")
+
+    return InvitationVerifyResponse(
+        email=invitation.email,
+        organization_id=invitation.organization_id,
+        organization_name=organization.name,
+        role_name=invitation.role_name,
+        expires_at=invitation.expires_at,
+    )
 
 
 @router.post(

@@ -24,6 +24,19 @@ class InvitationCreatedResponse(InvitationResponse):
     activation_credential: str
 
 
+class InvitationVerify(BaseModel):
+    activation_id: uuid.UUID
+    token: str = Field(min_length=20)
+
+
+class InvitationVerifyResponse(BaseModel):
+    email: str
+    organization_id: uuid.UUID
+    organization_name: str
+    role_name: str
+    expires_at: datetime
+
+
 class InvitationAccept(BaseModel):
     activation_id: uuid.UUID
     token: str = Field(min_length=20)

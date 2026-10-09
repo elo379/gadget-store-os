@@ -194,3 +194,108 @@ def test_http_activation_owner_auth_personnel_permissions_and_tenant_isolation(h
             ActivationCode.code_digest == digest_code(activation_code)
         ))
         assert redeemed is not None and redeemed.status == "redeemed"
+
+def test_http_personnel_invitation_verification(http_database):
+    from datetime import datetime, timedelta, timezone
+    from app.organizations.invitation_model import PersonnelInvitation
+
+    owner_password = "StrongPass123!"
+    activation_code = generate_code()
+    _issue(http_database, activation_code)
+
+    with TestClient(app) as client:
+        created = client.post("/organizations", json={
+            "name": "Invitation Verification Store",
+            "slug": "invitation-verification-store",
+            "owner_email": "owner@invitation-verification.example",
+            "owner_password": owner_password,
+            "activation_code": activation_code,
+        })
+        assert created.status_code == 201, created.text
+        organization_id = created.json()["id"]
+        headers = _login(
+            client,
+            "owner@invitation-verification.example",
+            owner_password,
+        )
+
+        def invite(email):
+            response = client.post(
+                f"/organizations/{organization_id}/store-tree/invitations",
+                headers=headers,
+                json={"email": email, "role_name": "staff"},
+            )
+            assert response.status_code == 201, response.text
+            return response.json()
+
+        valid_invite = invite("valid@invitation-verification.example")
+        payload = {
+            "activation_id": valid_invite["activation_id"],
+            "token": valid_invite["activation_credential"],
+        }
+
+        verified = client.post(
+            "/organizations/store-tree/invitations/verify",
+            json=payload,
+        )
+        assert verified.status_code == 200, verified.text
+        result = verified.json()
+        assert result["email"] == "valid@invitation-verification.example"
+        assert result["organization_id"] == organization_id
+        assert result["organization_name"] == "Invitation Verification Store"
+        assert result["role_name"] == "staff"
+        assert result["expires_at"]
+
+        # Verification is read-only: the same invitation remains verifiable.
+        repeated = client.post(
+            "/organizations/store-tree/invitations/verify",
+            json=payload,
+        )
+        assert repeated.status_code == 200, repeated.text
+
+        wrong_token = {**payload, "token": "x" * len(payload["token"])}
+        rejected = client.post(
+            "/organizations/store-tree/invitations/verify",
+            json=wrong_token,
+        )
+        assert rejected.status_code == 400
+        assert "invalid" in rejected.json()["detail"].lower()
+
+        expired_invite = invite("expired@invitation-verification.example")
+        with http_database() as db:
+            from uuid import UUID
+            record = db.get(
+                PersonnelInvitation,
+                UUID(expired_invite["activation_id"]),
+            )
+            assert record is not None
+            record.expires_at = datetime.now(timezone.utc) - timedelta(seconds=1)
+            db.commit()
+
+        expired = client.post(
+            "/organizations/store-tree/invitations/verify",
+            json={
+                "activation_id": expired_invite["activation_id"],
+                "token": expired_invite["activation_credential"],
+            },
+        )
+        assert expired.status_code == 400
+        assert "expired" in expired.json()["detail"].lower()
+
+        revoked_invite = invite("revoked@invitation-verification.example")
+        revoke = client.patch(
+            f"/organizations/{organization_id}/store-tree/invitations/"
+            f"{revoked_invite['id']}/revoke",
+            headers=headers,
+        )
+        assert revoke.status_code == 200, revoke.text
+
+        revoked = client.post(
+            "/organizations/store-tree/invitations/verify",
+            json={
+                "activation_id": revoked_invite["activation_id"],
+                "token": revoked_invite["activation_credential"],
+            },
+        )
+        assert revoked.status_code == 400
+        assert "no longer active" in revoked.json()["detail"].lower()
